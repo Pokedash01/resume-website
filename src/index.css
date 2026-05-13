@@ -82,7 +82,7 @@
   width: max-content;
   gap: 3rem;
 
-  animation: marqueeMove 40s linear infinite;
+  animation: marqueeMove 80s linear infinite;
 
   will-change: transform;
   transform: translate3d(0, 0, 0);
