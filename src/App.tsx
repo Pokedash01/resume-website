@@ -95,27 +95,48 @@ const skills = [
 function SkillsCarousel() {
   return (
     <div className="relative border-y border-white/5 overflow-hidden bg-white/[0.01]">
-      {/* Funky Green Ribbon */}
-      <div className="bg-neon py-3 mb-0 flex items-center justify-center transform -skew-x-12 -rotate-2 mx-auto w-fit px-16 relative z-10 -mb-6 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+      {/* Ribbon */}
+      <div className="bg-neon py-3 flex items-center justify-center transform -skew-x-12 -rotate-2 mx-auto w-fit px-16 relative z-10 -mb-6 mt-4 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
         <span className="text-black font-black text-3xl tracking-tighter italic uppercase underline decoration-black/20 underline-offset-4">
           Toolkit & Expertise
         </span>
       </div>
-      
-      <div className="py-24">
-        <motion.div 
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="flex gap-12 whitespace-nowrap"
+
+      <div className="relative overflow-hidden py-24">
+        {/* Gradient fade left */}
+        <div className="absolute left-0 top-0 z-20 h-full w-32 bg-gradient-to-r from-[#050505] to-transparent pointer-events-none" />
+
+        {/* Gradient fade right */}
+        <div className="absolute right-0 top-0 z-20 h-full w-32 bg-gradient-to-l from-[#050505] to-transparent pointer-events-none" />
+
+        <motion.div
+          className="flex w-max gap-12"
+          animate={{
+            x: [0, -2000],
+          }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 30,
+              ease: "linear",
+            },
+          }}
         >
-          {[...skills, ...skills].map((skill, i) => (
-            <div key={i} className="flex items-center gap-6">
-              <span className="text-4xl md:text-6xl font-black tracking-tighter text-white/10 hover:text-neon transition-colors cursor-default">
-                {skill.toUpperCase()}
-              </span>
-              <div className="w-3 h-3 bg-neon rounded-full" />
-            </div>
-          ))}
+          {[...Array(6)].flatMap((_, repeatIndex) =>
+            skills.map((skill, i) => (
+              <div
+                key={`${repeatIndex}-${i}`}
+                className="flex items-center gap-6 shrink-0"
+              >
+                <span className="text-4xl md:text-6xl font-black tracking-tighter text-white/10 hover:text-neon transition-colors duration-300 cursor-default whitespace-nowrap">
+                  {skill.toUpperCase()}
+                </span>
+
+                <div className="w-3 h-3 bg-neon rounded-full shrink-0" />
+              </div>
+            ))
+          )}
         </motion.div>
       </div>
     </div>
