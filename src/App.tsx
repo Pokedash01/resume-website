@@ -264,7 +264,7 @@ export default function App() {
 
           <div className="mt-12 flex flex-wrap gap-4">
             <a 
-              href="/K_BHATT_RESUME_3.pdf" 
+              href="/Resume.pdf" 
               target="_blank" 
               rel="noreferrer"
               className="bg-neon text-black px-8 py-4 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:neon-glow transition-all"
