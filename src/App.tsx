@@ -4,7 +4,7 @@
  */
 
 import { motion, useScroll, useTransform } from "motion/react";
-import { ArrowUpRight, Download, Mail, Smartphone, Linkedin, ExternalLink, CheckCircle2, BarChart3 } from "lucide-react";
+import { Download, Mail, Smartphone, Linkedin, ExternalLink, CheckCircle2, BarChart3 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { ReactNode } from "react";
 
@@ -222,9 +222,13 @@ export default function App() {
           <a href="#impact" className="hover:text-neon transition-colors">Impact</a>
           <a href="#contact" className="hover:text-neon transition-colors">Contact</a>
         </div>
-        <button className="bg-neon text-black px-6 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform">
+        <a
+          href="/Resume.pdf"
+          download="K_BHATT_RESUME.pdf"
+          className="bg-neon text-black px-6 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform"
+        >
           Resume <Download size={12} />
-        </button>
+        </a>
       </nav>
 
       {/* Hero Section */}
@@ -262,16 +266,6 @@ export default function App() {
             </span>
           </motion.p>
 
-          <div className="mt-12 flex flex-wrap gap-4">
-            <a 
-              href="/K_BHATT_RESUME_3.pdf" 
-              target="_blank" 
-              rel="noreferrer"
-              className="bg-neon text-black px-8 py-4 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:neon-glow transition-all"
-            >
-              Resume <ArrowUpRight size={14} />
-            </a>
-          </div>
         </div>
 
         <motion.div
@@ -283,7 +277,7 @@ export default function App() {
           <div className="absolute inset-0 border border-white/10 rounded-[32px] overflow-hidden glass neon-glow">
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10" />
             <img 
-              src="/f997cf43-524f-4d9f-acc3-e96bd364e3f4.jpg" 
+              src="/profile.jpg"
               alt="Kartik Bhatt"
               className="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
             />
