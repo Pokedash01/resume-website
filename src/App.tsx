@@ -283,7 +283,7 @@ export default function App() {
           <div className="absolute inset-0 border border-white/10 rounded-[32px] overflow-hidden glass neon-glow">
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10" />
             <img 
-              src="/f997cf43-524f-4d9f-acc3-e96bd364e3f4.jpg" 
+              src="/profile.jpg" 
               alt="Kartik Bhatt"
               className="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
             />
