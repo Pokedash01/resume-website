@@ -93,6 +93,8 @@ const skills = [
 ];
 
 function SkillsCarousel() {
+  const repeatedSkills = [...skills, ...skills, ...skills, ...skills];
+
   return (
     <div className="relative border-y border-white/5 overflow-hidden bg-white/[0.01]">
       {/* Ribbon */}
@@ -103,41 +105,28 @@ function SkillsCarousel() {
       </div>
 
       <div className="relative overflow-hidden py-24">
-        {/* Gradient fade left */}
+        {/* Left Fade */}
         <div className="absolute left-0 top-0 z-20 h-full w-32 bg-gradient-to-r from-[#050505] to-transparent pointer-events-none" />
 
-        {/* Gradient fade right */}
+        {/* Right Fade */}
         <div className="absolute right-0 top-0 z-20 h-full w-32 bg-gradient-to-l from-[#050505] to-transparent pointer-events-none" />
 
-        <motion.div
-          className="flex w-max gap-12"
-          animate={{
-            x: [0, -2000],
-          }}
-          transition={{
-            x: {
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: 30,
-              ease: "linear",
-            },
-          }}
-        >
-          {[...Array(6)].flatMap((_, repeatIndex) =>
-            skills.map((skill, i) => (
+        <div className="marquee">
+          <div className="marquee-track">
+            {repeatedSkills.map((skill, i) => (
               <div
-                key={`${repeatIndex}-${i}`}
+                key={i}
                 className="flex items-center gap-6 shrink-0"
               >
-                <span className="text-4xl md:text-6xl font-black tracking-tighter text-white/10 hover:text-neon transition-colors duration-300 cursor-default whitespace-nowrap">
+                <span className="text-4xl md:text-6xl font-black tracking-tighter text-white/10 hover:text-neon transition-colors duration-300 whitespace-nowrap">
                   {skill.toUpperCase()}
                 </span>
 
                 <div className="w-3 h-3 bg-neon rounded-full shrink-0" />
               </div>
-            ))
-          )}
-        </motion.div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
