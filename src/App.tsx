@@ -20,8 +20,8 @@ function SpotlightCard({ children, className = "" }: { children: ReactNode, clas
 
 const stats = [
   { label: "YEARS", value: "3+" },
-  { label: "HRS / YEAR", value: "3,000+" },
-  { label: "ASSETS", value: "50k+" },
+  { label: "HRS SAVED", value: "3,000+" },
+  { label: "ASSETS MANAGED", value: "50k+" },
   { label: "RFP / RFI", value: "100+" },
   { label: "AWARDS", value: "5×" },
 ];
@@ -265,10 +265,11 @@ export default function App() {
           >
             Knowledge Management & Business Analyst.<br />
             <span className="text-white/30 text-sm font-mono tracking-widest uppercase mt-4 block">
-              power platform · genai · sharepoint.
+              power platform · genai · sharepoint
             </span>
           </motion.p>
-
+        </div>
+        
         <motion.div
           initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
           whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
@@ -412,7 +413,7 @@ export default function App() {
                 role: "Analyst — Knowledge Management",
                 loc: "2 YEARS · GURUGRAM, HARYANA",
                 desc: "Leading cross-functional projects across 12 sectors with 360° stakeholder management, business development, and Power Platform automation.",
-                bullets: ["Power Platform automation & SharePoint Online ecosystem", "360° stakeholder management across 12 sectors", "Saved 2,000+ hours annually · 5 awards earned"]
+                bullets: ["Power Platform automation & SharePoint Online ecosystem", "360° stakeholder management across 16 sectors", "Saved 3,000+ hours annually · 5 awards earned"]
               },
               {
                 date: "SEP 2022 — OCT 2023",
