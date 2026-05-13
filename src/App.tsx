@@ -222,9 +222,16 @@ export default function App() {
           <a href="#impact" className="hover:text-neon transition-colors">Impact</a>
           <a href="#contact" className="hover:text-neon transition-colors">Contact</a>
         </div>
-        <button className="bg-neon text-black px-6 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform">
-          Resume <Download size={12} />
-        </button>
+        <a 
+          href="/Resume.pdf" 
+          download="Kartik_Bhatt_Resume.pdf"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <button className="bg-neon text-black px-6 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform">
+            Resume <Download size={12} />
+          </button>
+        </a>
       </nav>
 
       {/* Hero Section */}
@@ -261,18 +268,6 @@ export default function App() {
               power platform · genai · sharepoint.
             </span>
           </motion.p>
-
-          <div className="mt-12 flex flex-wrap gap-4">
-            <a 
-              href="/Resume.pdf" 
-              target="_blank" 
-              rel="noreferrer"
-              className="bg-neon text-black px-8 py-4 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:neon-glow transition-all"
-            >
-              Resume <ArrowUpRight size={14} />
-            </a>
-          </div>
-        </div>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
