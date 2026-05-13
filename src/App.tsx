@@ -87,9 +87,9 @@ const projects = [
 ];
 
 const skills = [
-  "Power Apps", "Power Automate", "Power BI", "SharePoint Online", "MS Excel", 
-  "MS PowerPoint", "Copilot", "GenAI", "AI Agents", "GenAI Workflows", 
-  "RFP / RFI", "Asset Management", "Process Documentation", "SQL"
+  "Power Apps", "Power Automate", "Power BI", "SharePoint",
+  "SQL", "Copilot", "Gen AI", "AI Agents", "GenAI Workflows", 
+  "RFP / RFI"
 ];
 
 function SkillsCarousel() {
