@@ -755,12 +755,14 @@ export default function App() {
             {[
               { icon: <Mail size={24} />, label: "EMAIL", val: "kb270102@gmail.com", href: "mailto:kb270102@gmail.com" },
               { icon: <Smartphone size={24} />, label: "PHONE", val: "+91-7428062532", href: "tel:+917428062532" },
-              { icon: <Linkedin size={24} />, label: "LINKEDIN", val: "/kartik-bhatt", href: "https://linkedin.com/in/kb2701" },
+              { icon: <Linkedin size={24} />, label: "LINKEDIN", val: "/kartik-bhatt", href: "https://www.linkedin.com/in/kartik-bhatt-b77249219/" },
             ].map(item => (
               <a 
                 key={item.label}
                 href={item.href}
                 className="group transition-all"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <SpotlightCard className="glass p-10 rounded-[32px] border border-white/5 flex flex-col items-center gap-6">
                   <div className="text-white/40 group-hover:text-neon transition-colors relative z-20">{item.icon}</div>
