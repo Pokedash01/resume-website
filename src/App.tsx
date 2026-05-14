@@ -780,7 +780,7 @@ export default function App() {
           </div>
 
           <footer className="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-bold tracking-[0.2em] text-white/20 uppercase">
-            <div>© 2025 / KARTIK BHATT / DELHI</div>
+            <div>© 2026-28 / KARTIK BHATT</div>
             <div>DELHI, INDIA</div>
           </footer>
         </div>
