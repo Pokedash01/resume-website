@@ -219,7 +219,23 @@ export default function App() {
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 inset-x-0 z-[999] backdrop-blur-2xl bg-black/40 border-b border-white/10 px-6 md:px-12 h-20 flex items-center justify-between">
+      <nav className="
+  fixed top-4 left-1/2 -translate-x-1/2
+  w-[95%] md:w-[92%] max-w-7xl
+  z-[999]
+
+  backdrop-blur-[24px]
+  bg-black/45
+  border border-white/10
+
+  rounded-2xl
+  shadow-[0_8px_32px_rgba(0,0,0,0.35)]
+
+  px-6 md:px-12
+  h-20
+
+  flex items-center justify-between
+">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-neon rounded-full" />
           <span className="font-bold tracking-tighter text-sm uppercase">kartik.bhatt</span>
