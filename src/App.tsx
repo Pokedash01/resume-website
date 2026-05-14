@@ -27,11 +27,11 @@ const stats = [
 ];
 
 const chartData = [
-  { name: 'Harvesting App', hours: 1200+, color: '#D9FF00' },
-  { name: 'Assets Library Management', hours: 200+, color: '#34D399' },
-  { name: 'Legacy Excel to SPO Migration', hours: 500+, color: '#A855F7' },
-  { name: 'Pillar Metrices', hours: 185+, color: '#F43F5E' },
-  { name: 'AI Agents', hours: 100+, color: '#F59E0B' },
+  { name: 'Harvesting App', hours: 1200, color: '#D9FF00' },
+  { name: 'Assets Library Management', hours: 200, color: '#34D399' },
+  { name: 'Legacy Excel to SPO Migration', hours: 500, color: '#A855F7' },
+  { name: 'Pillar Metrices', hours: 185, color: '#F43F5E' },
+  { name: 'AI Agents', hours: 100, color: '#F59E0B' },
 ];
 
 const impactMetrics = [
