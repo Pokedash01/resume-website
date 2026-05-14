@@ -42,8 +42,8 @@
   .nav-blur {
   background: rgba(5, 5, 5, 0.78);
 
-  backdrop-filter: blur(35px);
-  -webkit-backdrop-filter: blur(35px);
+  backdrop-filter: blur(45px);
+  -webkit-backdrop-filter: blur(45px);
 
   border-bottom: 1px solid rgba(255,255,255,0.06);
   }
