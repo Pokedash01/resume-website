@@ -140,7 +140,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden selection:bg-neon selection:text-black">
       {/* Scroll-Responsive Background Elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 gpu">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {/* Moving Perspective Grid */}
         <motion.div 
           style={{ 
@@ -219,7 +219,7 @@ export default function App() {
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 inset-x-0 z-[9999] glass backdrop-gpu px-6 md:px-12 h-20 flex items-center justify-between border-b border-white/5">
+      <nav className="fixed top-0 w-full z-50 glass px-6 md:px-12 h-20 flex items-center justify-between border-b border-white/5">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-neon rounded-full" />
           <span className="font-bold tracking-tighter text-sm uppercase">kartik.bhatt</span>
