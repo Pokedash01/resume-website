@@ -20,22 +20,22 @@ function SpotlightCard({ children, className = "" }: { children: ReactNode, clas
 
 const stats = [
   { label: "YEARS", value: "3+" },
-  { label: "HRS SAVED", value: "3,000+" },
-  { label: "ASSETS MANAGED", value: "50k+" },
+  { label: "HRS SAVED", value: "2,000+" },
+  { label: "ASSETS MANAGED", value: "30k+" },
   { label: "RFP / RFI", value: "100+" },
   { label: "AWARDS", value: "5×" },
 ];
 
 const chartData = [
-  { name: 'Harvesting App', hours: 1500, color: '#D9FF00' },
-  { name: 'Assets Library Management', hours: 200, color: '#34D399' },
-  { name: 'Legacy Excel to SPO Migration', hours: 1100, color: '#A855F7' },
-  { name: 'Pillar Metrices', hours: 185, color: '#F43F5E' },
-  { name: 'AI Agents', hours: 800, color: '#F59E0B' },
+  { name: 'Harvesting App', hours: 1200+, color: '#D9FF00' },
+  { name: 'Assets Library Management', hours: 200+, color: '#34D399' },
+  { name: 'Legacy Excel to SPO Migration', hours: 500+, color: '#A855F7' },
+  { name: 'Pillar Metrices', hours: 185+, color: '#F43F5E' },
+  { name: 'AI Agents', hours: 100+, color: '#F59E0B' },
 ];
 
 const impactMetrics = [
-  { label: "Hours", value: "3,000+", sub: "Saved Annually", color: "border-yellow-500/20" },
+  { label: "Hours", value: "2,000+", sub: "Saved Annually", color: "border-yellow-500/20" },
   { label: "Assets", value: "30,000+", sub: "Managed in Repository", color: "border-emerald-500/20" },
   { label: "RFP/RFIs", value: "100+", sub: "Across 16 Sectors", color: "border-rose-500/20" },
   { label: "Pages", value: "50+", sub: "Built to KPMG Standards", color: "border-purple-500/20" },
@@ -47,14 +47,14 @@ const projects = [
     title: "Power Platform Automated Harvesting",
     desc: "Built Power Apps + Power Automate solution for harvesting knowledge assets — saving 1,500 hrs. annually.",
     tags: ["POWER APPS", "POWER AUTOMATE", "POWER BI"],
-    impact: "1,500 hrs saved / year"
+    impact: "1,200 hrs saved / year"
   },
   {
     org: "KPMG",
     title: "SPO List Migration & Modernisation",
     desc: "Migrated legacy Excel data to SharePoint Online with Power Automate flows for real-time notifications.",
     tags: ["SHAREPOINT ONLINE", "POWER APPS", "POWER AUTOMATE"],
-    impact: "1,100 hrs saved"
+    impact: "500 hrs saved"
   },
   {
     org: "KPMG",
@@ -439,7 +439,7 @@ export default function App() {
                 role: "Analyst — Knowledge Management",
                 loc: "2 YEARS · GURUGRAM, HARYANA",
                 desc: "Leading cross-functional projects across 12 sectors with 360° stakeholder management, business development, and Power Platform automation.",
-                bullets: ["Power Platform automation & SharePoint Online ecosystem", "360° stakeholder management across 16 sectors", "Saved 3,000+ hours annually · 5 awards earned"]
+                bullets: ["Power Platform automation & SharePoint Online ecosystem", "360° stakeholder management across 16 sectors", "Saved 2,000+ hours annually · 5 awards earned"]
               },
               {
                 date: "SEP 2022 — OCT 2023",
@@ -656,7 +656,7 @@ export default function App() {
                     <h3 className="text-3xl font-black tracking-tight">the receipts.<br/><span className="text-neon italic">hours saved, by initiative.</span></h3>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-black text-neon">3,785_hrs</div>
+                    <div className="text-2xl font-black text-neon">2,185_hrs</div>
                     <div className="text-[9px] font-bold tracking-widest text-white/20 uppercase">Total Saved</div>
                   </div>
                 </div>
