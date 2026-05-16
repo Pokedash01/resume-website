@@ -493,7 +493,7 @@ export default function App() {
         {/* Full-bleed carousel, edge to edge */}
         <SkillsCarousel />
 
-        <div className="py-20 px-6 md:px-12 border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 mt-14">
           <SectionLabel num="04" label="Toolkit & Expertise" />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
