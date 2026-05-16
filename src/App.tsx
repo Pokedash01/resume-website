@@ -374,7 +374,7 @@ export default function App() {
             <div>
               <motion.h2 initial="hidden" whileInView="visible" viewport={VP}
                 variants={{ visible:{ transition:{ staggerChildren:0.15 } } }}
-                className="text-4xl md:text-[54px] font-black tracking-tighter leading-[0.9] mb-9 uppercase">
+                className="text-4xl md:text-[54px] font-black tracking-tighter leading-[0.9] mb-9 lowercase">
                 {(["i turn legacy", "chaos into measurable,", "automated impact."] as const).map((line, idx) => (
                   <motion.span key={line}
                     variants={{ hidden:{ opacity:0, y:60, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
@@ -522,20 +522,18 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <SectionLabel num="05" label="Projects & Impact" />
 
-          <motion.h2 initial="hidden" whileInView="visible" viewport={VP}
-            variants={{ visible:{ transition:{ staggerChildren:0.15 } } }}
-            className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.85] mb-14">
-            <motion.span
-              variants={{ hidden:{ opacity:0, y:50, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
-              transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}
-              className="block">projects that moved
-            </motion.span>
-            <motion.span
-              variants={{ hidden:{ opacity:0, y:50, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
-              transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}
-              className="block text-neon italic">needles, not just decks.
-            </motion.span>
-          </motion.h2>
+           <motion.h2 initial="hidden" whileInView="visible" viewport={VP}
+                variants={{ visible:{ transition:{ staggerChildren:0.15 } } }}
+                className="text-4xl md:text-[54px] font-black tracking-tighter leading-[0.9] mb-9 lowercase">
+                {(["projects that moved", "needles, not just decks."] as const).map((line, idx) => (
+                  <motion.span key={line}
+                    variants={{ hidden:{ opacity:0, y:60, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
+                    transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}
+                    className={`block${idx===1?" text-white/20 italic":""}`}>
+                    {line}
+                  </motion.span>
+                ))}
+            </motion.h2>
 
           {/* Project cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
