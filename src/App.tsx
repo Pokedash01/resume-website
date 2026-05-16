@@ -644,7 +644,7 @@ export default function App() {
 
           <motion.h2 initial="hidden" whileInView="visible" viewport={VP}
             variants={{ visible:{ transition:{ staggerChildren:0.15 } } }}
-            className="text-4xl md:text-[78px] font-black tracking-tighter leading-[0.85] mb-14">
+            className="text-4xl md:text-[54px] font-black tracking-tighter leading-[0.85] mb-14">
             {(["five awards.", "discipline collecting", "interest."] as const).map((line, idx) => (
               <motion.span key={line}
                 variants={{ hidden:{ opacity:0, y:60, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
