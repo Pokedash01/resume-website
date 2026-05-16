@@ -143,25 +143,25 @@ const experiences = [
 const awards = [
   {
     num: "01",
-    title: "kudos award × 2",
+    title: "Kudos award × 2",
     org: "KPMG GLOBAL SERVICES",
     desc: "Exceptional efficiency via Lean Six Sigma — saved 2,000+ hours annually. Also awarded for migrating legacy VBA / Excel to GenAI agents & Power Platform.",
   },
   {
     num: "02",
-    title: "super team award",
+    title: "Super team award",
     org: "KPMG GLOBAL SERVICES",
     desc: "Hosting and organising employee council events for the wider KGS group, fostering community and collaboration.",
   },
   {
     num: "03",
-    title: "ally of inclusion",
+    title: "Ally of inclusion",
     org: "KPMG GLOBAL SERVICES",
     desc: "Commitment to cultivating an inclusive and diverse work environment across KPMG Global Services.",
   },
   {
     num: "04",
-    title: "gurus@work",
+    title: "Gurus@work",
     org: "KPMG GLOBAL SERVICES",
     desc: "Contributions to KGS learning culture — empowering and inspiring learners across the organisation.",
   },
@@ -520,7 +520,7 @@ export default function App() {
       {/* ── PROJECTS & IMPACT ────────────────────────────────────────────── */}
       <section id="work" className="py-20 px-6 md:px-12 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
-          <SectionLabel num="05" label="Projects" />
+          <SectionLabel num="05" label="Projects & Impact" />
 
           <motion.h2 initial="hidden" whileInView="visible" viewport={VP}
             variants={{ visible:{ transition:{ staggerChildren:0.15 } } }}
@@ -528,12 +528,12 @@ export default function App() {
             <motion.span
               variants={{ hidden:{ opacity:0, y:50, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
               transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}
-              className="block">projects
+              className="block">projects that moved
             </motion.span>
             <motion.span
               variants={{ hidden:{ opacity:0, y:50, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
               transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}
-              className="block text-neon italic">&amp; impact.
+              className="block text-neon italic">needles, not just decks.
             </motion.span>
           </motion.h2>
 
@@ -647,7 +647,7 @@ export default function App() {
           <motion.h2 initial="hidden" whileInView="visible" viewport={VP}
             variants={{ visible:{ transition:{ staggerChildren:0.15 } } }}
             className="text-5xl md:text-[78px] font-black tracking-tighter leading-[0.85] mb-14">
-            {(["five awards.", "one quietly", "relentless year."] as const).map((line, idx) => (
+            {(["five awards.", "discipline collecting", "interest."] as const).map((line, idx) => (
               <motion.span key={line}
                 variants={{ hidden:{ opacity:0, y:60, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
                 transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}
