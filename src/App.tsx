@@ -6,33 +6,57 @@
 import { memo, useMemo, ReactNode } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { Download, Mail, Smartphone, Linkedin, CheckCircle2 } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
-// ─── Shared glass card with neon glow on hover ───────────────────────────────
-const GlassCard = memo(function GlassCard({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+// ─── Shared glass card ────────────────────────────────────────────────────────
+const GlassCard = memo(function GlassCard({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <div
-      className={[
-        "relative overflow-hidden rounded-2xl",
-        "border border-white/10 bg-white/[0.03] backdrop-blur-sm",
-        "transition-all duration-500",
-        "hover:border-neon/35 hover:bg-white/[0.05]",
-        "hover:shadow-[0_0_36px_0_rgba(217,255,0,0.07)]",
-        className,
-      ].join(" ")}
-    >
+    <div className={[
+      "relative overflow-hidden rounded-2xl",
+      "border border-white/10 bg-white/[0.03] backdrop-blur-sm",
+      "transition-all duration-500",
+      "hover:border-neon/35 hover:bg-white/[0.05]",
+      "hover:shadow-[0_0_36px_0_rgba(217,255,0,0.07)]",
+      className,
+    ].join(" ")}>
       {children}
     </div>
   );
 });
 
-// ─── Static data ─────────────────────────────────────────────────────────────
+// ─── Animated stagger headline ────────────────────────────────────────────────
+const StaggerHeadline = memo(function StaggerHeadline({
+  lines,
+  className = "",
+  dimFrom = 1,
+}: {
+  lines: readonly string[];
+  className?: string;
+  dimFrom?: number;
+}) {
+  return (
+    <motion.h2
+      initial="hidden"
+      whileInView="visible"
+      viewport={VP}
+      variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
+      className={["font-black tracking-tighter", className].join(" ")}
+    >
+      {lines.map((line, idx) => (
+        <motion.span
+          key={line}
+          variants={{ hidden: { opacity: 0, y: 60, filter: "blur(10px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)" } }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className={`block${idx >= dimFrom ? " text-white/20 italic" : ""}`}
+        >
+          {line}
+        </motion.span>
+      ))}
+    </motion.h2>
+  );
+});
+
+// ─── Static data ──────────────────────────────────────────────────────────────
 const stats = [
   { label: "YEARS",          value: "3+"     },
   { label: "HRS SAVED",      value: "2,000+" },
@@ -42,18 +66,18 @@ const stats = [
 ];
 
 const chartData = [
-  { name: "Harvesting App",        hours: 1200, color: "#D9FF00" },
-  { name: "Assets Library Mgmt",   hours: 200,  color: "#34D399" },
-  { name: "Legacy Excel to SPO",   hours: 500,  color: "#A855F7" },
-  { name: "Pillar Metrices",       hours: 185,  color: "#F43F5E" },
-  { name: "AI Agents",             hours: 100,  color: "#F59E0B" },
+  { name: "Harvesting App",       hours: 1200, color: "#D9FF00" },
+  { name: "Assets Library Mgmt",  hours: 200,  color: "#34D399" },
+  { name: "Legacy Excel to SPO",  hours: 500,  color: "#A855F7" },
+  { name: "Pillar Metrices",      hours: 185,  color: "#F43F5E" },
+  { name: "AI Agents",            hours: 100,  color: "#F59E0B" },
 ];
 
 const impactMetrics = [
-  { label: "Hours",    value: "2,000+",  sub: "Saved Annually",          color: "border-yellow-500/20"  },
-  { label: "Assets",   value: "30,000+", sub: "Managed in Repository",   color: "border-emerald-500/20" },
-  { label: "RFP/RFIs", value: "100+",    sub: "Across 16 Sectors",       color: "border-rose-500/20"    },
-  { label: "Pages",    value: "50+",     sub: "Built to KPMG Standards",  color: "border-purple-500/20" },
+  { label: "Hours",    value: "2,000+",  sub: "Saved Annually",         color: "border-yellow-500/20"  },
+  { label: "Assets",   value: "30,000+", sub: "Managed in Repository",  color: "border-emerald-500/20" },
+  { label: "RFP/RFIs", value: "100+",    sub: "Across 16 Sectors",      color: "border-rose-500/20"    },
+  { label: "Pages",    value: "50+",     sub: "Built to KPMG Standards", color: "border-purple-500/20" },
 ];
 
 const projects = [
@@ -102,10 +126,26 @@ const projects = [
 ];
 
 const toolkitGroups = [
-  { category: "/ POWER PLATFORM",  items: ["Power Apps", "Power Automate", "Power BI"] },
-  { category: "/ MICROSOFT 365",   items: ["SharePoint Online", "Excel", "PowerPoint"] },
-  { category: "/ AI & GENAI",      items: ["Copilot", "AI Agents", "GenAI Workflows"]  },
-  { category: "/ KNOWLEDGE MGMT.", items: ["RFP / RFI", "Asset Mgmt.", "Process Docs", "SQL"] },
+  {
+    category: "/ POWER PLATFORM",
+    items: ["Power Apps", "Power Automate", "Power BI"],
+    detail: "End-to-end automation & reporting across enterprise workflows.",
+  },
+  {
+    category: "/ MICROSOFT 365",
+    items: ["SharePoint Online", "Excel", "PowerPoint"],
+    detail: "Ecosystem-wide collaboration, data management & communication.",
+  },
+  {
+    category: "/ AI & GENAI",
+    items: ["Copilot", "AI Agents", "GenAI Workflows"],
+    detail: "Designing and deploying intelligent agents & training pipelines.",
+  },
+  {
+    category: "/ KNOWLEDGE MGMT.",
+    items: ["RFP / RFI", "Asset Mgmt.", "Process Docs", "SQL"],
+    detail: "Structured knowledge systems across 16 sectors and global teams.",
+  },
 ];
 
 const skills = [
@@ -183,7 +223,7 @@ const keyNumbers = [
 
 const VP = { once: true } as const;
 
-// ─── Reusable section label ───────────────────────────────────────────────────
+// ─── Section label ────────────────────────────────────────────────────────────
 function SectionLabel({ num, label }: { num: string; label: string }) {
   return (
     <div className="flex items-center gap-4 mb-12">
@@ -194,7 +234,7 @@ function SectionLabel({ num, label }: { num: string; label: string }) {
   );
 }
 
-// ─── Full-bleed skills carousel (no side padding, no fade masks) ──────────────
+// ─── Skills carousel ──────────────────────────────────────────────────────────
 const SkillsCarousel = memo(function SkillsCarousel() {
   const repeatedSkills = useMemo(() => [...skills, ...skills, ...skills, ...skills], []);
   return (
@@ -216,7 +256,7 @@ const SkillsCarousel = memo(function SkillsCarousel() {
   );
 });
 
-// ─── Animated background ─────────────────────────────────────────────────────
+// ─── Animated background ──────────────────────────────────────────────────────
 const Background = memo(function Background({ yDrift, yDriftReverse }: { yDrift: any; yDriftReverse: any }) {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -284,13 +324,9 @@ export default function App() {
           <span className="font-bold tracking-tighter text-sm uppercase">kartik.bhatt</span>
         </div>
         <div className="hidden md:flex gap-5 text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase">
-          <a href="#about"      className="hover:text-neon transition-colors">About</a>
-          <a href="#experience" className="hover:text-neon transition-colors">Experience</a>
-          <a href="#education"  className="hover:text-neon transition-colors">Education</a>
-          <a href="#toolkit"    className="hover:text-neon transition-colors">Toolkit</a>
-          <a href="#work"       className="hover:text-neon transition-colors">Projects</a>
-          <a href="#honors"     className="hover:text-neon transition-colors">Honors</a>
-          <a href="#contact"    className="hover:text-neon transition-colors">Contact</a>
+          {["about", "experience", "education", "toolkit", "work", "honors", "contact"].map(link => (
+            <a key={link} href={`#${link}`} className="hover:text-neon transition-colors">{link === "work" ? "Projects" : link.charAt(0).toUpperCase() + link.slice(1)}</a>
+          ))}
         </div>
         <a href="/Resume.pdf" download="Kartik_Bhatt_Resume.pdf" target="_blank" rel="noreferrer">
           <button className="bg-neon text-black px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform">
@@ -302,22 +338,22 @@ export default function App() {
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section className="min-h-screen pt-36 pb-20 px-6 md:px-12 flex flex-col lg:flex-row items-center justify-between gap-16">
         <div className="flex-1 max-w-3xl">
-          <motion.div initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }} viewport={VP}
+          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={VP}
             className="flex items-center gap-4 mb-10">
             <div className="w-12 h-px bg-neon" />
             <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 uppercase">Portfolio</span>
           </motion.div>
 
-          <motion.h1 initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={VP}
-            transition={{ type:"spring", stiffness:100, damping:20 }}
+          <motion.h1 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP}
+            transition={{ type: "spring", stiffness: 100, damping: 20 }}
             className="text-[80px] md:text-[150px] font-black leading-[0.75] tracking-tighter">
             kartik<br />
             <span className="text-white/20">bhatt</span>
             <span className="text-neon">_</span>
           </motion.h1>
 
-          <motion.p initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={VP}
-            transition={{ delay:0.3 }}
+          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={VP}
+            transition={{ delay: 0.3 }}
             className="mt-10 text-lg md:text-xl text-white/60 font-light max-w-lg leading-relaxed">
             Knowledge Management &amp; Business Analyst.<br />
             <span className="text-white/30 text-sm font-mono tracking-widest uppercase mt-3 block">
@@ -325,8 +361,8 @@ export default function App() {
             </span>
           </motion.p>
 
-          <motion.div initial={{ opacity:0, y:16 }} whileInView={{ opacity:1, y:0 }} viewport={VP}
-            transition={{ delay:0.5 }}
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP}
+            transition={{ delay: 0.5 }}
             className="mt-6 flex items-center gap-4">
             <div className="w-8 h-px bg-neon/60" />
             <span className="text-[11px] font-bold tracking-[0.3em] text-neon/70 uppercase">
@@ -335,8 +371,8 @@ export default function App() {
           </motion.div>
         </div>
 
-        <motion.div initial={{ opacity:0, scale:0.9, rotate:-5 }} whileInView={{ opacity:1, scale:1, rotate:0 }}
-          viewport={VP} transition={{ type:"spring", stiffness:50, damping:15 }}
+        <motion.div initial={{ opacity: 0, scale: 0.9, rotate: -5 }} whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+          viewport={VP} transition={{ type: "spring", stiffness: 50, damping: 15 }}
           className="relative w-full max-w-[480px] h-[440px] shrink-0">
           <div className="absolute inset-0 border border-white/10 rounded-[32px] overflow-hidden bg-white/[0.03] backdrop-blur-sm shadow-[0_0_60px_0_rgba(217,255,0,0.06)]">
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10" />
@@ -356,7 +392,7 @@ export default function App() {
       <section className="border-y border-white/5 bg-white/[0.015] backdrop-blur-sm">
         <div className="grid grid-cols-2 md:grid-cols-5 divide-x divide-white/5">
           {stats.map((stat, i) => (
-            <motion.div key={stat.label} initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
+            <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={VP} transition={{ delay: i * 0.08 }}
               className="p-10 flex flex-col gap-2 hover:bg-white/[0.02] transition-colors cursor-default">
               <div className="text-4xl md:text-5xl font-black tracking-tighter">{stat.value}</div>
@@ -372,18 +408,11 @@ export default function App() {
           <SectionLabel num="01" label="About Me" />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24">
             <div>
-              <motion.h2 initial="hidden" whileInView="visible" viewport={VP}
-                variants={{ visible:{ transition:{ staggerChildren:0.15 } } }}
-                className="text-4xl md:text-[54px] font-black tracking-tighter leading-[0.9] mb-9 lowercase">
-                {(["i turn legacy", "chaos into measurable,", "automated impact."] as const).map((line, idx) => (
-                  <motion.span key={line}
-                    variants={{ hidden:{ opacity:0, y:60, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
-                    transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}
-                    className={`block${idx===1?" text-white/20 italic":""}`}>
-                    {line}
-                  </motion.span>
-                ))}
-              </motion.h2>
+              <StaggerHeadline
+                lines={["i turn legacy", "chaos into measurable,", "automated impact."]}
+                className="text-4xl md:text-[54px] leading-[0.9] mb-9 lowercase"
+                dimFrom={1}
+              />
               <p className="text-white/60 text-base leading-relaxed font-light">
                 Results-driven analyst with 3+ years across{" "}
                 <span className="text-white font-medium">Knowledge Management</span> &amp;{" "}
@@ -398,11 +427,11 @@ export default function App() {
                 <div className="text-[10px] font-bold tracking-[0.3em] text-neon uppercase mb-7">/ At a Glance</div>
                 <div className="space-y-0">
                   {[
-                    { l:"NAME",   v:"Kartik Bhatt"           },
-                    { l:"ROLE",   v:"Analyst · KPMG"          },
-                    { l:"BASED",  v:"Delhi, India"             },
-                    { l:"DEGREE", v:"BCA · Computer Science"  },
-                    { l:"GPA",    v:"9.3 / 10 · top 1%"      },
+                    { l: "NAME",   v: "Kartik Bhatt"          },
+                    { l: "ROLE",   v: "Analyst · KPMG"         },
+                    { l: "BASED",  v: "Delhi, India"            },
+                    { l: "DEGREE", v: "BCA · Computer Science" },
+                    { l: "GPA",    v: "9.3 / 10 · top 1%"     },
                   ].map(item => (
                     <div key={item.l} className="flex justify-between items-center py-3 border-b border-white/5">
                       <span className="text-[9px] font-bold text-white/30 tracking-[0.2em]">{item.l}</span>
@@ -422,7 +451,7 @@ export default function App() {
           <SectionLabel num="02" label="Experience" />
           <div className="space-y-8">
             {experiences.map((exp) => (
-              <motion.div key={exp.org} initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={VP}>
+              <motion.div key={exp.org} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP}>
                 <GlassCard className="flex flex-col lg:flex-row gap-10 lg:gap-20 p-8">
                   <div className="w-44 text-[10px] font-bold text-white/30 tracking-widest pt-1 shrink-0">{exp.date}</div>
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -488,9 +517,7 @@ export default function App() {
       </section>
 
       {/* ── TOOLKIT & EXPERTISE ─────────────────────────────────────────── */}
-      {/* Carousel is full-bleed — sits ABOVE the section content, no px padding */}
       <section id="toolkit" className="py-20 border-b border-white/5">
-        {/* Full-bleed carousel, edge to edge */}
         <SkillsCarousel />
 
         <div className="max-w-7xl mx-auto px-6 md:px-12 mt-14">
@@ -498,11 +525,11 @@ export default function App() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {toolkitGroups.map((group, i) => (
-              <motion.div key={group.category} initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
+              <motion.div key={group.category} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={VP} transition={{ delay: i * 0.1 }}>
-                <GlassCard className="p-8 h-full group">
-                  <div className="text-[10px] font-black tracking-[0.25em] text-neon uppercase mb-7">{group.category}</div>
-                  <ul className="space-y-4">
+                <GlassCard className="p-8 h-full group flex flex-col hover:-translate-y-1">
+                  <div className="text-xl font-black tracking-tight text-white mb-7 group-hover:text-neon transition-colors duration-300">{group.category}</div>
+                  <ul className="space-y-4 mb-8">
                     {group.items.map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm font-medium text-white/60 group-hover:text-white/80 transition-colors">
                         <span className="text-neon font-black text-base leading-none">—</span>
@@ -510,6 +537,11 @@ export default function App() {
                       </li>
                     ))}
                   </ul>
+                  <div className="mt-auto pt-6 border-t border-white/5">
+                    <p className="text-[11px] text-white/25 leading-relaxed font-light group-hover:text-white/40 transition-colors">
+                      {group.detail}
+                    </p>
+                  </div>
                 </GlassCard>
               </motion.div>
             ))}
@@ -522,24 +554,16 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <SectionLabel num="05" label="Projects & Impact" />
 
-           <motion.h2 initial="hidden" whileInView="visible" viewport={VP}
-                variants={{ visible:{ transition:{ staggerChildren:0.15 } } }}
-                className="text-4xl md:text-[54px] font-black tracking-tighter leading-[0.9] mb-9 lowercase">
-                {(["projects that moved", "needles, not just decks."] as const).map((line, idx) => (
-                  <motion.span key={line}
-                    variants={{ hidden:{ opacity:0, y:60, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
-                    transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}
-                    className={`block${idx===1?" text-white/20 italic":""}`}>
-                    {line}
-                  </motion.span>
-                ))}
-            </motion.h2>
+          <StaggerHeadline
+            lines={["projects that moved", "needles, not just decks."]}
+            className="text-4xl md:text-[54px] leading-[0.9] mb-9 lowercase"
+            dimFrom={1}
+          />
 
-          {/* Project cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {projects.map((p, i) => (
-              <motion.div key={p.title} initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
-                viewport={VP} transition={{ type:"spring", stiffness:100, damping:20, delay: i * 0.08 }}>
+              <motion.div key={p.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={VP} transition={{ type: "spring", stiffness: 100, damping: 20, delay: i * 0.08 }}>
                 <GlassCard className="group p-8 flex flex-col h-full gap-6 hover:-translate-y-1">
                   <span className="text-[10px] font-black text-neon tracking-[0.3em] uppercase">{p.org}</span>
                   <div>
@@ -560,10 +584,9 @@ export default function App() {
             ))}
           </div>
 
-          {/* Impact metric pills */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
             {impactMetrics.map((m, i) => (
-              <motion.div key={m.label} initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
+              <motion.div key={m.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={VP} transition={{ delay: i * 0.08 }}>
                 <GlassCard className={`p-7 border ${m.color} flex flex-col items-center text-center h-full`}>
                   <div className="text-3xl font-black mb-1 tracking-tighter">{m.value}</div>
@@ -574,9 +597,8 @@ export default function App() {
             ))}
           </div>
 
-          {/* Chart + key numbers */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <motion.div initial={{ opacity:0, x:-20 }} whileInView={{ opacity:1, x:0 }} viewport={VP} className="lg:col-span-2">
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={VP} className="lg:col-span-2">
               <GlassCard className="p-10 h-full">
                 <div className="flex justify-between items-end mb-10">
                   <div>
@@ -592,16 +614,16 @@ export default function App() {
                 </div>
                 <div className="h-[320px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} layout="vertical" margin={{ left:20, right:30 }}>
+                    <BarChart data={chartData} layout="vertical" margin={{ left: 20, right: 30 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" horizontal={false} />
                       <XAxis type="number" hide />
                       <YAxis dataKey="name" type="category" axisLine={false} tickLine={false}
-                        tick={{ fill:"#ffffff40", fontSize:9, fontWeight:700 }} width={130} />
-                      <Tooltip cursor={{ fill:"#ffffff05" }}
-                        contentStyle={{ background:"#111", border:"1px solid rgba(217,255,0,0.2)", borderRadius:"12px" }}
-                        itemStyle={{ color:"#D9FF00", fontWeight:"bold" }}
+                        tick={{ fill: "#ffffff40", fontSize: 9, fontWeight: 700 }} width={130} />
+                      <Tooltip cursor={{ fill: "#ffffff05" }}
+                        contentStyle={{ background: "#111", border: "1px solid rgba(217,255,0,0.2)", borderRadius: "12px" }}
+                        itemStyle={{ color: "#D9FF00", fontWeight: "bold" }}
                         formatter={(v: any) => [`${v} hrs`, "Hours saved"]} />
-                      <Bar dataKey="hours" radius={[0,4,4,0]} barSize={22} isAnimationActive={false}>
+                      <Bar dataKey="hours" radius={[0, 4, 4, 0]} barSize={22} isAnimationActive={false}>
                         {chartData.map((e, idx) => <Cell key={idx} fill={e.color} />)}
                       </Bar>
                     </BarChart>
@@ -610,7 +632,7 @@ export default function App() {
               </GlassCard>
             </motion.div>
 
-            <motion.div initial={{ opacity:0, x:20 }} whileInView={{ opacity:1, x:0 }} viewport={VP}>
+            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={VP}>
               <GlassCard className="p-10 flex flex-col gap-6 h-full">
                 <div>
                   <div className="text-[10px] font-bold tracking-[0.3em] text-white/20 uppercase mb-5">/ Key Numbers</div>
@@ -642,22 +664,15 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <SectionLabel num="06" label="Honors" />
 
-          <motion.h2 initial="hidden" whileInView="visible" viewport={VP}
-            variants={{ visible:{ transition:{ staggerChildren:0.15 } } }}
-            className="text-4xl md:text-[54px] font-black tracking-tighter leading-[0.85] mb-14">
-            {(["five awards.", "discipline collecting", "interest."] as const).map((line, idx) => (
-              <motion.span key={line}
-                variants={{ hidden:{ opacity:0, y:60, filter:"blur(10px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
-                transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}
-                className={`block${idx > 0 ? " text-white/20" : ""}`}>
-                {line}
-              </motion.span>
-            ))}
-          </motion.h2>
+          <StaggerHeadline
+            lines={["five awards.", "discipline collecting", "interest."]}
+            className="text-4xl md:text-[54px] leading-[0.85] mb-14"
+            dimFrom={1}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {awards.map((award, i) => (
-              <motion.div key={award.num} initial={{ opacity:0, y:24 }} whileInView={{ opacity:1, y:0 }}
+              <motion.div key={award.num} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={VP} transition={{ delay: i * 0.1 }}>
                 <GlassCard className="p-10 h-full group">
                   <div className="flex items-center justify-between mb-5">
@@ -676,18 +691,11 @@ export default function App() {
       {/* ── CONTACT ─────────────────────────────────────────────────────── */}
       <section id="contact" className="py-20 px-6 md:px-12">
         <div className="max-w-7xl mx-auto text-center">
-          <motion.h2 initial="hidden" whileInView="visible" viewport={VP}
-            variants={{ visible:{ transition:{ staggerChildren:0.15 } } }}
-            className="text-[52px] md:text-[105px] font-black leading-[0.8] tracking-tighter mb-10 uppercase">
-            {(["let's build", "something", "impactful."] as const).map((line, idx) => (
-              <motion.span key={line}
-                variants={{ hidden:{ opacity:0, y:80, filter:"blur(15px)" }, visible:{ opacity:1, y:0, filter:"blur(0px)" } }}
-                transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}
-                className={`block${idx===1?" text-white/20 italic":idx===2?" text-neon":""}`}>
-                {line}
-              </motion.span>
-            ))}
-          </motion.h2>
+          <StaggerHeadline
+            lines={["let's build", "something", "impactful."]}
+            className="text-[52px] md:text-[105px] leading-[0.8] mb-10 uppercase"
+            dimFrom={1}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-14">
             {contactItems.map(item => (
