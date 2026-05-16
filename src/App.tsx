@@ -127,24 +127,20 @@ const projects = [
 
 const toolkitGroups = [
   {
-    category: "Power platform",
+    category: "Power Platform",
     items: ["Power Apps", "Power Automate", "Power BI"],
-    detail: "End-to-end automation & reporting across enterprise workflows.",
   },
   {
     category: "Microsoft 365",
     items: ["SharePoint Online", "Excel", "PowerPoint"],
-    detail: "Ecosystem-wide collaboration, data management & communication.",
   },
   {
     category: "AI & GenAI",
     items: ["Copilot", "AI Agents", "GenAI Workflows"],
-    detail: "Designing and deploying intelligent agents & training pipelines.",
   },
   {
-    category: "Knowledge mgmt.",
-    items: ["RFP / RFI", "Asset Mgmt.", "Process Docs", "SQL"],
-    detail: "Structured knowledge systems across 16 sectors and global teams.",
+    category: "Knowledge Mgmt.",
+    items: ["RFP / RFI", "Metadata Mgmt.", "SQL"],
   },
 ];
 
