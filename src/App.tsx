@@ -140,7 +140,7 @@ const toolkitGroups = [
   },
   {
     category: "Knowledge Mgmt.",
-    items: ["RFP / RFI", "Metadata Mgmt.", "SQL"],
+    items: ["RFP / RFI", "Taxonomy / Metadata Mgmt.", "SQL"],
   },
 ];
 
@@ -528,15 +528,12 @@ export default function App() {
                   <ul className="space-y-4 mb-8">
                     {group.items.map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm font-medium text-white/60 group-hover:text-white/80 transition-colors">
+                        <span className="text-neon font-black text-base leading-none">—</span>
                         {item}
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-auto pt-6 border-t border-white/5">
-                    <p className="text-[11px] text-white/25 leading-relaxed font-light group-hover:text-white/40 transition-colors">
-                      {group.detail}
-                    </p>
-                  </div>
+
                 </GlassCard>
               </motion.div>
             ))}
