@@ -92,6 +92,25 @@ const projects = [
   },
 ];
 
+const toolkitGroups = [
+  {
+    category: "/ POWER PLATFORM",
+    items: ["Power Apps", "Power Automate", "Power BI"],
+  },
+  {
+    category: "/ MICROSOFT 365",
+    items: ["SharePoint Online", "Excel", "PowerPoint"],
+  },
+  {
+    category: "/ AI & GENAI",
+    items: ["Copilot", "AI Agents", "GenAI Workflows"],
+  },
+  {
+    category: "/ KNOWLEDGE MGMT.",
+    items: ["RFP / RFI", "Asset Mgmt.", "Process Docs", "SQL"],
+  },
+];
+
 const skills = [
   "Power Apps", "Power Automate", "Power BI", "SharePoint",
   "SQL", "Copilot", "Gen AI", "AI Agents", "GenAI Workflows", "RFP / RFI",
@@ -124,6 +143,33 @@ const experiences = [
   },
 ];
 
+const awards = [
+  {
+    num: "01",
+    title: "kudos award × 2",
+    org: "KPMG GLOBAL SERVICES",
+    desc: "Exceptional efficiency via Lean Six Sigma — saved 2,000+ hours annually. Also awarded for migrating legacy VBA / Excel to GenAI agents & Power Platform.",
+  },
+  {
+    num: "02",
+    title: "super team award",
+    org: "KPMG GLOBAL SERVICES",
+    desc: "Hosting and organising employee council events for the wider KGS group, fostering community and collaboration.",
+  },
+  {
+    num: "03",
+    title: "ally of inclusion",
+    org: "KPMG GLOBAL SERVICES",
+    desc: "Commitment to cultivating an inclusive and diverse work environment across KPMG Global Services.",
+  },
+  {
+    num: "04",
+    title: "gurus@work",
+    org: "KPMG GLOBAL SERVICES",
+    desc: "Contributions to KGS learning culture — empowering and inspiring learners across the organisation.",
+  },
+];
+
 const contactItems = [
   { icon: <Mail size={24} />, label: "EMAIL", val: "kb270102@gmail.com", href: "mailto:kb270102@gmail.com" },
   { icon: <Smartphone size={24} />, label: "PHONE", val: "+91-7428062532", href: "tel:+917428062532" },
@@ -143,24 +189,15 @@ const VP = { once: true } as const;
 
 // ─── Skills Carousel (memoised — never re-renders) ──────────────────────────
 const SkillsCarousel = memo(function SkillsCarousel() {
-  // Build the repeated list once
   const repeatedSkills = useMemo(
     () => [...skills, ...skills, ...skills, ...skills],
     []
   );
 
   return (
-    <div className="relative border-y border-white/5 overflow-hidden bg-white/[0.01]">
-      <div className="bg-neon py-3 flex items-center justify-center transform -skew-x-12 -rotate-2 mx-auto w-fit px-16 relative z-10 -mb-6 mt-4 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-        <span className="text-black font-black text-3xl tracking-tighter italic uppercase underline decoration-black/20 underline-offset-4">
-          Toolkit &amp; Expertise
-        </span>
-      </div>
-
-      <div className="relative overflow-hidden py-24">
-        <div className="absolute left-0 top-0 z-20 h-full w-32 bg-gradient-to-r from-[#050505] to-transparent pointer-events-none" />
-        <div className="absolute right-0 top-0 z-20 h-full w-32 bg-gradient-to-l from-[#050505] to-transparent pointer-events-none" />
-
+    <div className="relative border-y border-white/5 overflow-hidden">
+      <div className="relative overflow-hidden py-10">
+        {/* No fading gradient masks */}
         <div className="marquee">
           <div className="marquee-track">
             {repeatedSkills.map((skill, i) => (
@@ -178,8 +215,7 @@ const SkillsCarousel = memo(function SkillsCarousel() {
   );
 });
 
-// ─── Background (memoised — only depends on scroll transforms) ───────────────
-// Accepts pre-computed motion values to avoid re-creating transforms
+// ─── Background (memoised) ───────────────────────────────────────────────────
 const Background = memo(function Background({ yDrift, yDriftReverse }: { yDrift: any; yDriftReverse: any }) {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: "transform" }}>
@@ -198,8 +234,6 @@ const Background = memo(function Background({ yDrift, yDriftReverse }: { yDrift:
         />
       </motion.div>
 
-      {/* Geometric data nodes — removed Framer animations on individual nodes;
-          they drift with scroll only (cheaper: no rAF loop per node) */}
       <div className="absolute inset-0">
         {[...Array(6)].map((_, i) => (
           <motion.div
@@ -219,7 +253,6 @@ const Background = memo(function Background({ yDrift, yDriftReverse }: { yDrift:
         ))}
       </div>
 
-      {/* Data stream bars — CSS animation instead of JS-driven Framer loops */}
       <div className="absolute right-0 top-0 bottom-0 w-24 overflow-hidden opacity-[0.05] flex flex-col items-center py-20 pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <div
@@ -232,11 +265,9 @@ const Background = memo(function Background({ yDrift, yDriftReverse }: { yDrift:
         ))}
       </div>
 
-      {/* Static vertical lines */}
       <div className="absolute inset-y-0 left-12 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent" />
       <div className="absolute inset-y-0 right-12 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent" />
 
-      {/* Gradient orbs */}
       <motion.div
         style={{ y: yDriftReverse, x: 20, willChange: "transform" }}
         className="absolute top-[-10%] right-[-5%] w-[60vw] h-[60vw] bg-neon/10 rounded-full blur-[120px] mix-blend-screen opacity-20"
@@ -246,7 +277,6 @@ const Background = memo(function Background({ yDrift, yDriftReverse }: { yDrift:
         className="absolute bottom-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-blue-500/5 rounded-full blur-[100px] mix-blend-screen opacity-10"
       />
 
-      {/* Noise grain */}
       <div
         className="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none"
         style={{
@@ -261,13 +291,11 @@ const Background = memo(function Background({ yDrift, yDriftReverse }: { yDrift:
 export default function App() {
   const { scrollYProgress } = useScroll();
 
-  // Compute transforms once; reused by Background + hero
   const yDrift = useTransform(scrollYProgress, [0, 1], [0, 400]);
   const yDriftReverse = useTransform(scrollYProgress, [0, 1], [0, -400]);
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden selection:bg-neon selection:text-black">
-      {/* CSS keyframe for data-stream bars (replaces 20 Framer JS animation loops) */}
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 0.2; transform: scaleY(0.8); }
@@ -299,8 +327,10 @@ export default function App() {
           <a href="#about"      className="hover:text-neon transition-colors">About</a>
           <a href="#experience" className="hover:text-neon transition-colors">Experience</a>
           <a href="#education"  className="hover:text-neon transition-colors">Education</a>
+          <a href="#toolkit"    className="hover:text-neon transition-colors">Toolkit</a>
           <a href="#work"       className="hover:text-neon transition-colors">Projects</a>
           <a href="#impact"     className="hover:text-neon transition-colors">Impact</a>
+          <a href="#honors"     className="hover:text-neon transition-colors">Honors</a>
           <a href="#contact"    className="hover:text-neon transition-colors">Contact</a>
         </div>
         <a href="/Resume.pdf" download="Kartik_Bhatt_Resume.pdf" target="_blank" rel="noreferrer">
@@ -347,6 +377,20 @@ export default function App() {
               power platform · genai · sharepoint
             </span>
           </motion.p>
+
+          {/* ── Tagline ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VP}
+            transition={{ delay: 0.5 }}
+            className="mt-8 flex items-center gap-4"
+          >
+            <div className="w-8 h-px bg-neon/60" />
+            <span className="text-[11px] font-bold tracking-[0.35em] text-neon/70 uppercase">
+              Three years. Two global firms. One mission.
+            </span>
+          </motion.div>
         </div>
 
         <motion.div
@@ -395,7 +439,7 @@ export default function App() {
       </section>
 
       {/* ── About ───────────────────────────────────────────────────────── */}
-      <section id="about" className="py-24 md:py-32 px-6 md:px-12 border-b border-white/5 min-h-[700px] flex items-center" style={{ contain: "layout style" }}>
+      <section id="about" className="py-24 md:py-32 px-6 md:px-12 border-b border-white/5 min-h-[700px] flex items-center">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-20">
             <span className="text-neon font-black text-sm">01</span>
@@ -460,7 +504,7 @@ export default function App() {
       </section>
 
       {/* ── Experience ──────────────────────────────────────────────────── */}
-      <section id="experience" className="py-24 md:py-32 px-6 md:px-12 border-b border-white/5" style={{ contain: "layout style" }}>
+      <section id="experience" className="py-24 md:py-32 px-6 md:px-12 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-20">
             <span className="text-neon font-black text-sm">02</span>
@@ -504,7 +548,7 @@ export default function App() {
       </section>
 
       {/* ── Education ───────────────────────────────────────────────────── */}
-      <section id="education" className="py-24 md:py-32 px-6 md:px-12 border-b border-white/5 bg-white/[0.01]" style={{ contain: "layout style" }}>
+      <section id="education" className="py-24 md:py-32 px-6 md:px-12 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-20">
             <span className="text-neon font-black text-sm">03</span>
@@ -540,7 +584,6 @@ export default function App() {
                 </div>
 
                 <div className="border border-neon/30 glass p-10 md:p-12 rounded-3xl flex flex-col items-center justify-center text-neon shrink-0 relative overflow-hidden">
-                  {/* CSS pulse instead of Framer JS loop */}
                   <div
                     className="absolute inset-0 bg-neon/10 rounded-full blur-3xl pointer-events-none"
                     style={{ animation: "pulse 4s ease-in-out infinite" }}
@@ -554,16 +597,52 @@ export default function App() {
         </div>
       </section>
 
-      {/* ── Skills Carousel ─────────────────────────────────────────────── */}
-      <SkillsCarousel />
+      {/* ── Toolkit & Expertise ─────────────────────────────────────────── */}
+      <section id="toolkit" className="py-24 md:py-32 px-6 md:px-12 border-b border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-4 mb-20">
+            <span className="text-neon font-black text-sm">04</span>
+            <div className="w-16 h-px bg-neon" />
+            <span className="text-xs md:text-sm font-black tracking-[0.4em] text-neon uppercase">Toolkit &amp; Expertise</span>
+          </div>
+
+          {/* Grouped toolkit cards — matching reference image */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {toolkitGroups.map((group, i) => (
+              <motion.div
+                key={group.category}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={VP}
+                transition={{ delay: i * 0.1 }}
+              >
+                <div className="border border-white/10 rounded-2xl p-8 h-full hover:border-neon/30 transition-all duration-300">
+                  <div className="text-[10px] font-black tracking-[0.25em] text-neon uppercase mb-8">{group.category}</div>
+                  <ul className="space-y-4">
+                    {group.items.map(item => (
+                      <li key={item} className="flex items-center gap-3 text-sm font-medium text-white/70 hover:text-white transition-colors">
+                        <span className="text-neon font-black text-lg leading-none">—</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Skills marquee — no gradient masks */}
+          <SkillsCarousel />
+        </div>
+      </section>
 
       {/* ── Projects ────────────────────────────────────────────────────── */}
-      <section id="work" className="py-24 md:py-32 px-6 md:px-12 bg-white/[0.01]" style={{ contain: "layout style" }}>
+      <section id="work" className="py-24 md:py-32 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
             <div>
               <div className="flex items-center gap-4 mb-8">
-                <span className="text-neon font-black text-sm">04</span>
+                <span className="text-neon font-black text-sm">05</span>
                 <div className="w-16 h-px bg-neon" />
                 <span className="text-xs md:text-sm font-black tracking-[0.4em] text-neon uppercase">Projects</span>
               </div>
@@ -625,10 +704,10 @@ export default function App() {
       </section>
 
       {/* ── Impact & Metrics ────────────────────────────────────────────── */}
-      <section id="impact" className="py-24 md:py-32 px-6 md:px-12 border-t border-white/5 bg-[#080808]" style={{ contain: "layout style" }}>
+      <section id="impact" className="py-24 md:py-32 px-6 md:px-12 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-20">
-            <span className="text-neon font-black text-sm">05</span>
+            <span className="text-neon font-black text-sm">06</span>
             <div className="w-16 h-px bg-neon" />
             <span className="text-xs md:text-sm font-black tracking-[0.4em] text-neon uppercase">Impact &amp; Metrics</span>
           </div>
@@ -736,8 +815,62 @@ export default function App() {
         </div>
       </section>
 
+      {/* ── Honors / Awards ─────────────────────────────────────────────── */}
+      <section id="honors" className="py-24 md:py-32 px-6 md:px-12 border-t border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-4 mb-12">
+            <span className="text-neon font-black text-sm">07</span>
+            <div className="w-16 h-px bg-neon" />
+            <span className="text-xs md:text-sm font-black tracking-[0.4em] text-neon uppercase">Honors</span>
+          </div>
+
+          <motion.h2
+            initial="hidden"
+            whileInView="visible"
+            viewport={VP}
+            variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
+            className="text-5xl md:text-[90px] font-black tracking-tighter leading-[0.85] mb-20"
+          >
+            {(["five awards.", "one quietly", "relentless year."] as const).map((line, idx) => (
+              <motion.span
+                key={line}
+                variants={{
+                  hidden: { opacity: 0, y: 60, filter: "blur(10px)" },
+                  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+                }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className={`block${idx > 0 ? " text-white/20" : ""}`}
+              >
+                {line}
+              </motion.span>
+            ))}
+          </motion.h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {awards.map((award, i) => (
+              <motion.div
+                key={award.num}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={VP}
+                transition={{ delay: i * 0.1 }}
+              >
+                <div className="border border-white/10 rounded-2xl p-10 h-full hover:border-neon/30 transition-all duration-300 group">
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-[10px] font-black text-neon tracking-[0.3em]">/ {award.num}</span>
+                    <span className="text-[9px] font-bold tracking-[0.25em] text-white/20 uppercase">{award.org}</span>
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-black tracking-tight mb-4 group-hover:text-neon transition-colors">{award.title}</h3>
+                  <p className="text-sm text-white/40 leading-relaxed">{award.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Contact ─────────────────────────────────────────────────────── */}
-      <section id="contact" className="py-24 md:py-32 px-6 md:px-12">
+      <section id="contact" className="py-24 md:py-32 px-6 md:px-12 border-t border-white/5">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
             initial="hidden"
