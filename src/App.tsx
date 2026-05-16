@@ -127,22 +127,22 @@ const projects = [
 
 const toolkitGroups = [
   {
-    category: "/ POWER PLATFORM",
+    category: "Power platform",
     items: ["Power Apps", "Power Automate", "Power BI"],
     detail: "End-to-end automation & reporting across enterprise workflows.",
   },
   {
-    category: "/ MICROSOFT 365",
+    category: "Microsoft 365",
     items: ["SharePoint Online", "Excel", "PowerPoint"],
     detail: "Ecosystem-wide collaboration, data management & communication.",
   },
   {
-    category: "/ AI & GENAI",
+    category: "AI & GenAI",
     items: ["Copilot", "AI Agents", "GenAI Workflows"],
     detail: "Designing and deploying intelligent agents & training pipelines.",
   },
   {
-    category: "/ KNOWLEDGE MGMT.",
+    category: "Knowledge mgmt.",
     items: ["RFP / RFI", "Asset Mgmt.", "Process Docs", "SQL"],
     detail: "Structured knowledge systems across 16 sectors and global teams.",
   },
@@ -517,10 +517,10 @@ export default function App() {
       </section>
 
       {/* ── TOOLKIT & EXPERTISE ─────────────────────────────────────────── */}
-      <section id="toolkit" className="py-20 border-b border-white/5">
-        <SkillsCarousel />
+      <section id="toolkit" className="py-20 px-6 md:px-12 border-b border-white/5">
+        <div className="-mx-6 md:-mx-12"><SkillsCarousel /></div>
 
-        <div className="max-w-7xl mx-auto px-6 md:px-12 mt-14">
+        <div className="max-w-7xl mx-auto mt-14">
           <SectionLabel num="04" label="Toolkit & Expertise" />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
