@@ -528,7 +528,6 @@ export default function App() {
                   <ul className="space-y-4 mb-8">
                     {group.items.map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm font-medium text-white/60 group-hover:text-white/80 transition-colors">
-                        <span className="text-neon font-black text-base leading-none">—</span>
                         {item}
                       </li>
                     ))}
