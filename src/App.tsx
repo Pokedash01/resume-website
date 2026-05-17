@@ -29,10 +29,12 @@ const StaggerHeadline = memo(function StaggerHeadline({
   lines,
   className = "",
   dimFrom = 1,
+  greenWords = [],
 }: {
   lines: readonly string[];
   className?: string;
   dimFrom?: number;
+  greenWords?: string[];
 }) {
   return (
     <motion.h2
@@ -49,7 +51,9 @@ const StaggerHeadline = memo(function StaggerHeadline({
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className={`block${idx >= dimFrom ? " text-white/20 italic" : ""}`}
         >
-          {line}
+          {greenWords.includes(line)
+            ? <span className="text-[#D9FF00]">{line}</span>
+            : line}
         </motion.span>
       ))}
     </motion.h2>
@@ -433,10 +437,12 @@ export default function App() {
           <SectionLabel num="01" label="About Me" />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24">
             <div>
+              {/* CHANGED: "automated impact." is now neon green */}
               <StaggerHeadline
                 lines={["i turn legacy", "chaos into measurable,", "automated impact."]}
                 className="text-4xl md:text-[54px] leading-[0.9] mb-9 lowercase"
                 dimFrom={1}
+                greenWords={["automated impact."]}
               />
               <p className="text-white/60 text-base leading-relaxed font-light">
                 Results-driven analyst with 3+ years across{" "}
@@ -575,10 +581,12 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <SectionLabel num="05" label="Projects & Impact" />
 
+          {/* CHANGED: "decks." is on its own line and green */}
           <StaggerHeadline
-            lines={["projects that moved", "needles, not just decks."]}
+            lines={["projects that moved", "needles, not just", "decks."]}
             className="text-4xl md:text-[54px] leading-[0.9] mb-9 lowercase"
             dimFrom={1}
+            greenWords={["decks."]}
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
@@ -685,10 +693,12 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <SectionLabel num="06" label="Honors" />
 
+          {/* CHANGED: "interest." is green */}
           <StaggerHeadline
             lines={["five awards.", "discipline collecting", "interest."]}
             className="text-4xl md:text-[54px] leading-[0.85] mb-14"
             dimFrom={1}
+            greenWords={["interest."]}
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -712,10 +722,12 @@ export default function App() {
       {/* ── CONTACT ─────────────────────────────────────────────────────── */}
       <section id="contact" className="py-20 px-6 md:px-12">
         <div className="max-w-7xl mx-auto text-center">
+          {/* CHANGED: "impactful." is green */}
           <StaggerHeadline
             lines={["let's build", "something", "impactful."]}
             className="text-[52px] md:text-[105px] leading-[0.8] mb-10 uppercase"
             dimFrom={1}
+            greenWords={["impactful."]}
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-14">
