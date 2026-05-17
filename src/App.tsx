@@ -252,40 +252,69 @@ const SkillsCarousel = memo(function SkillsCarousel() {
   );
 });
 
-// ─── Animated background ──────────────────────────────────────────────────────
-const Background = memo(function Background({ yDrift, yDriftReverse }: { yDrift: any; yDriftReverse: any }) {
+// ─── Static background (optimized) ───────────────────────────────────────────
+const Background = memo(function Background() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      <motion.div style={{ y: yDrift, perspective: "1000px" }} className="absolute inset-0 opacity-[0.05]">
-        <div className="absolute inset-0 origin-top h-[200%] w-full" style={{
-          backgroundImage: "linear-gradient(to right,#D9FF00 1px,transparent 1px),linear-gradient(to bottom,#D9FF00 1px,transparent 1px)",
-          backgroundSize: "100px 100px",
-          transform: "rotateX(60deg) translateY(-20%)",
-        }} />
-      </motion.div>
+      
+      {/* Static perspective grid */}
+      <div className="absolute inset-0 opacity-[0.04]">
+        <div
+          className="absolute inset-0 origin-top h-[200%] w-full"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right,#D9FF00 1px,transparent 1px),linear-gradient(to bottom,#D9FF00 1px,transparent 1px)",
+            backgroundSize: "100px 100px",
+            transform: "rotateX(60deg) translateY(-20%)",
+          }}
+        />
+      </div>
+
+      {/* Static geometric elements */}
       <div className="absolute inset-0">
         {[...Array(6)].map((_, i) => (
-          <motion.div key={i} className="absolute opacity-10"
-            style={{ y: i % 2 === 0 ? yDrift : yDriftReverse, rotate: i * 45, left: `${15 + i * 15}%`, top: `${20 + i * 10}%` }}>
-            <div className="w-16 h-16 border border-neon rounded-sm transform rotate-45" />
+          <div
+            key={i}
+            className="absolute opacity-[0.08]"
+            style={{
+              rotate: `${i * 45}deg`,
+              left: `${15 + i * 15}%`,
+              top: `${20 + i * 10}%`,
+            }}
+          >
+            <div className="w-16 h-16 border border-neon rounded-sm rotate-45" />
             <div className="absolute top-1/2 left-full w-24 h-px bg-gradient-to-r from-neon to-transparent" />
-          </motion.div>
+          </div>
         ))}
       </div>
-      <div className="absolute right-0 top-0 bottom-0 w-24 overflow-hidden opacity-[0.05] flex flex-col items-center py-20 pointer-events-none">
+
+      {/* Static right bars */}
+      <div className="absolute right-0 top-0 bottom-0 w-24 overflow-hidden opacity-[0.04] flex flex-col items-center py-20">
         {[...Array(20)].map((_, i) => (
-          <div key={i} className="w-1 h-32 bg-neon mt-4 rounded-full"
-            style={{ animation: `datapulse ${2 + (i % 3)}s ease-in-out ${i * 0.1}s infinite` }} />
+          <div
+            key={i}
+            className="w-1 h-32 bg-neon mt-4 rounded-full"
+          />
         ))}
       </div>
+
+      {/* Side lines */}
       <div className="absolute inset-y-0 left-12 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent" />
       <div className="absolute inset-y-0 right-12 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent" />
-      <motion.div style={{ y: yDriftReverse }}
-        className="absolute top-[-10%] right-[-5%] w-[60vw] h-[60vw] bg-neon/10 rounded-full blur-[120px] mix-blend-screen opacity-20" />
-      <motion.div style={{ y: yDrift }}
-        className="absolute bottom-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-blue-500/5 rounded-full blur-[100px] mix-blend-screen opacity-10" />
-      <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none"
-        style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
+
+      {/* Static glow blobs */}
+      <div className="absolute top-[-10%] right-[-5%] w-[60vw] h-[60vw] bg-neon/10 rounded-full blur-[120px] opacity-20" />
+
+      <div className="absolute bottom-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-blue-500/5 rounded-full blur-[100px] opacity-10" />
+
+      {/* Static noise texture */}
+      <div
+        className="absolute inset-0 opacity-[0.02] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+      />
     </div>
   );
 });
