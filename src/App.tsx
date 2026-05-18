@@ -215,7 +215,7 @@ const contactItems = [
 
 const keyNumbers = [
   "Managed 5,000+ KPMG members contact system",
-  "QA'd 500+ content pieces weekly",
+  "QA'd 100+ content pieces weekly",
   "Uploaded 5,000+ content assets",
   "Improved project quality from 74% → 95%",
   "Delivered project 2 weeks ahead of schedule",
