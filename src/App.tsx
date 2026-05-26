@@ -80,7 +80,7 @@ const chartData = [
 const impactMetrics = [
   { label: "Hours",    value: "2,000+",  sub: "Saved Annually",         color: "border-yellow-500/20"  },
   { label: "Assets",   value: "30,000+", sub: "Managed in Repository",  color: "border-emerald-500/20" },
-  { label: "RFP/RFIs", value: "100+",    sub: "Across 16 Sectors",      color: "border-rose-500/20"    },
+  { label: "RFP/RFIs", value: "100+",    sub: "Across 13 Sectors",      color: "border-rose-500/20"    },
   { label: "Pages",    value: "50+",     sub: "Built to KPMG Standards", color: "border-purple-500/20" },
 ];
 
@@ -159,10 +159,10 @@ const experiences = [
     org: "KPMG",
     role: "Analyst — Knowledge Management",
     loc: "2 YEARS · GURUGRAM, HARYANA",
-    desc: "Leading cross-functional projects across 12 sectors with 360° stakeholder management, business development, and Power Platform automation.",
+    desc: "Leading cross-functional projects across 13 sectors with 360° stakeholder management, business development, and Power Platform automation.",
     bullets: [
       "Power Platform automation & SharePoint Online ecosystem",
-      "360° stakeholder management across 16 sectors",
+      "360° stakeholder management across 13 sectors",
       "Saved 2,000+ hours annually · 5 awards earned",
     ],
   },
@@ -450,7 +450,7 @@ export default function App() {
                 <span className="text-white font-medium">Content Engineering</span> at top global firms.
                 Specialises in Power Platform automation, SharePoint Online, and data-driven operational
                 improvements. Saved 2,000+ hours annually through lean process optimisation and
-                GenAI-powered workflows — across 16 sectors and global teams.
+                GenAI-powered workflows — across 13 sectors and global teams.
               </p>
             </div>
             <div>
