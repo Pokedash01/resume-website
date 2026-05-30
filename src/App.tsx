@@ -351,11 +351,6 @@ export default function App() {
           from { transform:translateX(0); }
           to   { transform:translateX(-50%); }
         }
-        @keyframes navpop {
-          0%   { opacity:0; transform:translateX(-50%) translateY(-14px) scale(0.96); }
-          60%  { transform:translateX(-50%) translateY(2px) scale(1.01); }
-          100% { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
-        }
         @keyframes dotblink {
           0%,100% { opacity:1; }
           50%     { opacity:0.15; }
@@ -368,9 +363,14 @@ export default function App() {
       <Background yDrift={yDrift} yDriftReverse={yDriftReverse} />
 
       {/* ── NAV ─────────────────────────────────────────────────────────── */}
+      <motion.div
+        className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl z-[999]"
+        initial={{ opacity: 0, y: -18, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+      >
       <nav
-        className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl z-[999]
-          backdrop-blur-[24px] border rounded-2xl px-6 md:px-10 h-16 flex items-center justify-between"
+        className="backdrop-blur-[24px] border rounded-2xl px-6 md:px-10 h-16 flex items-center justify-between"
         style={{
           background: scrolled ? "rgba(0,0,0,0.60)" : "rgba(0,0,0,0)",
           borderColor: scrolled ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0)",
@@ -378,7 +378,6 @@ export default function App() {
             ? "0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(217,255,0,0.04), inset 0 1px 0 rgba(217,255,0,0.06)"
             : "none",
           transition: "background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease",
-          animation: "navpop 0.55s cubic-bezier(0.16,1,0.3,1) both",
         }}
       >
         <div className="flex items-center gap-2">
@@ -399,6 +398,7 @@ export default function App() {
           </button>
         </a>
       </nav>
+      </motion.div>
 
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section className="min-h-screen pt-36 pb-20 px-6 md:px-12 flex flex-col lg:flex-row items-center justify-between gap-16">
