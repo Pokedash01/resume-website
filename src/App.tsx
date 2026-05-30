@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { memo, useMemo, ReactNode } from "react";
+import { memo, useMemo, ReactNode, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { Download, Mail, Smartphone, Linkedin, CheckCircle2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
@@ -221,7 +221,8 @@ const keyNumbers = [
   "Delivered project 2 weeks ahead of schedule",
 ];
 
-const VP = { once: true } as const;
+// FIX 1: increased `amount` so elements only animate when substantially in view
+const VP = { once: true, amount: 0.3 } as const;
 
 // ─── Section label ────────────────────────────────────────────────────────────
 function SectionLabel({ num, label }: { num: string; label: string }) {
@@ -329,6 +330,14 @@ export default function App() {
   const yDrift        = useTransform(scrollYProgress, [0, 1], [0,  400]);
   const yDriftReverse = useTransform(scrollYProgress, [0, 1], [0, -400]);
 
+  // FIX 3: track scroll position to toggle nav appearance
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden selection:bg-neon selection:text-black">
       <style>{`
@@ -340,14 +349,27 @@ export default function App() {
           from { transform:translateX(0); }
           to   { transform:translateX(-50%); }
         }
+        /* FIX 2: offset anchor targets so section titles clear the fixed nav */
+        section[id] {
+          scroll-margin-top: 100px;
+        }
       `}</style>
 
       <Background yDrift={yDrift} yDriftReverse={yDriftReverse} />
 
       {/* ── NAV ─────────────────────────────────────────────────────────── */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl z-[999]
-        backdrop-blur-[24px] bg-black/45 border border-white/10 rounded-2xl
-        shadow-[0_8px_32px_rgba(0,0,0,0.35)] px-6 md:px-10 h-20 flex items-center justify-between">
+      {/* FIX 3: flush/transparent at top, frosted pill once scrolled */}
+      <nav
+        className={[
+          "fixed z-[999] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          scrolled
+            ? // scrolled: centred pill with backdrop
+              "top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl backdrop-blur-[24px] bg-black/45 border border-white/10 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.35)] px-6 md:px-10 h-20"
+            : // at top: full-width flush, no bg
+              "top-0 left-0 right-0 px-6 md:px-12 h-20 bg-transparent border-b border-transparent",
+        ].join(" ")}
+        style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+      >
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-neon rounded-full" />
           <span className="font-bold tracking-tighter text-sm uppercase">kartik.bhatt</span>
@@ -437,7 +459,6 @@ export default function App() {
           <SectionLabel num="01" label="About Me" />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24">
             <div>
-              {/* CHANGED: "automated impact." is now neon green */}
               <StaggerHeadline
                 lines={["i turn legacy", "chaos into measurable,", "automated impact."]}
                 className="text-4xl md:text-[54px] leading-[0.9] mb-9 lowercase"
@@ -568,7 +589,6 @@ export default function App() {
                       </li>
                     ))}
                   </ul>
-
                 </GlassCard>
               </motion.div>
             ))}
@@ -581,7 +601,6 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <SectionLabel num="05" label="Projects & Impact" />
 
-          {/* CHANGED: "decks." is on its own line and green */}
           <StaggerHeadline
             lines={["projects that moved", "needles, not just", "decks."]}
             className="text-4xl md:text-[54px] leading-[0.9] mb-9 lowercase"
@@ -693,7 +712,6 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <SectionLabel num="06" label="Honors" />
 
-          {/* CHANGED: "interest." is green */}
           <StaggerHeadline
             lines={["five awards.", "discipline collecting", "interest."]}
             className="text-4xl md:text-[54px] leading-[0.85] mb-14"
@@ -722,7 +740,6 @@ export default function App() {
       {/* ── CONTACT ─────────────────────────────────────────────────────── */}
       <section id="contact" className="py-20 px-6 md:px-12">
         <div className="max-w-7xl mx-auto text-center">
-          {/* CHANGED: "impactful." is green */}
           <StaggerHeadline
             lines={["let's build", "something", "impactful."]}
             className="text-[52px] md:text-[105px] leading-[0.8] mb-10 uppercase"
