@@ -330,10 +330,10 @@ export default function App() {
   const yDrift        = useTransform(scrollYProgress, [0, 1], [0,  400]);
   const yDriftReverse = useTransform(scrollYProgress, [0, 1], [0, -400]);
 
-  // FIX 3: track scroll position to toggle nav appearance
+  // Nav: track scroll to fade in backdrop without changing layout
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
+    const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -358,17 +358,15 @@ export default function App() {
       <Background yDrift={yDrift} yDriftReverse={yDriftReverse} />
 
       {/* ── NAV ─────────────────────────────────────────────────────────── */}
-      {/* FIX 3: flush/transparent at top, frosted pill once scrolled */}
       <nav
-        className={[
-          "fixed z-[999] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          scrolled
-            ? // scrolled: centred pill with backdrop
-              "top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl backdrop-blur-[24px] bg-black/45 border border-white/10 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.35)] px-6 md:px-10 h-20"
-            : // at top: full-width flush, no bg
-              "top-0 left-0 right-0 px-6 md:px-12 h-20 bg-transparent border-b border-transparent",
-        ].join(" ")}
-        style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+        className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl z-[999]
+          backdrop-blur-[24px] border rounded-2xl px-6 md:px-10 h-16 flex items-center justify-between"
+        style={{
+          background: scrolled ? "rgba(0,0,0,0.55)" : "rgba(0,0,0,0)",
+          borderColor: scrolled ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0)",
+          boxShadow: scrolled ? "0 8px 32px rgba(0,0,0,0.4)" : "none",
+          transition: "background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease",
+        }}
       >
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-neon rounded-full" />
@@ -581,10 +579,10 @@ export default function App() {
                 viewport={VP} transition={{ delay: i * 0.1 }}>
                 <GlassCard className="p-8 h-full group flex flex-col hover:-translate-y-1">
                   <div className="text-xl font-black tracking-tight text-white mb-7 group-hover:text-neon transition-colors duration-300">{group.category}</div>
-                  <ul className="space-y-4 mb-8">
+                  <ul className="space-y-3 mb-8">
                     {group.items.map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm font-medium text-white/60 group-hover:text-white/80 transition-colors">
-                        <span className="text-neon font-black text-base leading-none">—</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-neon/50 group-hover:bg-neon shrink-0 transition-colors duration-300" />
                         {item}
                       </li>
                     ))}
@@ -719,16 +717,16 @@ export default function App() {
             greenWords={["interest."]}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {awards.map((award, i) => (
               <motion.div key={award.num} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={VP} transition={{ delay: i * 0.1 }}>
-                <GlassCard className="p-10 h-full group">
-                  <div className="flex items-center justify-between mb-5">
-                    <span className="text-[10px] font-black text-neon tracking-[0.3em]">/ {award.num}</span>
+                <GlassCard className="p-7 h-full group">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-1 h-4 bg-neon rounded-full" />
                     <span className="text-[9px] font-bold tracking-[0.25em] text-white/20 uppercase">{award.org}</span>
                   </div>
-                  <h3 className="text-2xl md:text-[28px] font-black tracking-tight mb-4 group-hover:text-neon transition-colors">{award.title}</h3>
+                  <h3 className="text-xl font-black tracking-tight mb-3 group-hover:text-neon transition-colors">{award.title}</h3>
                   <p className="text-sm text-white/40 leading-relaxed">{award.desc}</p>
                 </GlassCard>
               </motion.div>
