@@ -221,8 +221,10 @@ const keyNumbers = [
   "Delivered project 2 weeks ahead of schedule",
 ];
 
-// FIX 1: increased `amount` so elements only animate when substantially in view
-const VP = { once: true, amount: 0.3 } as const;
+// amount: 0.45 — elements must be nearly half-visible before animating
+const VP = { once: true, amount: 0.45 } as const;
+// looser threshold for project/award cards (tall grid items)
+const VP_CARDS = { once: true, amount: 0.15 } as const;
 
 // ─── Section label ────────────────────────────────────────────────────────────
 function SectionLabel({ num, label }: { num: string; label: string }) {
@@ -362,9 +364,11 @@ export default function App() {
         className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl z-[999]
           backdrop-blur-[24px] border rounded-2xl px-6 md:px-10 h-16 flex items-center justify-between"
         style={{
-          background: scrolled ? "rgba(0,0,0,0.55)" : "rgba(0,0,0,0)",
+          background: scrolled ? "rgba(0,0,0,0.60)" : "rgba(0,0,0,0)",
           borderColor: scrolled ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0)",
-          boxShadow: scrolled ? "0 8px 32px rgba(0,0,0,0.4)" : "none",
+          boxShadow: scrolled
+            ? "0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(217,255,0,0.04), inset 0 1px 0 rgba(217,255,0,0.06)"
+            : "none",
           transition: "background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease",
         }}
       >
@@ -609,7 +613,7 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {projects.map((p, i) => (
               <motion.div key={p.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={VP} transition={{ type: "spring", stiffness: 100, damping: 20, delay: i * 0.08 }}>
+                viewport={VP_CARDS} transition={{ type: "spring", stiffness: 100, damping: 20, delay: i * 0.08 }}>
                 <GlassCard className="group p-8 flex flex-col h-full gap-6 hover:-translate-y-1">
                   <span className="text-[10px] font-black text-neon tracking-[0.3em] uppercase">{p.org}</span>
                   <div>
@@ -720,10 +724,9 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {awards.map((award, i) => (
               <motion.div key={award.num} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={VP} transition={{ delay: i * 0.1 }}>
+                viewport={VP_CARDS} transition={{ delay: i * 0.1 }}>
                 <GlassCard className="p-7 h-full group">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-1 h-4 bg-neon rounded-full" />
+                  <div className="mb-3">
                     <span className="text-[9px] font-bold tracking-[0.25em] text-white/20 uppercase">{award.org}</span>
                   </div>
                   <h3 className="text-xl font-black tracking-tight mb-3 group-hover:text-neon transition-colors">{award.title}</h3>
