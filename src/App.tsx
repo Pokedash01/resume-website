@@ -4,9 +4,155 @@
  */
 
 import { memo, useMemo, ReactNode, useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 import { Download, Mail, Smartphone, Linkedin, CheckCircle2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+
+// ─── Loading Screen ───────────────────────────────────────────────────────────
+const LoadingScreen = memo(function LoadingScreen({ onComplete }: { onComplete: () => void }) {
+  const [progress, setProgress] = useState(0);
+  const [phase, setPhase] = useState<"loading" | "done">("loading");
+
+  useEffect(() => {
+    // Ramp up progress
+    const steps = [
+      { target: 30,  delay: 0,    duration: 400  },
+      { target: 65,  delay: 400,  duration: 500  },
+      { target: 88,  delay: 900,  duration: 400  },
+      { target: 100, delay: 1300, duration: 300  },
+    ];
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    steps.forEach(({ target, delay, duration }) => {
+      timers.push(
+        setTimeout(() => {
+          const start = Date.now();
+          const startVal = progress;
+          const tick = () => {
+            const elapsed = Date.now() - start;
+            const t = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - t, 3);
+            setProgress(Math.round(startVal + (target - startVal) * ease));
+            if (t < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }, delay)
+      );
+    });
+    // Trigger exit
+    timers.push(setTimeout(() => setPhase("done"), 1700));
+    timers.push(setTimeout(() => onComplete(), 2300));
+    return () => timers.forEach(clearTimeout);
+  }, []); // eslint-disable-line
+
+  return (
+    <AnimatePresence>
+      {phase === "loading" && (
+        <motion.div
+          key="loader"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505] overflow-hidden"
+          exit={{ opacity: 0, filter: "blur(12px)", scale: 1.03 }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Grid bg */}
+          <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
+            <div
+              className="absolute inset-0 origin-top h-[200%] w-full"
+              style={{
+                backgroundImage:
+                  "linear-gradient(to right,#D9FF00 1px,transparent 1px),linear-gradient(to bottom,#D9FF00 1px,transparent 1px)",
+                backgroundSize: "80px 80px",
+                transform: "rotateX(60deg) translateY(-20%)",
+              }}
+            />
+          </div>
+
+          {/* Glow blob */}
+          <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] bg-[#D9FF00]/10 rounded-full blur-[120px] opacity-20 pointer-events-none" />
+
+          {/* Corner marks */}
+          {[
+            "top-6 left-6 border-t border-l",
+            "top-6 right-6 border-t border-r",
+            "bottom-6 left-6 border-b border-l",
+            "bottom-6 right-6 border-b border-r",
+          ].map((cls, i) => (
+            <motion.div
+              key={i}
+              className={`absolute w-6 h-6 border-white/20 ${cls}`}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.07, duration: 0.4 }}
+            />
+          ))}
+
+          {/* Name */}
+          <motion.div
+            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="relative z-10 text-center mb-10"
+          >
+            <div
+              className="text-[68px] md:text-[100px] font-black leading-none tracking-tighter select-none"
+              style={{ animation: "loaderFlicker 3s ease-in-out infinite" }}
+            >
+              kartik<span className="text-[#D9FF00]">_</span>
+            </div>
+            <div className="text-[10px] font-bold tracking-[0.5em] text-white/25 uppercase mt-2">
+              Knowledge Management · Power Platform · GenAI
+            </div>
+          </motion.div>
+
+          {/* Progress bar */}
+          <motion.div
+            className="relative z-10 flex flex-col items-center gap-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className="w-[200px] h-[2px] bg-white/8 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#D9FF00] rounded-full transition-all duration-150"
+                style={{
+                  width: `${progress}%`,
+                  boxShadow: "0 0 10px #D9FF00, 0 0 20px rgba(217,255,0,0.4)",
+                }}
+              />
+            </div>
+            <div className="flex items-center justify-between w-[200px]">
+              <span className="text-[9px] font-bold tracking-[0.4em] text-white/25 uppercase">Loading</span>
+              <span className="text-[9px] font-black text-[#D9FF00] tabular-nums">{progress}%</span>
+            </div>
+          </motion.div>
+
+          {/* Scan line */}
+          <div
+            className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#D9FF00]/20 to-transparent pointer-events-none"
+            style={{ animation: "scanline 2.5s linear infinite" }}
+          />
+
+          <style>{`
+            @keyframes loaderFlicker {
+              0%,100%   { opacity:1; }
+              44%        { opacity:1; }
+              45%        { opacity:.4; }
+              46%        { opacity:1; }
+              89%        { opacity:1; }
+              90%        { opacity:.6; }
+              91%        { opacity:1; }
+            }
+            @keyframes scanline {
+              0%   { top: -2px; opacity:0; }
+              10%  { opacity:1; }
+              90%  { opacity:1; }
+              100% { top: 100%; opacity:0; }
+            }
+          `}</style>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+});
 
 // ─── Shared glass card ────────────────────────────────────────────────────────
 const GlassCard = memo(function GlassCard({ children, className = "" }: { children: ReactNode; className?: string }) {
@@ -180,29 +326,30 @@ const experiences = [
   },
 ];
 
+// ── CHANGE 4: "KPMG GLOBAL SERVICES" → "KPMG" in all awards ─────────────────
 const awards = [
   {
     num: "01",
     title: "Kudos award × 2",
-    org: "KPMG GLOBAL SERVICES",
+    org: "KPMG",
     desc: "Exceptional efficiency via Lean Six Sigma — saved 2,000+ hours annually. Also awarded for migrating legacy VBA / Excel to GenAI agents & Power Platform.",
   },
   {
     num: "02",
     title: "Super team award",
-    org: "KPMG GLOBAL SERVICES",
+    org: "KPMG",
     desc: "Hosting and organising employee council events for the wider KGS group, fostering community and collaboration.",
   },
   {
     num: "03",
     title: "Ally of inclusion",
-    org: "KPMG GLOBAL SERVICES",
+    org: "KPMG",
     desc: "Commitment to cultivating an inclusive and diverse work environment across KPMG Global Services.",
   },
   {
     num: "04",
     title: "Gurus@work",
-    org: "KPMG GLOBAL SERVICES",
+    org: "KPMG",
     desc: "Contributions to KGS learning culture — empowering and inspiring learners across the organisation.",
   },
 ];
@@ -221,9 +368,7 @@ const keyNumbers = [
   "Delivered project 2 weeks ahead of schedule",
 ];
 
-// amount: 0.45 — elements must be nearly half-visible before animating
 const VP = { once: true, amount: 0.45 } as const;
-// looser threshold for project/award cards (tall grid items)
 const VP_CARDS = { once: true, amount: 0.15 } as const;
 
 // ─── Section label ────────────────────────────────────────────────────────────
@@ -259,12 +404,10 @@ const SkillsCarousel = memo(function SkillsCarousel() {
   );
 });
 
-// ─── Static background (optimized) ───────────────────────────────────────────
+// ─── Static background ───────────────────────────────────────────────────────
 const Background = memo(function Background() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      
-      {/* Static perspective grid */}
       <div className="absolute inset-0 opacity-[0.04]">
         <div
           className="absolute inset-0 origin-top h-[200%] w-full"
@@ -276,45 +419,27 @@ const Background = memo(function Background() {
           }}
         />
       </div>
-
-      {/* Static geometric elements */}
       <div className="absolute inset-0">
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
             className="absolute opacity-[0.08]"
-            style={{
-              rotate: `${i * 45}deg`,
-              left: `${15 + i * 15}%`,
-              top: `${20 + i * 10}%`,
-            }}
+            style={{ rotate: `${i * 45}deg`, left: `${15 + i * 15}%`, top: `${20 + i * 10}%` }}
           >
             <div className="w-16 h-16 border border-neon rounded-sm rotate-45" />
             <div className="absolute top-1/2 left-full w-24 h-px bg-gradient-to-r from-neon to-transparent" />
           </div>
         ))}
       </div>
-
-      {/* Static right bars */}
       <div className="absolute right-0 top-0 bottom-0 w-24 overflow-hidden opacity-[0.04] flex flex-col items-center py-20">
         {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="w-1 h-32 bg-neon mt-4 rounded-full"
-          />
+          <div key={i} className="w-1 h-32 bg-neon mt-4 rounded-full" />
         ))}
       </div>
-
-      {/* Side lines */}
       <div className="absolute inset-y-0 left-12 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent" />
       <div className="absolute inset-y-0 right-12 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent" />
-
-      {/* Static glow blobs */}
       <div className="absolute top-[-10%] right-[-5%] w-[60vw] h-[60vw] bg-neon/10 rounded-full blur-[120px] opacity-20" />
-
       <div className="absolute bottom-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-blue-500/5 rounded-full blur-[100px] opacity-10" />
-
-      {/* Static noise texture */}
       <div
         className="absolute inset-0 opacity-[0.02] mix-blend-overlay"
         style={{
@@ -332,8 +457,9 @@ export default function App() {
   const yDrift        = useTransform(scrollYProgress, [0, 1], [0,  400]);
   const yDriftReverse = useTransform(scrollYProgress, [0, 1], [0, -400]);
 
-  // Nav: track scroll to fade in backdrop without changing layout
+  const [loaded, setLoaded] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -360,424 +486,452 @@ export default function App() {
         }
       `}</style>
 
-      <Background yDrift={yDrift} yDriftReverse={yDriftReverse} />
+      {/* ── LOADING SCREEN ───────────────────────────────────────────── */}
+      <LoadingScreen onComplete={() => setLoaded(true)} />
 
-      {/* ── NAV ─────────────────────────────────────────────────────────── */}
       <motion.div
-        className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl z-[999]"
-        initial={{ opacity: 0, y: -18, scale: 0.96 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0 }}
+        animate={loaded ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.5 }}
       >
-      <nav
-        className="backdrop-blur-[24px] border rounded-2xl px-6 md:px-10 h-16 flex items-center justify-between"
-        style={{
-          background: scrolled ? "rgba(0,0,0,0.60)" : "rgba(0,0,0,0)",
-          borderColor: scrolled ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0)",
-          boxShadow: scrolled
-            ? "0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(217,255,0,0.04), inset 0 1px 0 rgba(217,255,0,0.06)"
-            : "none",
-          transition: "background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease",
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <div
-            className="w-2 h-2 bg-neon rounded-full"
-            style={{ animation: "dotblink 2.4s ease-in-out infinite" }}
-          />
-          <span className="font-bold tracking-tighter text-sm uppercase">kartik.bhatt</span>
-        </div>
-        <div className="hidden md:flex gap-5 text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase">
-          {["about", "experience", "education", "toolkit", "work", "honors", "contact"].map(link => (
-            <a key={link} href={`#${link}`} className="hover:text-neon transition-colors">{link === "work" ? "Projects" : link.charAt(0).toUpperCase() + link.slice(1)}</a>
-          ))}
-        </div>
-        <a href="/Resume.pdf" download="Kartik_Bhatt_Resume.pdf" target="_blank" rel="noreferrer">
-          <button className="bg-neon text-black px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform">
-            Resume <Download size={12} />
-          </button>
-        </a>
-      </nav>
-      </motion.div>
+        <Background yDrift={yDrift} yDriftReverse={yDriftReverse} />
 
-      {/* ── HERO ────────────────────────────────────────────────────────── */}
-      <section className="min-h-screen pt-36 pb-20 px-6 md:px-12 flex flex-col lg:flex-row items-center justify-between gap-16">
-        <div className="flex-1 max-w-3xl">
-          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={VP}
-            className="flex items-center gap-4 mb-10">
-            <div className="w-12 h-px bg-neon" />
-            <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 uppercase">Portfolio</span>
-          </motion.div>
-
-          <motion.h1 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP}
-            transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            className="text-[80px] md:text-[150px] font-black leading-[0.75] tracking-tighter">
-            kartik<br />
-            <span className="text-white/20">bhatt</span>
-            <span className="text-neon">_</span>
-          </motion.h1>
-
-          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={VP}
-            transition={{ delay: 0.3 }}
-            className="mt-10 text-lg md:text-xl text-white/60 font-light max-w-lg leading-relaxed">
-            Knowledge Management &amp; Business Analyst.<br />
-            <span className="text-white/30 text-sm font-mono tracking-widest uppercase mt-3 block">
-              power platform · genai · sharepoint
-            </span>
-          </motion.p>
-
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP}
-            transition={{ delay: 0.5 }}
-            className="mt-6 flex items-center gap-4">
-            <div className="w-8 h-px bg-neon/60" />
-            <span className="text-[11px] font-bold tracking-[0.3em] text-neon/70 uppercase">
-              Three years. Two global firms. One mission.
-            </span>
-          </motion.div>
-        </div>
-
-        <motion.div initial={{ opacity: 0, scale: 0.9, rotate: -5 }} whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-          viewport={VP} transition={{ type: "spring", stiffness: 50, damping: 15 }}
-          className="relative w-full max-w-[480px] h-[440px] shrink-0">
-          <div className="absolute inset-0 border border-white/10 rounded-[32px] overflow-hidden bg-white/[0.03] backdrop-blur-sm shadow-[0_0_60px_0_rgba(217,255,0,0.06)]">
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10" />
-            <img src="/profile.jpg" alt="Kartik Bhatt" loading="eager" decoding="async"
-              className="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
-            <div className="absolute bottom-8 left-8 z-20">
-              <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full">
-                <div className="w-1.5 h-1.5 bg-neon rounded-full animate-pulse" />
-                <span className="text-[10px] font-bold tracking-widest uppercase text-white/80">ANALYST · KPMG</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ── STATS BAR ───────────────────────────────────────────────────── */}
-      <section className="border-y border-white/5 bg-white/[0.015] backdrop-blur-sm">
-        <div className="grid grid-cols-2 md:grid-cols-5 divide-x divide-white/5">
-          {stats.map((stat, i) => (
-            <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={VP} transition={{ delay: i * 0.08 }}
-              className="p-10 flex flex-col gap-2 hover:bg-white/[0.02] transition-colors cursor-default">
-              <div className="text-4xl md:text-5xl font-black tracking-tighter">{stat.value}</div>
-              <div className="text-[9px] font-bold tracking-[0.4em] text-white/30 uppercase">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── ABOUT ───────────────────────────────────────────────────────── */}
-      <section id="about" className="py-20 px-6 md:px-12 border-b border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <SectionLabel num="01" label="About Me" />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24">
-            <div>
-              <StaggerHeadline
-                lines={["i turn legacy", "chaos into measurable,", "automated impact."]}
-                className="text-4xl md:text-[54px] leading-[0.9] mb-9 lowercase"
-                dimFrom={1}
-                greenWords={["automated impact."]}
+        {/* ── NAV ─────────────────────────────────────────────────────── */}
+        <motion.div
+          className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl z-[999]"
+          initial={{ opacity: 0, y: -18, scale: 0.96 }}
+          animate={loaded ? { opacity: 1, y: 0, scale: 1 } : {}}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+        >
+          <nav
+            className="backdrop-blur-[24px] border rounded-2xl px-6 md:px-10 h-16 flex items-center justify-between"
+            style={{
+              background: scrolled ? "rgba(0,0,0,0.60)" : "rgba(0,0,0,0)",
+              borderColor: scrolled ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0)",
+              boxShadow: scrolled
+                ? "0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(217,255,0,0.04), inset 0 1px 0 rgba(217,255,0,0.06)"
+                : "none",
+              transition: "background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease",
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <div
+                className="w-2 h-2 bg-neon rounded-full"
+                style={{ animation: "dotblink 2.4s ease-in-out infinite" }}
               />
-              <p className="text-white/60 text-base leading-relaxed font-light">
-                Results-driven analyst with 3+ years across{" "}
-                <span className="text-white font-medium">Knowledge Management</span> &amp;{" "}
-                <span className="text-white font-medium">Content Engineering</span> at top global firms.
-                Specialises in Power Platform automation, SharePoint Online, and data-driven operational
-                improvements. Saved 2,000+ hours annually through lean process optimisation and
-                GenAI-powered workflows — across 13 sectors and global teams.
-              </p>
+              <span className="font-bold tracking-tighter text-sm uppercase">kartik.bhatt</span>
             </div>
-            <div>
-              <GlassCard className="p-9">
-                <div className="text-[10px] font-bold tracking-[0.3em] text-neon uppercase mb-7">/ At a Glance</div>
-                <div className="space-y-0">
-                  {[
-                    { l: "NAME",   v: "Kartik Bhatt"          },
-                    { l: "ROLE",   v: "Analyst · KPMG"         },
-                    { l: "BASED",  v: "Delhi, India"            },
-                    { l: "DEGREE", v: "BCA · Computer Science" },
-                    { l: "GPA",    v: "9.3 / 10 · top 1%"     },
-                  ].map(item => (
-                    <div key={item.l} className="flex justify-between items-center py-3 border-b border-white/5">
-                      <span className="text-[9px] font-bold text-white/30 tracking-[0.2em]">{item.l}</span>
-                      <span className="text-sm font-medium">{item.v}</span>
-                    </div>
-                  ))}
-                </div>
-              </GlassCard>
+            <div className="hidden md:flex gap-5 text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase">
+              {["about", "experience", "education", "toolkit", "work", "honors", "contact"].map(link => (
+                <a key={link} href={`#${link}`} className="hover:text-neon transition-colors">
+                  {link === "work" ? "Projects" : link.charAt(0).toUpperCase() + link.slice(1)}
+                </a>
+              ))}
             </div>
-          </div>
-        </div>
-      </section>
+            <a href="/Resume.pdf" download="Kartik_Bhatt_Resume.pdf" target="_blank" rel="noreferrer">
+              <button className="bg-neon text-black px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform">
+                Resume <Download size={12} />
+              </button>
+            </a>
+          </nav>
+        </motion.div>
 
-      {/* ── EXPERIENCE ──────────────────────────────────────────────────── */}
-      <section id="experience" className="py-20 px-6 md:px-12 border-b border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <SectionLabel num="02" label="Experience" />
-          <div className="space-y-8">
-            {experiences.map((exp) => (
-              <motion.div key={exp.org} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP}>
-                <GlassCard className="flex flex-col lg:flex-row gap-10 lg:gap-20 p-8">
-                  <div className="w-44 text-[10px] font-bold text-white/30 tracking-widest pt-1 shrink-0">{exp.date}</div>
-                  <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div>
-                      <h3 className="text-3xl font-black tracking-tight mb-2">{exp.org}</h3>
-                      <div className="text-neon text-sm font-medium mb-2">{exp.role}</div>
-                      <div className="text-[10px] font-bold tracking-[0.2em] text-white/20 uppercase">{exp.loc}</div>
-                    </div>
-                    <div>
-                      <p className="text-white/50 mb-5 font-light text-sm leading-relaxed">{exp.desc}</p>
-                      <ul className="space-y-3">
-                        {exp.bullets.map(b => (
-                          <li key={b} className="flex gap-3 text-sm font-medium items-start">
-                            <span className="text-neon shrink-0 mt-px">+</span>
-                            <span className="text-white/80">{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── EDUCATION ───────────────────────────────────────────────────── */}
-      <section id="education" className="py-20 px-6 md:px-12 border-b border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <SectionLabel num="03" label="Education" />
-          <GlassCard className="p-8 md:p-14 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-8 md:p-14 opacity-[0.03] pointer-events-none select-none">
-              <div className="text-[100px] md:text-[180px] font-black italic">BCA</div>
-            </div>
-            <div className="relative z-10">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                <div>
-                  <h3 className="text-3xl md:text-5xl font-black tracking-tighter mb-3 uppercase">Bachelor of Computer Applications</h3>
-                  <div className="text-neon text-xl font-bold italic tracking-tight">Majors: Computer Science</div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="text-[10px] font-bold tracking-widest text-white/40 uppercase mb-1">Duration</div>
-                  <div className="text-lg font-medium">JUL 2019 — AUG 2022</div>
-                </div>
-              </div>
-              <div className="flex flex-col md:flex-row gap-10 items-center">
-                <div className="flex-1">
-                  <div className="text-2xl font-bold tracking-tight text-white/60 mb-4 italic">Maharaja Surajmal Institute</div>
-                  <p className="text-white/40 max-w-2xl leading-relaxed font-light text-sm">
-                    Strong academic foundation in Computer Science. Analytical mindset sharpened from Top 1%
-                    performance. Technical depth in systems, databases, and software that drives real-world impact at enterprise scale.
-                  </p>
-                </div>
-                <div className="border border-neon/30 bg-neon/[0.06] backdrop-blur-sm p-10 rounded-3xl flex flex-col items-center justify-center text-neon shrink-0 shadow-[0_0_40px_0_rgba(217,255,0,0.1)]">
-                  <div className="text-5xl font-black tracking-tighter">9.3 / 10</div>
-                  <div className="text-[10px] font-black tracking-widest uppercase mt-2 text-white/40">GPA / TOP 1%</div>
-                </div>
-              </div>
-            </div>
-          </GlassCard>
-        </div>
-      </section>
-
-      {/* ── TOOLKIT & EXPERTISE ─────────────────────────────────────────── */}
-      <section id="toolkit" className="py-20 px-6 md:px-12 border-b border-white/5">
-        <div className="-mx-6 md:-mx-12"><SkillsCarousel /></div>
-
-        <div className="max-w-7xl mx-auto mt-14">
-          <SectionLabel num="04" label="Toolkit & Expertise" />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {toolkitGroups.map((group, i) => (
-              <motion.div key={group.category} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={VP} transition={{ delay: i * 0.1 }}>
-                <GlassCard className="p-8 h-full group flex flex-col hover:-translate-y-1">
-                  <div className="text-xl font-black tracking-tight text-white mb-7 group-hover:text-neon transition-colors duration-300">{group.category}</div>
-                  <ul className="space-y-3 mb-8">
-                    {group.items.map(item => (
-                      <li key={item} className="flex items-center gap-3 text-sm font-medium text-white/60 group-hover:text-white/80 transition-colors">
-                        <span className="w-1.5 h-1.5 rounded-full bg-neon/50 group-hover:bg-neon shrink-0 transition-colors duration-300" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── PROJECTS & IMPACT ────────────────────────────────────────────── */}
-      <section id="work" className="py-20 px-6 md:px-12 border-b border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <SectionLabel num="05" label="Projects & Impact" />
-
-          <StaggerHeadline
-            lines={["projects that moved", "needles, not just", "decks."]}
-            className="text-4xl md:text-[54px] leading-[0.9] mb-9 lowercase"
-            dimFrom={1}
-            greenWords={["decks."]}
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {projects.map((p, i) => (
-              <motion.div key={p.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={VP_CARDS} transition={{ type: "spring", stiffness: 100, damping: 20, delay: i * 0.08 }}>
-                <GlassCard className="group p-8 flex flex-col h-full gap-6 hover:-translate-y-1">
-                  <span className="text-[10px] font-black text-neon tracking-[0.3em] uppercase">{p.org}</span>
-                  <div>
-                    <h3 className="text-xl font-black leading-tight mb-3 tracking-tight group-hover:text-neon transition-colors">{p.title}</h3>
-                    <p className="text-sm text-white/40 leading-relaxed">{p.desc}</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {p.tags.map(t => (
-                      <span key={t} className="px-3 py-1 bg-white/5 rounded-full text-[8px] font-black tracking-widest uppercase border border-white/5 group-hover:text-neon group-hover:border-neon/30 transition-all">{t}</span>
-                    ))}
-                  </div>
-                  <div className="pt-4 border-t border-white/5 mt-auto flex items-center justify-between">
-                    <span className="text-[8px] font-bold text-white/30 tracking-[0.3em] uppercase">Impact</span>
-                    <span className="text-xs font-bold text-neon">{p.impact}</span>
-                  </div>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            {impactMetrics.map((m, i) => (
-              <motion.div key={m.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={VP} transition={{ delay: i * 0.08 }}>
-                <GlassCard className={`p-7 border ${m.color} flex flex-col items-center text-center h-full`}>
-                  <div className="text-3xl font-black mb-1 tracking-tighter">{m.value}</div>
-                  <div className="text-[9px] font-black tracking-[0.2em] uppercase text-neon mb-1">{m.label}</div>
-                  <div className="text-[9px] font-medium text-white/30 tracking-wider uppercase">{m.sub}</div>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={VP} className="lg:col-span-2">
-              <GlassCard className="p-10 h-full">
-                <div className="flex justify-between items-end mb-10">
-                  <div>
-                    <div className="text-[10px] font-bold tracking-[0.3em] text-white/20 uppercase mb-2">/ Analytics</div>
-                    <h3 className="text-2xl font-black tracking-tight">
-                      the receipts.<br /><span className="text-neon italic">hours saved, by initiative.</span>
-                    </h3>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-black text-neon">2,185_hrs</div>
-                    <div className="text-[9px] font-bold tracking-widest text-white/20 uppercase">Total Saved</div>
-                  </div>
-                </div>
-                <div className="h-[320px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} layout="vertical" margin={{ left: 20, right: 30 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" horizontal={false} />
-                      <XAxis type="number" hide />
-                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false}
-                        tick={{ fill: "#ffffff40", fontSize: 9, fontWeight: 700 }} width={130} />
-                      <Tooltip cursor={{ fill: "#ffffff05" }}
-                        contentStyle={{ background: "#111", border: "1px solid rgba(217,255,0,0.2)", borderRadius: "12px" }}
-                        itemStyle={{ color: "#D9FF00", fontWeight: "bold" }}
-                        formatter={(v: any) => [`${v} hrs`, "Hours saved"]} />
-                      <Bar dataKey="hours" radius={[0, 4, 4, 0]} barSize={22} isAnimationActive={false}>
-                        {chartData.map((e, idx) => <Cell key={idx} fill={e.color} />)}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </GlassCard>
+        {/* ── HERO ────────────────────────────────────────────────────── */}
+        <section className="min-h-screen pt-36 pb-20 px-6 md:px-12 flex flex-col lg:flex-row items-center justify-between gap-16">
+          <div className="flex-1 max-w-3xl">
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={VP}
+              className="flex items-center gap-4 mb-10">
+              <div className="w-12 h-px bg-neon" />
+              <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 uppercase">Portfolio</span>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={VP}>
-              <GlassCard className="p-10 flex flex-col gap-6 h-full">
-                <div>
-                  <div className="text-[10px] font-bold tracking-[0.3em] text-white/20 uppercase mb-5">/ Key Numbers</div>
-                  <div className="space-y-5">
-                    {keyNumbers.map((text, i) => (
-                      <div key={i} className="flex gap-4 group">
-                        <div className="w-5 h-5 rounded-full bg-neon/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-neon transition-all group-hover:text-black">
-                          <CheckCircle2 size={12} />
-                        </div>
-                        <span className="text-sm font-medium text-white/60 leading-tight group-hover:text-white transition-colors">{text}</span>
+            <motion.h1 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP}
+              transition={{ type: "spring", stiffness: 100, damping: 20 }}
+              className="text-[80px] md:text-[150px] font-black leading-[0.75] tracking-tighter">
+              kartik<br />
+              <span className="text-white/20">bhatt</span>
+              <span className="text-neon">_</span>
+            </motion.h1>
+
+            <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={VP}
+              transition={{ delay: 0.3 }}
+              className="mt-10 text-lg md:text-xl text-white/60 font-light max-w-lg leading-relaxed">
+              Knowledge Management &amp; Business Analyst.<br />
+              <span className="text-white/30 text-sm font-mono tracking-widest uppercase mt-3 block">
+                power platform · genai · sharepoint
+              </span>
+            </motion.p>
+
+            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP}
+              transition={{ delay: 0.5 }}
+              className="mt-6 flex items-center gap-4">
+              <div className="w-8 h-px bg-neon/60" />
+              <span className="text-[11px] font-bold tracking-[0.3em] text-neon/70 uppercase">
+                Three years. Two global firms. One mission.
+              </span>
+            </motion.div>
+          </div>
+
+          <motion.div initial={{ opacity: 0, scale: 0.9, rotate: -5 }} whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+            viewport={VP} transition={{ type: "spring", stiffness: 50, damping: 15 }}
+            className="relative w-full max-w-[480px] h-[440px] shrink-0">
+            <div className="absolute inset-0 border border-white/10 rounded-[32px] overflow-hidden bg-white/[0.03] backdrop-blur-sm shadow-[0_0_60px_0_rgba(217,255,0,0.06)]">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10" />
+              <img src="/profile.jpg" alt="Kartik Bhatt" loading="eager" decoding="async"
+                className="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+              <div className="absolute bottom-8 left-8 z-20">
+                <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full">
+                  <div className="w-1.5 h-1.5 bg-neon rounded-full animate-pulse" />
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-white/80">ANALYST · KPMG</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* ── STATS BAR ─────────────────────────────────────────────── */}
+        <section className="border-y border-white/5 bg-white/[0.015] backdrop-blur-sm">
+          <div className="grid grid-cols-2 md:grid-cols-5 divide-x divide-white/5">
+            {stats.map((stat, i) => (
+              <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={VP} transition={{ delay: i * 0.08 }}
+                className="p-10 flex flex-col gap-2 hover:bg-white/[0.02] transition-colors cursor-default">
+                <div className="text-4xl md:text-5xl font-black tracking-tighter">{stat.value}</div>
+                <div className="text-[9px] font-bold tracking-[0.4em] text-white/30 uppercase">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── ABOUT ─────────────────────────────────────────────────── */}
+        <section id="about" className="py-20 px-6 md:px-12 border-b border-white/5">
+          <div className="max-w-7xl mx-auto">
+            <SectionLabel num="01" label="About Me" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24">
+              <div>
+                <StaggerHeadline
+                  lines={["i turn legacy", "chaos into measurable,", "automated impact."]}
+                  className="text-4xl md:text-[54px] leading-[0.9] mb-9 lowercase"
+                  dimFrom={1}
+                  greenWords={["automated impact."]}
+                />
+                <p className="text-white/60 text-base leading-relaxed font-light">
+                  Results-driven analyst with 3+ years across{" "}
+                  <span className="text-white font-medium">Knowledge Management</span> &amp;{" "}
+                  <span className="text-white font-medium">Content Engineering</span> at top global firms.
+                  Specialises in Power Platform automation, SharePoint Online, and data-driven operational
+                  improvements. Saved 2,000+ hours annually through lean process optimisation and
+                  GenAI-powered workflows — across 13 sectors and global teams.
+                </p>
+              </div>
+              <div>
+                <GlassCard className="p-9">
+                  <div className="text-[10px] font-bold tracking-[0.3em] text-neon uppercase mb-7">/ At a Glance</div>
+                  <div className="space-y-0">
+                    {[
+                      { l: "NAME",   v: "Kartik Bhatt"          },
+                      { l: "ROLE",   v: "Analyst · KPMG"         },
+                      { l: "BASED",  v: "Delhi, India"            },
+                      { l: "DEGREE", v: "BCA · Computer Science" },
+                      { l: "GPA",    v: "9.3 / 10 · top 1%"     },
+                    ].map(item => (
+                      <div key={item.l} className="flex justify-between items-center py-3 border-b border-white/5">
+                        <span className="text-[9px] font-bold text-white/30 tracking-[0.2em]">{item.l}</span>
+                        <span className="text-sm font-medium">{item.v}</span>
                       </div>
                     ))}
                   </div>
+                </GlassCard>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── EXPERIENCE ────────────────────────────────────────────── */}
+        <section id="experience" className="py-20 px-6 md:px-12 border-b border-white/5">
+          <div className="max-w-7xl mx-auto">
+            <SectionLabel num="02" label="Experience" />
+            <div className="space-y-8">
+              {experiences.map((exp) => (
+                <motion.div key={exp.org} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={VP}>
+                  <GlassCard className="flex flex-col lg:flex-row gap-10 lg:gap-20 p-8">
+                    <div className="w-44 text-[10px] font-bold text-white/30 tracking-widest pt-1 shrink-0">{exp.date}</div>
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div>
+                        <h3 className="text-3xl font-black tracking-tight mb-2">{exp.org}</h3>
+                        <div className="text-neon text-sm font-medium mb-2">{exp.role}</div>
+                        <div className="text-[10px] font-bold tracking-[0.2em] text-white/20 uppercase">{exp.loc}</div>
+                      </div>
+                      <div>
+                        <p className="text-white/50 mb-5 font-light text-sm leading-relaxed">{exp.desc}</p>
+                        <ul className="space-y-3">
+                          {exp.bullets.map(b => (
+                            <li key={b} className="flex gap-3 text-sm font-medium items-start">
+                              <span className="text-neon shrink-0 mt-px">+</span>
+                              <span className="text-white/80">{b}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── EDUCATION ─────────────────────────────────────────────── */}
+        {/* CHANGE 2: max-w-4xl + centered + slideInLeft animation */}
+        <section id="education" className="py-20 px-6 md:px-12 border-b border-white/5">
+          <div className="max-w-7xl mx-auto">
+            <SectionLabel num="03" label="Education" />
+            <motion.div
+              initial={{ opacity: 0, x: -40, filter: "blur(8px)" }}
+              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              viewport={VP}
+              transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+              className="max-w-4xl"
+            >
+              <GlassCard className="p-8 md:p-12 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 md:p-12 opacity-[0.03] pointer-events-none select-none">
+                  <div className="text-[100px] md:text-[160px] font-black italic">BCA</div>
                 </div>
-                <div className="mt-auto p-5 bg-neon text-black rounded-2xl">
-                  <div className="font-black text-xs tracking-widest uppercase mb-1">Impact Driven</div>
-                  <p className="text-xs font-bold leading-relaxed opacity-80">
-                    "Data-driven decisions combined with automated workflows result in exponential efficiency."
-                  </p>
+                <div className="relative z-10">
+                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                    <div>
+                      <h3 className="text-2xl md:text-4xl font-black tracking-tighter mb-3 uppercase">
+                        Bachelor of Computer Applications
+                      </h3>
+                      <div className="text-neon text-lg font-bold italic tracking-tight">Majors: Computer Science</div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-[10px] font-bold tracking-widest text-white/40 uppercase mb-1">Duration</div>
+                      <div className="text-base font-medium">JUL 2019 — AUG 2022</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col md:flex-row gap-10 items-center">
+                    <div className="flex-1">
+                      <div className="text-xl font-bold tracking-tight text-white/60 mb-4 italic">
+                        Maharaja Surajmal Institute
+                      </div>
+                      <p className="text-white/40 max-w-xl leading-relaxed font-light text-sm">
+                        Strong academic foundation in Computer Science. Analytical mindset sharpened from Top 1%
+                        performance. Technical depth in systems, databases, and software that drives real-world impact at enterprise scale.
+                      </p>
+                    </div>
+                    <div className="border border-neon/30 bg-neon/[0.06] backdrop-blur-sm p-8 rounded-3xl flex flex-col items-center justify-center text-neon shrink-0 shadow-[0_0_40px_0_rgba(217,255,0,0.1)]">
+                      <div className="text-4xl font-black tracking-tighter">9.3 / 10</div>
+                      <div className="text-[10px] font-black tracking-widest uppercase mt-2 text-white/40">GPA / TOP 1%</div>
+                    </div>
+                  </div>
                 </div>
               </GlassCard>
             </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── HONORS / AWARDS ─────────────────────────────────────────────── */}
-      <section id="honors" className="py-20 px-6 md:px-12 border-b border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <SectionLabel num="06" label="Honors" />
+        {/* ── TOOLKIT & EXPERTISE ───────────────────────────────────── */}
+        <section id="toolkit" className="py-20 px-6 md:px-12 border-b border-white/5">
+          <div className="-mx-6 md:-mx-12"><SkillsCarousel /></div>
 
-          <StaggerHeadline
-            lines={["five awards.", "discipline collecting", "interest."]}
-            className="text-4xl md:text-[54px] leading-[0.85] mb-14"
-            dimFrom={1}
-            greenWords={["interest."]}
-          />
+          <div className="max-w-7xl mx-auto mt-14">
+            <SectionLabel num="04" label="Toolkit & Expertise" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {awards.map((award, i) => (
-              <motion.div key={award.num} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={VP_CARDS} transition={{ delay: i * 0.1 }}>
-                <GlassCard className="p-7 h-full group">
-                  <div className="mb-3">
-                    <span className="text-[9px] font-bold tracking-[0.25em] text-white/20 uppercase">{award.org}</span>
+            {/* CHANGE 3: tighter padding + inline-flex to hug content */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {toolkitGroups.map((group, i) => (
+                <motion.div key={group.category} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={VP} transition={{ delay: i * 0.1 }}>
+                  <GlassCard className="p-5 group hover:-translate-y-1">
+                    <div className="text-base font-black tracking-tight text-white mb-4 group-hover:text-neon transition-colors duration-300">
+                      {group.category}
+                    </div>
+                    <ul className="space-y-2.5">
+                      {group.items.map(item => (
+                        <li key={item} className="flex items-center gap-3 text-sm font-medium text-white/60 group-hover:text-white/80 transition-colors">
+                          <span className="w-1.5 h-1.5 rounded-full bg-neon/50 group-hover:bg-neon shrink-0 transition-colors duration-300" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </GlassCard>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── PROJECTS & IMPACT ─────────────────────────────────────── */}
+        <section id="work" className="py-20 px-6 md:px-12 border-b border-white/5">
+          <div className="max-w-7xl mx-auto">
+            <SectionLabel num="05" label="Projects & Impact" />
+
+            <StaggerHeadline
+              lines={["projects that moved", "needles, not just", "decks."]}
+              className="text-4xl md:text-[54px] leading-[0.9] mb-9 lowercase"
+              dimFrom={1}
+              greenWords={["decks."]}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+              {projects.map((p, i) => (
+                <motion.div key={p.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={VP_CARDS} transition={{ type: "spring", stiffness: 100, damping: 20, delay: i * 0.08 }}>
+                  <GlassCard className="group p-8 flex flex-col h-full gap-6 hover:-translate-y-1">
+                    {/* CHANGE 5: org label is now grey like awards, not neon */}
+                    <span className="text-[10px] font-black text-white/25 tracking-[0.3em] uppercase">{p.org}</span>
+                    <div>
+                      <h3 className="text-xl font-black leading-tight mb-3 tracking-tight group-hover:text-neon transition-colors">{p.title}</h3>
+                      <p className="text-sm text-white/40 leading-relaxed">{p.desc}</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {p.tags.map(t => (
+                        <span key={t} className="px-3 py-1 bg-white/5 rounded-full text-[8px] font-black tracking-widest uppercase border border-white/5 group-hover:text-neon group-hover:border-neon/30 transition-all">{t}</span>
+                      ))}
+                    </div>
+                    <div className="pt-4 border-t border-white/5 mt-auto flex items-center justify-between">
+                      <span className="text-[8px] font-bold text-white/30 tracking-[0.3em] uppercase">Impact</span>
+                      <span className="text-xs font-bold text-neon">{p.impact}</span>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+              {impactMetrics.map((m, i) => (
+                <motion.div key={m.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={VP} transition={{ delay: i * 0.08 }}>
+                  <GlassCard className={`p-7 border ${m.color} flex flex-col items-center text-center h-full`}>
+                    <div className="text-3xl font-black mb-1 tracking-tighter">{m.value}</div>
+                    <div className="text-[9px] font-black tracking-[0.2em] uppercase text-neon mb-1">{m.label}</div>
+                    <div className="text-[9px] font-medium text-white/30 tracking-wider uppercase">{m.sub}</div>
+                  </GlassCard>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={VP} className="lg:col-span-2">
+                <GlassCard className="p-10 h-full">
+                  <div className="flex justify-between items-end mb-10">
+                    <div>
+                      <div className="text-[10px] font-bold tracking-[0.3em] text-white/20 uppercase mb-2">/ Analytics</div>
+                      <h3 className="text-2xl font-black tracking-tight">
+                        the receipts.<br /><span className="text-neon italic">hours saved, by initiative.</span>
+                      </h3>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-black text-neon">2,185_hrs</div>
+                      <div className="text-[9px] font-bold tracking-widest text-white/20 uppercase">Total Saved</div>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-black tracking-tight mb-3 group-hover:text-neon transition-colors">{award.title}</h3>
-                  <p className="text-sm text-white/40 leading-relaxed">{award.desc}</p>
+                  <div className="h-[320px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={chartData} layout="vertical" margin={{ left: 20, right: 30 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" horizontal={false} />
+                        <XAxis type="number" hide />
+                        <YAxis dataKey="name" type="category" axisLine={false} tickLine={false}
+                          tick={{ fill: "#ffffff40", fontSize: 9, fontWeight: 700 }} width={130} />
+                        <Tooltip cursor={{ fill: "#ffffff05" }}
+                          contentStyle={{ background: "#111", border: "1px solid rgba(217,255,0,0.2)", borderRadius: "12px" }}
+                          itemStyle={{ color: "#D9FF00", fontWeight: "bold" }}
+                          formatter={(v: any) => [`${v} hrs`, "Hours saved"]} />
+                        <Bar dataKey="hours" radius={[0, 4, 4, 0]} barSize={22} isAnimationActive={false}>
+                          {chartData.map((e, idx) => <Cell key={idx} fill={e.color} />)}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </GlassCard>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ── CONTACT ─────────────────────────────────────────────────────── */}
-      <section id="contact" className="py-20 px-6 md:px-12">
-        <div className="max-w-7xl mx-auto text-center">
-          <StaggerHeadline
-            lines={["let's build", "something", "impactful."]}
-            className="text-[52px] md:text-[105px] leading-[0.8] mb-10 uppercase"
-            dimFrom={1}
-            greenWords={["impactful."]}
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-14">
-            {contactItems.map(item => (
-              <a key={item.label} href={item.href} className="group" target="_blank" rel="noopener noreferrer">
-                <GlassCard className="p-10 flex flex-col items-center gap-5">
-                  <div className="text-white/40 group-hover:text-neon transition-colors">{item.icon}</div>
-                  <div className="text-[9px] font-bold tracking-[0.4em] text-white/40 group-hover:text-neon transition-colors uppercase">{item.label}</div>
-                  <div className="text-sm font-medium text-white">{item.val}</div>
+              <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={VP}>
+                <GlassCard className="p-10 flex flex-col gap-6 h-full">
+                  <div>
+                    <div className="text-[10px] font-bold tracking-[0.3em] text-white/20 uppercase mb-5">/ Key Numbers</div>
+                    <div className="space-y-5">
+                      {keyNumbers.map((text, i) => (
+                        <div key={i} className="flex gap-4 group">
+                          <div className="w-5 h-5 rounded-full bg-neon/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-neon transition-all group-hover:text-black">
+                            <CheckCircle2 size={12} />
+                          </div>
+                          <span className="text-sm font-medium text-white/60 leading-tight group-hover:text-white transition-colors">{text}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="mt-auto p-5 bg-neon text-black rounded-2xl">
+                    <div className="font-black text-xs tracking-widest uppercase mb-1">Impact Driven</div>
+                    <p className="text-xs font-bold leading-relaxed opacity-80">
+                      "Data-driven decisions combined with automated workflows result in exponential efficiency."
+                    </p>
+                  </div>
                 </GlassCard>
-              </a>
-            ))}
+              </motion.div>
+            </div>
           </div>
+        </section>
 
-          <footer className="mt-14 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-bold tracking-[0.2em] text-white/20 uppercase">
-            <div>© 2026-28 / KARTIK BHATT</div>
-            <div>DELHI, INDIA</div>
-          </footer>
-        </div>
-      </section>
+        {/* ── HONORS / AWARDS ───────────────────────────────────────── */}
+        <section id="honors" className="py-20 px-6 md:px-12 border-b border-white/5">
+          <div className="max-w-7xl mx-auto">
+            <SectionLabel num="06" label="Honors" />
+
+            <StaggerHeadline
+              lines={["five awards.", "discipline collecting", "interest."]}
+              className="text-4xl md:text-[54px] leading-[0.85] mb-14"
+              dimFrom={1}
+              greenWords={["interest."]}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {awards.map((award, i) => (
+                <motion.div key={award.num} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={VP_CARDS} transition={{ delay: i * 0.1 }}>
+                  <GlassCard className="p-7 h-full group">
+                    <div className="mb-3">
+                      <span className="text-[9px] font-bold tracking-[0.25em] text-white/20 uppercase">{award.org}</span>
+                    </div>
+                    <h3 className="text-xl font-black tracking-tight mb-3 group-hover:text-neon transition-colors">{award.title}</h3>
+                    <p className="text-sm text-white/40 leading-relaxed">{award.desc}</p>
+                  </GlassCard>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── CONTACT ───────────────────────────────────────────────── */}
+        <section id="contact" className="py-20 px-6 md:px-12">
+          <div className="max-w-7xl mx-auto text-center">
+            <StaggerHeadline
+              lines={["let's build", "something", "impactful."]}
+              className="text-[52px] md:text-[105px] leading-[0.8] mb-10 uppercase"
+              dimFrom={1}
+              greenWords={["impactful."]}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-14">
+              {contactItems.map(item => (
+                <a key={item.label} href={item.href} className="group" target="_blank" rel="noopener noreferrer">
+                  <GlassCard className="p-10 flex flex-col items-center gap-5">
+                    <div className="text-white/40 group-hover:text-neon transition-colors">{item.icon}</div>
+                    <div className="text-[9px] font-bold tracking-[0.4em] text-white/40 group-hover:text-neon transition-colors uppercase">{item.label}</div>
+                    <div className="text-sm font-medium text-white">{item.val}</div>
+                  </GlassCard>
+                </a>
+              ))}
+            </div>
+
+            <footer className="mt-14 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-bold tracking-[0.2em] text-white/20 uppercase">
+              <div>© 2026-28 / KARTIK BHATT</div>
+              <div>DELHI, INDIA</div>
+            </footer>
+          </div>
+        </section>
+      </motion.div>
     </div>
   );
 }
