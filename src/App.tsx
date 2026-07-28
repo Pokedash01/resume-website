@@ -652,8 +652,8 @@ function CertificationBadge({
   const { accent, name, code, issuer, image } = cert;
   return (
     <motion.div
-      className="relative shrink-0 cursor-pointer select-none flex items-center justify-center"
-      style={{ zIndex: hovered ? 30 : 10, width: 144, height: 168 }}
+      className="relative shrink-0 cursor-pointer select-none flex items-center justify-center w-[clamp(56px,10vw,140px)] h-[clamp(65px,11.6vw,163px)]"
+      style={{ zIndex: hovered ? 30 : 10 }}
       animate={{
         x: offset,
         scale: hovered ? 1.35 : 1,
@@ -673,7 +673,7 @@ function CertificationBadge({
       ) : (
         // Fallback shield for certifications without a supplied badge image
         <svg
-          width="144" height="168" viewBox="0 0 108 128"
+          width="100%" height="100%" viewBox="0 0 108 128"
           xmlns="http://www.w3.org/2000/svg"
           style={{ filter: hovered ? `drop-shadow(0 0 18px ${accent}66)` : "none" }}
         >
@@ -718,11 +718,11 @@ function CertificationBadge({
 const CertificationsRow = memo(function CertificationsRow() {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   return (
-    <div className="flex flex-wrap items-start justify-center gap-10 md:gap-16 py-14">
+    <div className="flex flex-nowrap items-start justify-center gap-2 sm:gap-4 md:gap-8 py-14 w-full">
       {certifications.map((cert, i) => {
         const hovered = hoverIdx === i;
         const dimmed  = hoverIdx !== null && !hovered;
-        const offset  = hoverIdx === null ? 0 : i < hoverIdx ? -26 : i > hoverIdx ? 26 : 0;
+        const offset  = hoverIdx === null ? 0 : i < hoverIdx ? -18 : i > hoverIdx ? 18 : 0;
         return (
           <div
             key={cert.id}
