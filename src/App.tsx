@@ -555,35 +555,35 @@ const experienceDefs = [
 const certifications = [
   {
     id: "ai901", issuer: "Microsoft", accent: "#0F6CBD",
-    name: "Azure AI Fundamentals", code: "AI-901", image: "/certs/ai-901.webp",
+    name: "Azure AI Fundamentals", code: "AI-901", image: "/ai-901.webp",
   },
   {
     id: "ab731", issuer: "Microsoft", accent: "#7719AA",
-    name: "AI Transformation Leader", code: "AB-731", image: null,
+    name: "AI Transformation Leader", code: "AB-731", image: /ai-transformation-leader,
   },
   {
     id: "ab730", issuer: "Microsoft", accent: "#D83B01",
-    name: "AI Business Professional", code: "AB-730", image: "/certs/ai-business-professional.webp",
+    name: "AI Business Professional", code: "AB-730", image: "/ai-business-professional.webp",
   },
   {
     id: "pbi", issuer: "NASBA", accent: "#F2B705",
-    name: "Power BI Essential Training", code: "", image: "/certs/nasba.png",
+    name: "Power BI Essential Training", code: "", image: "/nasba.png",
   },
   {
     id: "anthropic", issuer: "Anthropic", accent: "#D97757",
-    name: "AI Fluency Framework & Foundations", code: "", image: "/certs/anthropic.jpeg",
+    name: "AI Fluency Framework & Foundations", code: "", image: "/anthropic.jpeg",
   },
   {
     id: "sql", issuer: "HackerRank", accent: "#2EC866",
-    name: "SQL Intermediate", code: "", image: "/certs/hackerrank.png",
+    name: "SQL Intermediate", code: "", image: "/hackerrank.png",
   },
   {
     id: "cisco", issuer: "Cisco", accent: "#049FD9",
-    name: "Data Analytics Essentials", code: "", image: "/certs/cisco.jpeg",
+    name: "Data Analytics Essentials", code: "", image: "/cisco.jpeg",
   },
   {
     id: "lss", issuer: "CLSSYB", accent: "#F2B705",
-    name: "Lean Six Sigma Yellow Belt", code: "", image: "/certs/lss-yellow-belt.webp",
+    name: "Lean Six Sigma Yellow Belt", code: "", image: "/lss-yellow-belt.webp",
   },
 ];
 
