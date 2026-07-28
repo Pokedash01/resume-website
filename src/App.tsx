@@ -559,7 +559,7 @@ const certifications = [
   },
   {
     id: "ab731", issuer: "Microsoft", accent: "#7719AA",
-    name: "AI Transformation Leader", code: "AB-731", image: /ai-transformation-leader,
+    name: "AI Transformation Leader", code: "AB-731", image: /ai-transformation-leader.svg,
   },
   {
     id: "ab730", issuer: "Microsoft", accent: "#D83B01",
