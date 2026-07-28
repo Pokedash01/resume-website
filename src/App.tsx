@@ -559,7 +559,7 @@ const certifications = [
   },
   {
     id: "ab731", issuer: "Microsoft", accent: "#7719AA",
-    name: "AI Transformation Leader", code: "AB-731", image: /ai-transformation-leader.svg,
+    name: "AI Transformation Leader", code: "AB-731", image: "/ai-transformation-leader.svg",
   },
   {
     id: "ab730", issuer: "Microsoft", accent: "#D83B01",
@@ -718,7 +718,7 @@ function CertificationBadge({
 const CertificationsRow = memo(function CertificationsRow() {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   return (
-    <div className="flex items-start justify-center gap-3 md:gap-5 py-10 overflow-x-auto">
+    <div className="no-scrollbar flex items-start justify-center gap-3 md:gap-5 py-10 overflow-x-auto">
       {certifications.map((cert, i) => {
         const hovered = hoverIdx === i;
         const dimmed  = hoverIdx !== null && !hovered;
@@ -761,6 +761,8 @@ export default function App() {
         @keyframes marquee  { from { transform:translateX(0); } to { transform:translateX(-50%); } }
         @keyframes dotblink { 0%,100% { opacity:1; } 50% { opacity:0.15; } }
         section[id] { scroll-margin-top: 100px; }
+        .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
       `}</style>
 
       {/* Custom cursor — desktop only */}
