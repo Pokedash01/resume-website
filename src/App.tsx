@@ -559,7 +559,7 @@ const certifications = [
     url: "https://learn.microsoft.com/api/credentials/share/en-us/KartikBhatt-9674/36CD65E522C4D856?sharingId", // e.g. your Microsoft Learn "Show credential" share link
   },
   {
-    id: "ab731", issuer: "Microsoft", accent: "#7719AA",
+    id: "ab731", issuer: "Microsoft", accent: "#D83B01",
     name: "AI Transformation Leader", code: "AB-731", image: "/ai-transformation-leader.svg",
     url: "https://learn.microsoft.com/api/credentials/share/en-us/KartikBhatt-9674/C3EAB8B975263DC4?sharingId=E5019B4408E33F28",
   },
@@ -574,7 +574,7 @@ const certifications = [
     url: "",
   },
   {
-    id: "pbi", issuer: "NASBA", accent: "#001489",
+    id: "pbi", issuer: "NASBA", accent: "#314EF5",
     name: "Power BI Essential Training", code: "", image: "/nasba.png",
     url: "https://www.linkedin.com/learning/certificates/9e8c7d709aa9da810e5dff415caf1d30ff07a2d1a6009bfd6aad17ffbda3e771?u=88586714",
   },
