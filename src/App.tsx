@@ -575,7 +575,7 @@ const certifications = [
   },
   {
     id: "pbi", issuer: "NASBA", accent: "#314EF5",
-    name: "Power BI Essential Training", code: "", image: "/nasba.png",
+    name: "Power BI Essential Training", code: "", image: "/nasba.webp",
     url: "https://www.linkedin.com/learning/certificates/9e8c7d709aa9da810e5dff415caf1d30ff07a2d1a6009bfd6aad17ffbda3e771?u=88586714",
   },
   {
