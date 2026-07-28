@@ -556,35 +556,44 @@ const certifications = [
   {
     id: "ai901", issuer: "Microsoft", accent: "#0F6CBD",
     name: "Azure AI Fundamentals", code: "AI-901", image: "/ai-901.webp",
+    url: "https://learn.microsoft.com/api/credentials/share/en-us/KartikBhatt-9674/36CD65E522C4D856?sharingId", // e.g. your Microsoft Learn "Show credential" share link
   },
   {
     id: "ab731", issuer: "Microsoft", accent: "#7719AA",
     name: "AI Transformation Leader", code: "AB-731", image: "/ai-transformation-leader.svg",
+    url: "https://learn.microsoft.com/api/credentials/share/en-us/KartikBhatt-9674/C3EAB8B975263DC4?sharingId=E5019B4408E33F28",
   },
   {
     id: "ab730", issuer: "Microsoft", accent: "#D83B01",
     name: "AI Business Professional", code: "AB-730", image: "/ai-business-professional.webp",
+    url: "https://learn.microsoft.com/api/credentials/share/en-gb/KartikBhatt-9674/93E6DA71E489D648?sharingId",
   },
   {
-    id: "lss", issuer: "CLSSYB", accent: "#F2B705",
+    id: "lss", issuer: "KPMG", accent: "#F2B705",
     name: "Lean Six Sigma Yellow Belt", code: "", image: "/lss-yellow-belt.webp",
+    url: "",
   },
   {
     id: "pbi", issuer: "NASBA", accent: "#001489",
     name: "Power BI Essential Training", code: "", image: "/nasba.png",
+    url: "https://www.linkedin.com/learning/certificates/9e8c7d709aa9da810e5dff415caf1d30ff07a2d1a6009bfd6aad17ffbda3e771?u=88586714",
   },
   {
     id: "anthropic", issuer: "Anthropic", accent: "#D97757",
     name: "AI Fluency Framework & Foundations", code: "", image: "/anthropic.jpeg",
+    url: "https://verify.skilljar.com/c/8d48xix5aujm",
   },
   {
     id: "sql", issuer: "HackerRank", accent: "#2EC866",
     name: "SQL Intermediate", code: "", image: "/hackerrank.png",
+    url: "https://www.hackerrank.com/certificates/2084c5c6364c",
   },
   {
     id: "cisco", issuer: "Cisco", accent: "#049FD9",
-    name: "Data Analytics Essentials", code: "", image: "/cisco.jpeg",
+    name: "Data Analytics Essentials", code: "", image: "/cisco.png",
+    url: "https://www.credly.com/badges/eccf1481-fea5-4a16-b999-5f085aefa4f8/print",
   },
+
 ];
 
 const awards = [
@@ -649,21 +658,8 @@ function CertificationBadge({
   dimmed: boolean;
   offset: number;
 }) {
-  const { accent, name, code, issuer, image } = cert;
-  return (
-    <motion.div
-      className="relative shrink-0 cursor-pointer select-none flex items-center justify-center w-[clamp(56px,10vw,140px)] h-[clamp(65px,11.6vw,163px)]"
-      style={{ zIndex: hovered ? 30 : 10 }}
-      animate={{
-        x: offset,
-        scale: hovered ? 1.35 : 1,
-        y: hovered ? -18 : 0,
-        opacity: dimmed ? 0.35 : 1,
-      }}
-      transition={{ type: "spring", stiffness: 260, damping: 24 }}
-      data-hover
-    >
-      {image ? (
+  const { accent, name, code, issuer, image, url } = cert;
+  const badgeVisual = image ? (
         <img
           src={image}
           alt={`${issuer} — ${name}`}
@@ -696,6 +692,33 @@ function CertificationBadge({
             {name.split(" ").slice(2).join(" ").toUpperCase()}
           </text>
         </svg>
+  );
+
+  return (
+    <motion.div
+      className="relative shrink-0 cursor-pointer select-none flex items-center justify-center w-[clamp(56px,10vw,140px)] h-[clamp(65px,11.6vw,163px)]"
+      style={{ zIndex: hovered ? 30 : 10 }}
+      animate={{
+        x: offset,
+        scale: hovered ? 1.35 : 1,
+        y: hovered ? -18 : 0,
+        opacity: dimmed ? 0.35 : 1,
+      }}
+      transition={{ type: "spring", stiffness: 260, damping: 24 }}
+      data-hover
+    >
+      {url ? (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`View ${issuer} ${name} credential`}
+          className="w-full h-full flex items-center justify-center"
+        >
+          {badgeVisual}
+        </a>
+      ) : (
+        badgeVisual
       )}
       <AnimatePresence>
         {hovered && (
