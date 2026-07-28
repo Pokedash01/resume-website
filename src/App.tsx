@@ -653,11 +653,11 @@ function CertificationBadge({
   return (
     <motion.div
       className="relative shrink-0 cursor-pointer select-none flex items-center justify-center"
-      style={{ zIndex: hovered ? 30 : 10, width: 96, height: 112 }}
+      style={{ zIndex: hovered ? 30 : 10, width: 144, height: 168 }}
       animate={{
         x: offset,
-        scale: hovered ? 1.55 : 1,
-        y: hovered ? -16 : 0,
+        scale: hovered ? 1.35 : 1,
+        y: hovered ? -18 : 0,
         opacity: dimmed ? 0.35 : 1,
       }}
       transition={{ type: "spring", stiffness: 260, damping: 24 }}
@@ -673,7 +673,7 @@ function CertificationBadge({
       ) : (
         // Fallback shield for certifications without a supplied badge image
         <svg
-          width="96" height="112" viewBox="0 0 108 128"
+          width="144" height="168" viewBox="0 0 108 128"
           xmlns="http://www.w3.org/2000/svg"
           style={{ filter: hovered ? `drop-shadow(0 0 18px ${accent}66)` : "none" }}
         >
@@ -718,11 +718,11 @@ function CertificationBadge({
 const CertificationsRow = memo(function CertificationsRow() {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   return (
-    <div className="no-scrollbar flex items-start justify-center gap-3 md:gap-5 py-10 overflow-x-auto">
+    <div className="flex flex-wrap items-start justify-center gap-10 md:gap-16 py-14">
       {certifications.map((cert, i) => {
         const hovered = hoverIdx === i;
         const dimmed  = hoverIdx !== null && !hovered;
-        const offset  = hoverIdx === null ? 0 : i < hoverIdx ? -16 : i > hoverIdx ? 16 : 0;
+        const offset  = hoverIdx === null ? 0 : i < hoverIdx ? -26 : i > hoverIdx ? 26 : 0;
         return (
           <div
             key={cert.id}
@@ -761,8 +761,6 @@ export default function App() {
         @keyframes marquee  { from { transform:translateX(0); } to { transform:translateX(-50%); } }
         @keyframes dotblink { 0%,100% { opacity:1; } 50% { opacity:0.15; } }
         section[id] { scroll-margin-top: 100px; }
-        .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
-        .no-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
       `}</style>
 
       {/* Custom cursor — desktop only */}
