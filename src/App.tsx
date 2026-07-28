@@ -566,7 +566,11 @@ const certifications = [
     name: "AI Business Professional", code: "AB-730", image: "/ai-business-professional.webp",
   },
   {
-    id: "pbi", issuer: "NASBA", accent: "#F2B705",
+    id: "lss", issuer: "CLSSYB", accent: "#F2B705",
+    name: "Lean Six Sigma Yellow Belt", code: "", image: "/lss-yellow-belt.webp",
+  },
+  {
+    id: "pbi", issuer: "NASBA", accent: "#001489",
     name: "Power BI Essential Training", code: "", image: "/nasba.png",
   },
   {
@@ -580,10 +584,6 @@ const certifications = [
   {
     id: "cisco", issuer: "Cisco", accent: "#049FD9",
     name: "Data Analytics Essentials", code: "", image: "/cisco.jpeg",
-  },
-  {
-    id: "lss", issuer: "CLSSYB", accent: "#F2B705",
-    name: "Lean Six Sigma Yellow Belt", code: "", image: "/lss-yellow-belt.webp",
   },
 ];
 
