@@ -555,31 +555,35 @@ const experienceDefs = [
 const certifications = [
   {
     id: "ai901", issuer: "Microsoft", accent: "#0F6CBD",
-    title: "AZURE AI", sub: "FUNDAMENTALS", code: "AI-901",
+    name: "Azure AI Fundamentals", code: "AI-901", image: "/certs/ai-901.webp",
   },
   {
     id: "ab731", issuer: "Microsoft", accent: "#7719AA",
-    title: "AI TRANSFORMATION", sub: "LEADER", code: "AB-731",
+    name: "AI Transformation Leader", code: "AB-731", image: null,
   },
   {
     id: "ab730", issuer: "Microsoft", accent: "#D83B01",
-    title: "AI BUSINESS", sub: "PROFESSIONAL", code: "AB-730",
+    name: "AI Business Professional", code: "AB-730", image: "/certs/ai-business-professional.webp",
   },
   {
     id: "pbi", issuer: "NASBA", accent: "#F2B705",
-    title: "POWER BI", sub: "ESSENTIAL TRAINING", code: "",
+    name: "Power BI Essential Training", code: "", image: "/certs/nasba.png",
   },
   {
     id: "anthropic", issuer: "Anthropic", accent: "#D97757",
-    title: "AI FLUENCY", sub: "FRAMEWORK", code: "",
+    name: "AI Fluency Framework & Foundations", code: "", image: "/certs/anthropic.jpeg",
   },
   {
     id: "sql", issuer: "HackerRank", accent: "#2EC866",
-    title: "SQL", sub: "INTERMEDIATE", code: "",
+    name: "SQL Intermediate", code: "", image: "/certs/hackerrank.png",
   },
   {
     id: "cisco", issuer: "Cisco", accent: "#049FD9",
-    title: "DATA ANALYTICS", sub: "ESSENTIALS", code: "",
+    name: "Data Analytics Essentials", code: "", image: "/certs/cisco.jpeg",
+  },
+  {
+    id: "lss", issuer: "CLSSYB", accent: "#F2B705",
+    name: "Lean Six Sigma Yellow Belt", code: "", image: "/certs/lss-yellow-belt.webp",
   },
 ];
 
@@ -645,48 +649,54 @@ function CertificationBadge({
   dimmed: boolean;
   offset: number;
 }) {
-  const { accent, title, sub, code, issuer } = cert;
+  const { accent, name, code, issuer, image } = cert;
   return (
     <motion.div
-      className="relative shrink-0 cursor-pointer select-none"
-      style={{ zIndex: hovered ? 30 : 10 }}
+      className="relative shrink-0 cursor-pointer select-none flex items-center justify-center"
+      style={{ zIndex: hovered ? 30 : 10, width: 96, height: 112 }}
       animate={{
         x: offset,
-        scale: hovered ? 1.45 : 1,
-        y: hovered ? -14 : 0,
+        scale: hovered ? 1.55 : 1,
+        y: hovered ? -16 : 0,
         opacity: dimmed ? 0.35 : 1,
       }}
       transition={{ type: "spring", stiffness: 260, damping: 24 }}
       data-hover
     >
-      <svg
-        width="108" height="128" viewBox="0 0 108 128"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ filter: hovered ? `drop-shadow(0 0 18px ${accent}55)` : "none" }}
-      >
-        {/* Shield outline — no fill / no background */}
-        <path
-          d="M54 4 L100 20 V60 C100 92 80 112 54 124 C28 112 8 92 8 60 V20 Z"
-          fill="none" stroke={accent} strokeWidth="2.5"
+      {image ? (
+        <img
+          src={image}
+          alt={`${issuer} — ${name}`}
+          className="w-full h-full object-contain"
+          style={{ filter: hovered ? `drop-shadow(0 0 18px ${accent}66)` : "none" }}
         />
-        {/* Ribbon banner */}
-        <path
-          d="M2 56 Q54 44 106 56 L106 78 Q54 66 2 78 Z"
-          fill="#0A0A0A" stroke={accent} strokeWidth="1.6"
-        />
-        {/* Star in lower shield field */}
-        <path
-          d="M54 88 L57.6 95.4 L65.7 96.6 L59.8 102.3 L61.2 110.4 L54 106.6 L46.8 110.4 L48.2 102.3 L42.3 96.6 L50.4 95.4 Z"
-          fill={accent} opacity="0.9"
-        />
-        {/* Titles inside the ribbon */}
-        <text x="54" y="63" textAnchor="middle" fontSize="7.6" fontWeight="900" fill="#fff" letterSpacing="0.02em">
-          {title}
-        </text>
-        <text x="54" y="72.5" textAnchor="middle" fontSize="5.6" fontWeight="700" fill={accent} letterSpacing="0.03em">
-          {sub}
-        </text>
-      </svg>
+      ) : (
+        // Fallback shield for certifications without a supplied badge image
+        <svg
+          width="96" height="112" viewBox="0 0 108 128"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ filter: hovered ? `drop-shadow(0 0 18px ${accent}66)` : "none" }}
+        >
+          <path
+            d="M54 4 L100 20 V60 C100 92 80 112 54 124 C28 112 8 92 8 60 V20 Z"
+            fill="none" stroke={accent} strokeWidth="2.5"
+          />
+          <path
+            d="M2 56 Q54 44 106 56 L106 78 Q54 66 2 78 Z"
+            fill="#0A0A0A" stroke={accent} strokeWidth="1.6"
+          />
+          <path
+            d="M54 88 L57.6 95.4 L65.7 96.6 L59.8 102.3 L61.2 110.4 L54 106.6 L46.8 110.4 L48.2 102.3 L42.3 96.6 L50.4 95.4 Z"
+            fill={accent} opacity="0.9"
+          />
+          <text x="54" y="63" textAnchor="middle" fontSize="7.6" fontWeight="900" fill="#fff" letterSpacing="0.02em">
+            {name.split(" ").slice(0, 2).join(" ").toUpperCase()}
+          </text>
+          <text x="54" y="72.5" textAnchor="middle" fontSize="5.6" fontWeight="700" fill={accent} letterSpacing="0.03em">
+            {name.split(" ").slice(2).join(" ").toUpperCase()}
+          </text>
+        </svg>
+      )}
       <AnimatePresence>
         {hovered && (
           <motion.div
@@ -697,7 +707,7 @@ function CertificationBadge({
             className="absolute left-1/2 -translate-x-1/2 top-full mt-3 w-max text-center"
           >
             <div className="text-[10px] font-black tracking-widest uppercase" style={{ color: accent }}>{issuer}</div>
-            {code && <div className="text-[9px] font-bold text-white/40 tracking-widest">{code}</div>}
+            <div className="text-[9px] font-bold text-white/40 tracking-widest">{code || name}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1204,15 +1214,12 @@ export default function App() {
                   className="text-4xl md:text-[54px] leading-[0.9] mb-4 lowercase"
                   dimFrom={1} greenWords={["claims."]}
                 />
-                <p className="text-white/40 text-sm font-light mb-2">Hover a badge to bring it forward.</p>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={VP}
                 >
-                  <GlassCard className="px-4 md:px-10">
-                    <CertificationsRow />
-                  </GlassCard>
+                  <CertificationsRow />
                 </motion.div>
               </div>
             </section>
