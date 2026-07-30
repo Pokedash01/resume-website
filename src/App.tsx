@@ -134,7 +134,7 @@ const LoadingScreen = memo(function LoadingScreen({ onComplete }: { onComplete: 
               kartik<span className="text-[#D9FF00]">_</span>
             </div>
             <div className="text-[10px] font-bold tracking-[0.5em] text-white/20 uppercase mt-3">
-              Knowledge Management · Business Analysis · Automation Development
+              Power Platform · Copilot Studio · Sharepoint
             </div>
           </motion.div>
 
@@ -876,9 +876,9 @@ export default function App() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, ease: [0.16,1,0.3,1], delay: 0.45 }}
                 >
-                  Knowledge Management &amp; Business Analyst.<br />
+                  Knowledge Manager &amp; Business Analyst<br />
                   <span className="text-white/30 text-sm font-mono tracking-widest uppercase mt-3 block">
-                    power platform · copilot · sharepoint
+                    power platform · copilot studio · sharepoint
                   </span>
                 </motion.p>
 
