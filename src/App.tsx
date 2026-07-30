@@ -134,7 +134,7 @@ const LoadingScreen = memo(function LoadingScreen({ onComplete }: { onComplete: 
               kartik<span className="text-[#D9FF00]">_</span>
             </div>
             <div className="text-[10px] font-bold tracking-[0.5em] text-white/20 uppercase mt-3">
-              Knowledge Management · Power Platform · GenAI
+              Knowledge Management · Business Analysis · Automation Development
             </div>
           </motion.div>
 
@@ -457,11 +457,11 @@ const stats = [
 ];
 
 const chartData = [
-  { name: "Harvesting App",      hours: 1200, color: "#D9FF00" },
-  { name: "Assets Library Mgmt", hours: 200,  color: "#34D399" },
-  { name: "Legacy Excel to SPO", hours: 500,  color: "#A855F7" },
-  { name: "Pillar Metrices",     hours: 185,  color: "#F43F5E" },
-  { name: "AI Agents",           hours: 100,  color: "#F59E0B" },
+  { name: "Power Platform",      hours: 1200, color: "#D9FF00" },
+  { name: "AI Agents",           hours: 425,  color: "#34D399" },
+  { name: "VBA Macros",          hours: 385,  color: "#A855F7" },
+  { name: "SharePoint Lists",    hours: 150,  color: "#F43F5E" },
+  { name: "Process Optimization",hours: 100,  color: "#F59E0B" },
 ];
 
 const impactMetrics = [
@@ -483,9 +483,9 @@ const projects = [
     tags: ["SHAREPOINT ONLINE","POWER APPS","POWER AUTOMATE"], impact: "500 hrs saved",
   },
   {
-    org: "KPMG", title: "Global Sector Contact Repository",
-    desc: "Comprehensive repository for sector contacts spanning globe-wide KPMG members with curated sector pages.",
-    tags: ["SHAREPOINT","KNOWLEDGE MGMT","METADATA MGMT"], impact: "5,000+ members",
+    org: "KPMG", title: "Content Drafter Copilot Agent",
+    desc: "Coplilot agent to assist with messy data, draft fields, and apply metadata tags based on source and guidelines.",
+    tags: ["COPILOT STUDIO","LEAN SIX SIGMA","GENAI"], impact: "325 hrs saved",
   },
   {
     org: "KPMG", title: "Engagement Metrics Dashboard",
@@ -513,7 +513,7 @@ const toolkitGroups = [
 
 const skills = [
   "Power Apps","Power Automate","Power BI","SharePoint",
-  "SQL","Copilot","Gen AI","AI Agents","GenAI Workflows","RFP / RFI",
+  "SQL","Copilot","GenAI","AI Agents","GenAI Workflows","RFP / RFI",
 ];
 
 // Experience entries — start/end as Date objects for live tenure
@@ -878,7 +878,7 @@ export default function App() {
                 >
                   Knowledge Management &amp; Business Analyst.<br />
                   <span className="text-white/30 text-sm font-mono tracking-widest uppercase mt-3 block">
-                    power platform · genai · sharepoint
+                    power platform · copilot · sharepoint
                   </span>
                 </motion.p>
 
