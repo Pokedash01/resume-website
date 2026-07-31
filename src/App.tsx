@@ -507,13 +507,13 @@ const projects = [
 const toolkitGroups = [
   { category: "Power Platform",  items: ["Power Apps","Power Automate","Power BI"]          },
   { category: "Microsoft 365",   items: ["SharePoint Online","Excel","PowerPoint"]           },
-  { category: "AI & GenAI",      items: ["Copilot","AI Agents","GenAI Workflows"]            },
+  { category: "AI & GenAI",      items: ["Copilot Studio","AI Agents","GenAI Workflows"]            },
   { category: "Knowledge Mgmt.", items: ["RFP / RFI","Taxonomy / Metadata Mgmt.","SQL"]     },
 ];
 
 const skills = [
   "Power Apps","Power Automate","Power BI","SharePoint",
-  "SQL","Copilot","GenAI","AI Agents","GenAI Workflows","RFP / RFI",
+  "SQL","Copilot Studio","GenAI","AI Agents","GenAI Workflows","RFP / RFI",
 ];
 
 // Experience entries — start/end as Date objects for live tenure
