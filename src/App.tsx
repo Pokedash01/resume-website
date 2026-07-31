@@ -458,8 +458,8 @@ const stats = [
 
 const chartData = [
   { name: "Power Platform",      hours: 1200, color: "#D9FF00" },
-  { name: "AI Agents",           hours: 425,  color: "#34D399" },
-  { name: "VBA Macros",          hours: 385,  color: "#A855F7" },
+  { name: "VBA Macros",          hours: 785,  color: "#34D399" },
+  { name: "Copilot Agents",      hours: 325,  color: "#A855F7" },
   { name: "SharePoint Lists",    hours: 150,  color: "#F43F5E" },
   { name: "Process Optimization",hours: 100,  color: "#F59E0B" },
 ];
@@ -1176,7 +1176,7 @@ export default function App() {
                           </h3>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-black text-[#D9FF00]">2,185_hrs</div>
+                          <div className="text-2xl font-black text-[#D9FF00]">2,560_hrs</div>
                           <div className="text-[9px] font-bold tracking-widest text-white/20 uppercase">Total Saved</div>
                         </div>
                       </div>
