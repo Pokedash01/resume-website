@@ -805,39 +805,99 @@ export default function App() {
 
             {/* ── NAV ─────────────────────────────────────────── */}
             <motion.div
-              className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl z-[999]"
+              className="fixed left-1/2 -translate-x-1/2 z-[999]"
               initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              animate={{
+                opacity: 1,
+                y: scrolled ? 8 : 0,
+                width: scrolled ? "92%" : "95%",
+                maxWidth: scrolled ? "1180px" : "1280px",
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 180,
+                damping: 24,
+                mass: 0.8,
+              }}
             >
-              <nav
-                className="backdrop-blur-[24px] border rounded-2xl px-6 md:px-10 h-16 flex items-center justify-between"
-                style={{
-                  background:  scrolled ? "rgba(0,0,0,0.60)" : "rgba(0,0,0,0)",
-                  borderColor: scrolled ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0)",
-                  boxShadow:   scrolled ? "0 8px 32px rgba(0,0,0,0.45),0 0 0 1px rgba(217,255,0,0.04),inset 0 1px 0 rgba(217,255,0,0.06)" : "none",
-                  transition: "background 0.4s ease,border-color 0.4s ease,box-shadow 0.4s ease",
+              <motion.nav
+                className="px-6 md:px-10 flex items-center justify-between overflow-hidden"
+                animate={{
+                  height: scrolled ? 56 : 64,
+                  borderRadius: scrolled ? 22 : 16,
+            
+                  backgroundColor: scrolled
+                    ? "rgba(0,0,0,0.60)"
+                    : "rgba(0,0,0,0)",
+            
+                  borderColor: scrolled
+                    ? "rgba(255,255,255,0.10)"
+                    : "rgba(255,255,255,0)",
+            
+                  boxShadow: scrolled
+                    ? "0 10px 35px rgba(0,0,0,0.45), 0 0 0 1px rgba(217,255,0,0.04), inset 0 1px 0 rgba(217,255,0,0.06)"
+                    : "none",
+            
+                  backdropFilter: scrolled
+                    ? "blur(24px)"
+                    : "blur(0px)",
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 190,
+                  damping: 25,
+                  mass: 0.75,
                 }}
               >
+            
+                {/* KEEP YOUR EXISTING CONTENT EXACTLY THE SAME */}
+            
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-[#D9FF00] rounded-full" style={{ animation:"dotblink 2.4s ease-in-out infinite" }} />
-                  <span className="font-bold tracking-tighter text-sm uppercase">kartik.bhatt</span>
+                  <motion.div
+                    className="w-2 h-2 bg-[#D9FF00] rounded-full"
+                    style={{ animation: "dotblink 2.4s ease-in-out infinite" }}
+                    animate={{
+                      scale: scrolled ? 0.85 : 1,
+                    }}
+                  />
+            
+                  <span className="font-bold tracking-tighter text-sm uppercase">
+                    kartik.bhatt
+                  </span>
                 </div>
+            
                 <div className="hidden md:flex gap-5 text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase">
                   {["about","experience","education","toolkit","work","certifications","honors","contact"].map(link => (
-                    <a key={link} href={`#${link}`} className="hover:text-[#D9FF00] transition-colors">
-                      {link === "work" ? "Projects" : link.charAt(0).toUpperCase() + link.slice(1)}
+                    <a
+                      key={link}
+                      href={`#${link}`}
+                      className="hover:text-[#D9FF00] transition-colors"
+                    >
+                      {link === "work"
+                        ? "Projects"
+                        : link.charAt(0).toUpperCase() + link.slice(1)}
                     </a>
                   ))}
                 </div>
-                <a href="/Resume.pdf" download="Kartik_Bhatt_Resume.pdf" target="_blank" rel="noreferrer">
-                  <button className="bg-[#D9FF00] text-black px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform">
+            
+                <a
+                  href="/Resume.pdf"
+                  download="Kartik_Bhatt_Resume.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-[#D9FF00] text-black px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2"
+                  >
                     Resume <Download size={12} />
-                  </button>
+                  </motion.button>
                 </a>
-              </nav>
+            
+              </motion.nav>
             </motion.div>
-
+            
             {/* ══════════════════════════════════════════════════
                 HERO — uses `animate` NOT `whileInView`
                 because hero is already in viewport on load.
