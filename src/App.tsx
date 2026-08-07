@@ -805,28 +805,30 @@ export default function App() {
 
             {/* ── NAV ─────────────────────────────────────────── */}
             <motion.div
-              className="fixed left-1/2 -translate-x-1/2 z-[999]"
-              initial={{ opacity: 0, y: -20 }}
+              className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[92%] max-w-7xl z-[999]"
+              initial={{
+                opacity: 0,
+                y: -18,
+                scale: 0.96,
+              }}
               animate={{
                 opacity: 1,
-                y: scrolled ? 8 : 0,
-                width: scrolled ? "92%" : "95%",
-                maxWidth: scrolled ? "1180px" : "1280px",
+                y: 0,
+                scale: 1,
               }}
               transition={{
-                type: "spring",
-                stiffness: 180,
-                damping: 24,
-                mass: 0.8,
+                duration: 0.7,
+                ease: [0.16, 1, 0.3, 1],
+                delay: 0.15,
               }}
             >
-              <motion.nav
-                className="px-6 md:px-10 flex items-center justify-between overflow-hidden"
-                animate={{
-                  height: scrolled ? 56 : 64,
-                  borderRadius: scrolled ? 22 : 16,
+              {/* FLASHING BORDER */}
+              <div className="nav-border-flash pointer-events-none" />
             
-                  backgroundColor: scrolled
+              <nav
+                className="relative backdrop-blur-[24px] border rounded-2xl px-6 md:px-10 h-16 flex items-center justify-between"
+                style={{
+                  background: scrolled
                     ? "rgba(0,0,0,0.60)"
                     : "rgba(0,0,0,0)",
             
@@ -835,29 +837,21 @@ export default function App() {
                     : "rgba(255,255,255,0)",
             
                   boxShadow: scrolled
-                    ? "0 10px 35px rgba(0,0,0,0.45), 0 0 0 1px rgba(217,255,0,0.04), inset 0 1px 0 rgba(217,255,0,0.06)"
+                    ? "0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(217,255,0,0.04), inset 0 1px 0 rgba(217,255,0,0.06)"
                     : "none",
             
-                  backdropFilter: scrolled
-                    ? "blur(24px)"
-                    : "blur(0px)",
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 190,
-                  damping: 25,
-                  mass: 0.75,
+                  transition:
+                    "background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease",
                 }}
               >
             
-                {/* KEEP YOUR EXISTING CONTENT EXACTLY THE SAME */}
+                {/* YOUR EXISTING CONTENT — DO NOT CHANGE */}
             
                 <div className="flex items-center gap-2">
-                  <motion.div
+                  <div
                     className="w-2 h-2 bg-[#D9FF00] rounded-full"
-                    style={{ animation: "dotblink 2.4s ease-in-out infinite" }}
-                    animate={{
-                      scale: scrolled ? 0.85 : 1,
+                    style={{
+                      animation: "dotblink 2.4s ease-in-out infinite",
                     }}
                   />
             
@@ -867,7 +861,16 @@ export default function App() {
                 </div>
             
                 <div className="hidden md:flex gap-5 text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase">
-                  {["about","experience","education","toolkit","work","certifications","honors","contact"].map(link => (
+                  {[
+                    "about",
+                    "experience",
+                    "education",
+                    "toolkit",
+                    "work",
+                    "certifications",
+                    "honors",
+                    "contact",
+                  ].map((link) => (
                     <a
                       key={link}
                       href={`#${link}`}
@@ -886,17 +889,13 @@ export default function App() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="bg-[#D9FF00] text-black px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2"
-                  >
+                  <button className="bg-[#D9FF00] text-black px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform">
                     Resume <Download size={12} />
-                  </motion.button>
+                  </button>
                 </a>
             
-              </motion.nav>
-            </motion.div>
+              </nav>
+            </motion.div>         
             
             {/* ══════════════════════════════════════════════════
                 HERO — uses `animate` NOT `whileInView`
