@@ -558,6 +558,11 @@ const certifications = [
     name: "Azure AI Fundamentals", code: "AI-901", image: "/ai-901.webp",
     url: "https://learn.microsoft.com/api/credentials/share/en-us/KartikBhatt-9674/36CD65E522C4D856?sharingId", // e.g. your Microsoft Learn "Show credential" share link
   },
+   {
+    id: "agenticaioracle", issuer: "Oracle", accent: "#C74634",
+    name: "Agentic AI Certified Foundations Associate", code: "", image: "/oracle.jpg",
+    url: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=FC5EEEF261EFB38E89BA1D693D13D762945C8B8DA908F314D2CFB18501BFAD70", // e.g. your Microsoft Learn "Show credential" share link
+  },
   {
     id: "ab731", issuer: "Microsoft", accent: "#D83B01",
     name: "AI Transformation Leader", code: "AB-731", image: "/ai-transformation-leader.svg",
@@ -582,11 +587,6 @@ const certifications = [
     id: "anthropic", issuer: "Anthropic", accent: "#D97757",
     name: "AI Fluency Framework & Foundations", code: "", image: "/anthropic.jpeg",
     url: "https://verify.skilljar.com/c/8d48xix5aujm",
-  },
-  {
-    id: "sql", issuer: "HackerRank", accent: "#2EC866",
-    name: "SQL Intermediate", code: "", image: "/hackerrank.png",
-    url: "https://www.hackerrank.com/certificates/2084c5c6364c",
   },
   {
     id: "cisco", issuer: "Cisco", accent: "#049FD9",
