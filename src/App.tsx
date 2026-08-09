@@ -560,7 +560,7 @@ const certifications = [
   },
    {
     id: "agenticaioracle", issuer: "Oracle", accent: "#C74634",
-    name: "Agentic AI Certified Foundations Associate", code: "", image: "/Oracle.jpg",
+    name: "Agentic AI Certified Foundations Associate", code: "", image: "/oracle.png",
     url: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=FC5EEEF261EFB38E89BA1D693D13D762945C8B8DA908F314D2CFB18501BFAD70", // e.g. your Microsoft Learn "Show credential" share link
   },
   {
