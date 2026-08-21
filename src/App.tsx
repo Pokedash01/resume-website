@@ -576,7 +576,7 @@ const certifications = [
   {
     id: "lss", issuer: "KPMG", accent: "#F2B705",
     name: "Lean Six Sigma Yellow Belt", code: "", image: "/lss-yellow-belt.webp",
-    url: "",
+    url: "https://www.linkedin.com/in/kartik-bhatt-b77249219/overlay/Certifications/588596833/treasury/?profileId=ACoAADcH70sBCPygwhhyc7sNsaMsnUNn8mJC50I",
   },
   {
     id: "pbi", issuer: "NASBA", accent: "#314EF5",
