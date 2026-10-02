@@ -519,13 +519,29 @@ const skills = [
 // Experience entries — start/end as Date objects for live tenure
 const experienceDefs = [
   {
-    start:   new Date(2024, 4, 1),  // May 2024
+    id:      "kpmg-ba",
+    start:   new Date(2026, 9, 1),  // Oct 2026
     end:     null as Date | null,   // ongoing
-    dateStr: "MAY 2024 — PRESENT",
+    dateStr: "OCT 2026 — PRESENT",
+    org:     "KPMG",
+    role:    "Business Associate — Knowledge Management",
+    city:    "GURUGRAM, HARYANA",
+    desc:    "Promoted to Business Associate, taking on broader ownership of knowledge management initiatives, stakeholder engagement, and Power Platform automation across sectors.",
+    bullets: [
+      "Expanded scope across Power Platform & SharePoint Online",
+      "Continued 360° stakeholder management across 13 sectors",
+      "Promoted from Analyst after 2+ years of delivery",
+    ],
+  },
+  {
+    id:      "kpmg-analyst",
+    start:   new Date(2024, 4, 1),  // May 2024
+    end:     new Date(2026, 9, 1) as Date | null,  // Oct 2026 (promotion)
+    dateStr: "MAY 2024 — SEP 2026",
     org:     "KPMG",
     role:    "Analyst — Knowledge Management",
     city:    "GURUGRAM, HARYANA",
-    desc:    "Leading cross-functional projects across 13 sectors with 360° stakeholder management, business development, and Power Platform automation.",
+    desc:    "Led cross-functional projects across 13 sectors with 360° stakeholder management, business development, and Power Platform automation.",
     bullets: [
       "Power Platform automation & SharePoint Online ecosystem",
       "360° stakeholder management across 13 sectors",
@@ -533,6 +549,7 @@ const experienceDefs = [
     ],
   },
   {
+    id:      "globallogic",
     start:   new Date(2022, 8, 1),  // Sep 2022
     end:     new Date(2023, 9, 1),  // Oct 2023
     dateStr: "SEP 2022 — OCT 2023",
@@ -972,7 +989,7 @@ export default function App() {
                   <div className="absolute bottom-8 left-8 z-20">
                     <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full">
                       <div className="w-1.5 h-1.5 bg-[#D9FF00] rounded-full animate-pulse" />
-                      <span className="text-[10px] font-bold tracking-widest uppercase text-white/80">ANALYST · KPMG</span>
+                      <span className="text-[10px] font-bold tracking-widest uppercase text-white/80">BUSINESS ASSOCIATE · KPMG</span>
                     </div>
                   </div>
                 </div>
@@ -1022,11 +1039,11 @@ export default function App() {
                     <GlassCard className="p-9">
                       <div className="text-[10px] font-bold tracking-[0.3em] text-[#D9FF00] uppercase mb-7">/ At a Glance</div>
                       {[
-                        { l:"NAME",   v:"Kartik Bhatt"          },
-                        { l:"ROLE",   v:"Analyst · KPMG"         },
-                        { l:"BASED",  v:"Delhi, India"            },
-                        { l:"DEGREE", v:"BCA · Computer Science" },
-                        { l:"GPA",    v:"9.3 / 10 · top 1%"     },
+                        { l:"NAME",   v:"Kartik Bhatt"                },
+                        { l:"ROLE",   v:"Business Associate · KPMG"   },
+                        { l:"BASED",  v:"Delhi, India"                },
+                        { l:"DEGREE", v:"BCA · Computer Science"      },
+                        { l:"GPA",    v:"9.3 / 10 · top 1%"           },
                       ].map(item => (
                         <div key={item.l} className="flex justify-between items-center py-3 border-b border-white/5">
                           <span className="text-[9px] font-bold text-white/30 tracking-[0.2em]">{item.l}</span>
@@ -1049,7 +1066,7 @@ export default function App() {
                     const tenure = calcTenure(exp.start, exp.end ?? now);
                     return (
                       <motion.div
-                        key={exp.org}
+                        key={exp.id}
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={VP}
