@@ -516,51 +516,81 @@ const skills = [
   "SQL","Copilot Studio","GenAI","AI Agents","GenAI Workflows","RFP / RFI",
 ];
 
-// Experience entries — start/end as Date objects for live tenure
-const experienceDefs = [
+// Experience — one tile per organisation; each org holds one or more roles
+// (newest first). Start/end are Date objects so tenure is computed live.
+type Role = {
+  title:   string;
+  start:   Date;
+  end:     Date | null;   // null = current role
+  dateStr: string;
+  desc:    string;
+  bullets: string[];
+};
+type Org = {
+  id:      string;
+  org:     string;
+  city:    string;
+  start:   Date;
+  end:     Date | null;
+  dateStr: string;
+  roles:   Role[];
+};
+
+const experienceDefs: Org[] = [
   {
-    id:      "kpmg-ba",
-    start:   new Date(2026, 9, 1),  // Oct 2026
-    end:     null as Date | null,   // ongoing
-    dateStr: "OCT 2026 — PRESENT",
+    id:      "kpmg",
     org:     "KPMG",
-    role:    "Business Associate — Knowledge Management",
     city:    "GURUGRAM, HARYANA",
-    desc:    "Promoted to Business Associate, taking on broader ownership of knowledge management initiatives, stakeholder engagement, and Power Platform automation across sectors.",
-    bullets: [
-      "Expanded scope across Power Platform & SharePoint Online",
-      "Continued 360° stakeholder management across 13 sectors",
-      "Promoted from Analyst after 2+ years of delivery",
-    ],
-  },
-  {
-    id:      "kpmg-analyst",
     start:   new Date(2024, 4, 1),  // May 2024
-    end:     new Date(2026, 9, 1) as Date | null,  // Oct 2026 (promotion)
-    dateStr: "MAY 2024 — SEP 2026",
-    org:     "KPMG",
-    role:    "Analyst — Knowledge Management",
-    city:    "GURUGRAM, HARYANA",
-    desc:    "Led cross-functional projects across 13 sectors with 360° stakeholder management, business development, and Power Platform automation.",
-    bullets: [
-      "Power Platform automation & SharePoint Online ecosystem",
-      "360° stakeholder management across 13 sectors",
-      "Saved 2,000+ hours annually · 5 awards earned",
+    end:     null,                  // ongoing
+    dateStr: "MAY 2024 — PRESENT",
+    roles: [
+      {
+        title:   "Business Associate — Knowledge Management",
+        start:   new Date(2026, 9, 1),  // Oct 2026
+        end:     null,
+        dateStr: "OCT 2026 — PRESENT",
+        desc:    "Promoted to Business Associate, taking on broader ownership of knowledge management initiatives, stakeholder engagement, and Power Platform automation across sectors.",
+        bullets: [
+          "Expanded scope across Power Platform & SharePoint Online",
+          "Continued 360° stakeholder management across 13 sectors",
+          "Promoted from Analyst after 2+ years of delivery",
+        ],
+      },
+      {
+        title:   "Analyst — Knowledge Management",
+        start:   new Date(2024, 4, 1),  // May 2024
+        end:     new Date(2026, 9, 1),  // Oct 2026 (promotion)
+        dateStr: "MAY 2024 — SEP 2026",
+        desc:    "Led cross-functional projects across 13 sectors with 360° stakeholder management, business development, and Power Platform automation.",
+        bullets: [
+          "Power Platform automation & SharePoint Online ecosystem",
+          "360° stakeholder management across 13 sectors",
+          "Saved 2,000+ hours annually · 5 awards earned",
+        ],
+      },
     ],
   },
   {
     id:      "globallogic",
+    org:     "GlobalLogic Technologies",
+    city:    "GURUGRAM, HARYANA",
     start:   new Date(2022, 8, 1),  // Sep 2022
     end:     new Date(2023, 9, 1),  // Oct 2023
     dateStr: "SEP 2022 — OCT 2023",
-    org:     "GlobalLogic Technologies",
-    role:    "Associate Analyst — Content Engineering",
-    city:    "GURUGRAM, HARYANA",
-    desc:    "Delivered content engineering and AI training datasets for Google & Microsoft, leading pilot projects against major MNC competition.",
-    bullets: [
-      "GenAI training data for Google & Microsoft",
-      "QA error rate reduced by 25%",
-      "Led 3 pilot projects — all secured",
+    roles: [
+      {
+        title:   "Associate Analyst — Content Engineering",
+        start:   new Date(2022, 8, 1),
+        end:     new Date(2023, 9, 1),
+        dateStr: "SEP 2022 — OCT 2023",
+        desc:    "Delivered content engineering and AI training datasets for Google & Microsoft, leading pilot projects against major MNC competition.",
+        bullets: [
+          "GenAI training data for Google & Microsoft",
+          "QA error rate reduced by 25%",
+          "Led 3 pilot projects — all secured",
+        ],
+      },
     ],
   },
 ];
@@ -1063,7 +1093,7 @@ export default function App() {
                 <div className="space-y-8">
                   {experienceDefs.map((exp) => {
                     // Live tenure — updates every minute via `now` state tick
-                    const tenure = calcTenure(exp.start, exp.end ?? now);
+                    const orgTenure = calcTenure(exp.start, exp.end ?? now);
                     return (
                       <motion.div
                         key={exp.id}
@@ -1076,13 +1106,12 @@ export default function App() {
                             {exp.dateStr}
                           </div>
                           <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-10">
+                            {/* Org header — one per tile */}
                             <div>
                               <h3 className="text-3xl font-black tracking-tight mb-2">{exp.org}</h3>
-                              <div className="text-[#D9FF00] text-sm font-medium mb-2">{exp.role}</div>
-                              {/* Live-computed tenure with blinking "Live" badge for current role */}
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span className="text-[10px] font-bold tracking-[0.2em] text-white/20 uppercase">
-                                  {tenure} · {exp.city}
+                                  {orgTenure} · {exp.city}
                                 </span>
                                 {!exp.end && (
                                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#D9FF00]/10 border border-[#D9FF00]/20">
@@ -1092,16 +1121,36 @@ export default function App() {
                                 )}
                               </div>
                             </div>
-                            <div>
-                              <p className="text-white/50 mb-5 font-light text-sm leading-relaxed">{exp.desc}</p>
-                              <ul className="space-y-3">
-                                {exp.bullets.map(b => (
-                                  <li key={b} className="flex gap-3 text-sm font-medium items-start">
-                                    <span className="text-[#D9FF00] shrink-0 mt-px">+</span>
-                                    <span className="text-white/80">{b}</span>
-                                  </li>
-                                ))}
-                              </ul>
+
+                            {/* Roles — stacked as a timeline when an org has more than one */}
+                            <div className="space-y-8">
+                              {exp.roles.map((role, ri) => (
+                                <div
+                                  key={role.title}
+                                  className={exp.roles.length > 1 ? "relative pl-6 border-l border-[#D9FF00]/20" : ""}
+                                >
+                                  {exp.roles.length > 1 && (
+                                    <span
+                                      className={`absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full ${
+                                        ri === 0 ? "bg-[#D9FF00]" : "bg-[#D9FF00]/30"
+                                      }`}
+                                    />
+                                  )}
+                                  <div className="text-[#D9FF00] text-sm font-medium mb-1">{role.title}</div>
+                                  <div className="text-[10px] font-bold tracking-[0.2em] text-white/25 uppercase mb-4">
+                                    {role.dateStr} · {calcTenure(role.start, role.end ?? now)}
+                                  </div>
+                                  <p className="text-white/50 mb-5 font-light text-sm leading-relaxed">{role.desc}</p>
+                                  <ul className="space-y-3">
+                                    {role.bullets.map(b => (
+                                      <li key={b} className="flex gap-3 text-sm font-medium items-start">
+                                        <span className="text-[#D9FF00] shrink-0 mt-px">+</span>
+                                        <span className="text-white/80">{b}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         </GlassCard>
