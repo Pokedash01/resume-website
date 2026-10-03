@@ -4,12 +4,28 @@ This document formalizes the design system and UI engineering principles for Kar
 - [Taste Skill](https://www.tasteskill.dev/)
 - [Vercel Web Design Guidelines](https://github.com/vercel-labs/agent-skills)
 - [Vercel Web Animation Design](https://github.com/vercel-labs/open-agents/blob/main/.agents/skills/web-animation-design/SKILL.md)
+- [OakOSS Agent Skills](https://github.com/oakoss/agent-skills) (Scroll Animation Storytelling Experience)
 - [Awesome Design MD](https://github.com/voltagent/awesome-design-md)
 - [Playwright Agent CLI](https://playwright.dev/agent-cli/introduction)
 
 ---
 
-## 1. Core Design Philosophy & Anti-Slop Directive
+## 1. Narrative Architecture & Scroll Storytelling (OakOSS Agent Skills)
+
+The portfolio is structured as an orchestrated 6-act executive narrative rather than disjointed feature rows:
+- **Prologue (Hero)**: Real-time timezone telemetry (`New Delhi IST`), live deployment role status, oversized kinetic typography, and magnetic cursor interaction.
+- **Act I: The Ethos & Foundation (About)**: Core operational manifesto, annualized hours saved metrics ribbon, and executive credentials.
+- **Act II: The Trajectory (Experience)**: Multi-year career narrative highlighting the October 2026 promotion to Business Associate, KPMG KM leadership, and GlobalLogic foundational pilots.
+- **Act III: The Academic Benchmark (Education)**: Top 1% academic standing (9.3/10 GPA) in computer science, systems, and algorithms.
+- **Act IV: The Engineering Engine (Toolkit)**: Bento architecture covering Power Platform, Copilot Studio, and Lean Six Sigma methodology with production impact tags.
+- **Act V: The Case Studies (Projects & ROI)**: Filterable case study cards with gliding tab selector, deep dive architectural lightbox, and interactive ROI bar chart.
+- **Act VI: The Validation (Certifications & Honors)**: Verified credentials spread with spring physics and 5 enterprise awards.
+- **Epilogue: The Invitation (Contact)**: Direct executive dialogue channels and live availability.
+- **Global Chapter Spine & Progress Tracker**: Fixed-top scroll progress bar + floating side chapter indicators that dynamically highlight the active story act.
+
+---
+
+## 2. Core Design Philosophy & Anti-Slop Directive
 
 - **Domain-Authentic Identity**: A high-impact executive and technical portfolio representing an enterprise Knowledge Management and Power Platform leader at KPMG and GlobalLogic.
 - **Strict 60-30-10 Color Budget**:
