@@ -1117,13 +1117,13 @@ export default function App() {
             ref={heroRef}
             onMouseMove={handleHeroMouseMove}
             onMouseLeave={handleHeroMouseLeave}
-            className="relative min-h-[92vh] lg:min-h-screen pt-32 md:pt-36 pb-20 md:pb-24 px-6 md:px-12 max-w-7xl mx-auto flex items-center"
+            className="relative min-h-[100dvh] pt-24 md:pt-28 pb-20 md:pb-24 px-6 md:px-12 max-w-7xl mx-auto flex items-center justify-center"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
               {/* Left column (Text & Actions) — drifts up and fades as you scroll away */}
               <motion.div
                 style={{ y: heroTextY, opacity: heroTextOpacity }}
-                className="lg:col-span-7 flex flex-col justify-between py-2"
+                className="lg:col-span-7 flex flex-col justify-center py-2"
               >
                 <div>
                   {/* Clean Eyebrow with kinetic line reveal */}
@@ -1142,7 +1142,7 @@ export default function App() {
                   {/* Main Typography with masked slide-up reveal */}
                   <div className="overflow-hidden">
                     <motion.h1
-                      className="text-[68px] sm:text-[96px] md:text-[116px] lg:text-[124px] font-black leading-[0.88] tracking-tighter text-white"
+                      className="text-[72px] sm:text-[98px] md:text-[118px] lg:text-[128px] font-black leading-[0.88] tracking-tighter text-white"
                       initial={{ y: 40, opacity: 0 }}
                       animate={loaded ? { y: 0, opacity: 1 } : { y: 40, opacity: 0 }}
                       transition={{ duration: 0.65, ease: EASE_DECEL, delay: 0.15 }}
@@ -1155,7 +1155,7 @@ export default function App() {
 
                   {/* Professional Bio */}
                   <motion.p
-                    className="mt-6 md:mt-8 text-base sm:text-lg md:text-xl text-white/85 font-normal leading-relaxed max-w-xl"
+                    className="mt-6 md:mt-7 text-base sm:text-lg md:text-xl text-white/85 font-normal leading-relaxed max-w-xl"
                     initial={{ opacity: 0, y: 15 }}
                     animate={loaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                     transition={{ duration: 0.6, ease: EASE_DECEL, delay: 0.3 }}
@@ -1163,26 +1163,24 @@ export default function App() {
                     Business Associate at <span className="text-white font-semibold">KPMG</span> specializing in enterprise
                     Power Platform automation, Copilot Studio agents, and knowledge repository ecosystems across 13 global sectors.
                   </motion.p>
-                </div>
 
-                <div className="mt-8 lg:mt-4">
-                  {/* Quantified Metrics Ribbon */}
+                  {/* Quantified Metrics Ribbon - seamlessly connected to bio with clean formal spacing */}
                   <motion.div
-                    className="flex flex-wrap items-center gap-3.5 sm:gap-5 text-xs sm:text-[13px] font-semibold text-white/50 tracking-wider uppercase font-mono mb-8"
+                    className="mt-6 sm:mt-7 flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-[13px] font-semibold text-white/50 tracking-wider uppercase font-mono"
                     initial={{ opacity: 0, y: 15 }}
                     animate={loaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                     transition={{ duration: 0.6, ease: EASE_DECEL, delay: 0.4 }}
                   >
-                    <span className="text-[#D9FF00]">2,000+ Hours Saved</span>
-                    <span>·</span>
-                    <span className="text-white/80">30,000+ Assets Catalogued</span>
-                    <span>·</span>
-                    <span className="text-[#D9FF00]">5× Honors Won</span>
+                    <span className="text-[#D9FF00] font-bold">2,000+ Hours Saved</span>
+                    <span className="text-white/20">·</span>
+                    <span className="text-white/85 font-bold">30,000+ Assets Catalogued</span>
+                    <span className="text-white/20">·</span>
+                    <span className="text-[#D9FF00] font-bold">5× Honors Won</span>
                   </motion.div>
 
                   {/* Interactive Buttons */}
                   <motion.div
-                    className="flex flex-wrap items-center gap-4"
+                    className="mt-8 flex flex-wrap items-center gap-4"
                     initial={{ opacity: 0, y: 15 }}
                     animate={loaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                     transition={{ duration: 0.6, ease: EASE_DECEL, delay: 0.5 }}
@@ -1212,56 +1210,56 @@ export default function App() {
 
               {/* Right column: Black & White Photo — scroll parallax wrapper + mouse-tilt inner */}
               <motion.div
-                className="lg:col-span-5 flex flex-col"
+                className="lg:col-span-5 flex flex-col items-center justify-center"
                 style={{ y: heroPhotoY, scale: heroPhotoScale }}
               >
-              <motion.div
-                className="flex flex-col flex-1"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={loaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.7, ease: EASE_DECEL, delay: 0.25 }}
-                style={shouldReduceMotion ? undefined : { rotateX: tiltX, rotateY: tiltY, transformPerspective: 800 }}
-              >
-                <div className="relative w-full flex-1 min-h-[500px] md:min-h-[560px] lg:min-h-[600px] border border-white/15 rounded-3xl overflow-hidden bg-[#111111] shadow-[0_0_50px_rgba(217,255,0,0.06)] group">
-                  <img
-                    src="/profile.jpg"
-                    alt="Portrait of Kartik Bhatt"
-                    loading="eager"
-                    className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-110 brightness-100 transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute bottom-6 left-6 z-20">
-                    <div className="flex items-center gap-2.5 bg-black/80 backdrop-blur-md border border-white/20 px-3.5 py-1.5 rounded-xl shadow-lg">
-                      <div className="w-2 h-2 bg-[#D9FF00] rounded-full animate-pulse" />
-                      <span className="text-[10px] font-bold tracking-widest uppercase text-white font-mono">
-                        KPMG · BUSINESS ASSOCIATE
-                      </span>
+                <motion.div
+                  className="w-full flex flex-col flex-1"
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={loaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.7, ease: EASE_DECEL, delay: 0.25 }}
+                  style={shouldReduceMotion ? undefined : { rotateX: tiltX, rotateY: tiltY, transformPerspective: 800 }}
+                >
+                  <div className="relative w-full h-[440px] sm:h-[480px] md:h-[500px] lg:h-[520px] max-h-[62vh] border border-white/15 rounded-3xl overflow-hidden bg-[#111111] shadow-[0_0_50px_rgba(217,255,0,0.06)] group">
+                    <img
+                      src="/profile.jpg"
+                      alt="Portrait of Kartik Bhatt"
+                      loading="eager"
+                      className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-110 brightness-100 transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute bottom-6 left-6 z-20">
+                      <div className="flex items-center gap-2.5 bg-black/80 backdrop-blur-md border border-white/20 px-3.5 py-1.5 rounded-xl shadow-lg">
+                        <div className="w-2 h-2 bg-[#D9FF00] rounded-full animate-pulse" />
+                        <span className="text-[10px] font-bold tracking-widest uppercase text-white font-mono">
+                          KPMG · BUSINESS ASSOCIATE
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
               </motion.div>
             </div>
 
-            {/* Scroll cue — fades out immediately and is completely gone once About Me is reached */}
+            {/* Scroll cue — centered and clearly visible in the initial viewport */}
             <motion.div
               aria-hidden="true"
               style={{
                 opacity: scrollCueOpacity,
                 display: scrollCueDisplay,
               }}
-              className="hidden md:flex absolute bottom-5 left-1/2 -translate-x-1/2 flex-col items-center gap-2 pointer-events-none select-none"
+              className="flex absolute bottom-6 md:bottom-8 lg:bottom-9 left-1/2 -translate-x-1/2 flex-col items-center gap-2 pointer-events-none select-none z-20"
             >
-              <span className="text-[10px] font-mono font-bold tracking-[0.25em] text-white/40 uppercase">
+              <span className="text-[10px] font-mono font-bold tracking-[0.25em] text-white/50 uppercase">
                 Scroll
               </span>
-              <div className="w-5 h-8 rounded-full border border-white/20 bg-white/[0.02] flex items-start justify-center p-1 backdrop-blur-sm">
+              <div className="w-5 h-8 rounded-full border border-white/25 bg-white/[0.04] flex items-start justify-center p-1 backdrop-blur-sm shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
                 <motion.div
                   animate={{
                     y: [0, 13, 0],
-                    opacity: [0.9, 0.3, 0.9],
+                    opacity: [1, 0.4, 1],
                   }}
                   transition={{
-                    duration: 2.2,
+                    duration: 2.0,
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
