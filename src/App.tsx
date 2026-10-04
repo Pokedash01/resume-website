@@ -11,7 +11,20 @@ import {
   useTransform,
   AnimatePresence,
   useReducedMotion,
+  useScroll,
+  useInView,
 } from "motion/react";
+import {
+  VelocityMarquee,
+  ScrollWords,
+  CountUp,
+  Parallax,
+  TimelineRole,
+  SpreadItem,
+  useSpreadProgress,
+  HorizontalScroller,
+  useMediaQuery,
+} from "./scrollEffects";
 import {
   Download,
   Mail,
@@ -285,13 +298,19 @@ const ScrollReveal = memo(function ScrollReveal({
   );
 });
 
-// ─── Parallax Background (Clean, Subtle Architectural Atmosphere) ──────────────
+// ─── Parallax Background (Clean architectural grid & subtle ambient halos) ───
 const ParallaxBackground = memo(function ParallaxBackground() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
   const slowX = useSpring(mouseX, { stiffness: 20, damping: 30, mass: 1.2 });
   const slowY = useSpring(mouseY, { stiffness: 20, damping: 30, mass: 1.2 });
+
+  const reduceMotion = useReducedMotion();
+  const { scrollY } = useScroll();
+  const gridScrollY = useTransform(scrollY, [0, 6000], [0, reduceMotion ? 0 : -260]);
+  const haloScrollY = useTransform(scrollY, [0, 6000], [0, reduceMotion ? 0 : 380]);
+  const haloScrollY2 = useTransform(scrollY, [0, 6000], [0, reduceMotion ? 0 : -520]);
 
   useEffect(() => {
     let raf: number;
@@ -310,18 +329,20 @@ const ParallaxBackground = memo(function ParallaxBackground() {
   }, [mouseX, mouseY]);
 
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
       {/* Delicate architectural grid */}
       <div className="absolute inset-0 opacity-[0.035]">
-        <div
-          className="absolute inset-0 origin-top h-[200%] w-full"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right,#D9FF00 1px,transparent 1px),linear-gradient(to bottom,#D9FF00 1px,transparent 1px)",
-            backgroundSize: "96px 96px",
-            transform: "rotateX(60deg) translateY(-20%)",
-          }}
-        />
+        <motion.div className="absolute inset-0 h-[200%] w-full" style={{ y: gridScrollY }}>
+          <div
+            className="absolute inset-0 origin-top h-full w-full"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right,#D9FF00 1px,transparent 1px),linear-gradient(to bottom,#D9FF00 1px,transparent 1px)",
+              backgroundSize: "96px 96px",
+              transform: "rotateX(60deg) translateY(-20%)",
+            }}
+          />
+        </motion.div>
       </div>
 
       {/* Vertical architectural divider guides */}
@@ -329,11 +350,16 @@ const ParallaxBackground = memo(function ParallaxBackground() {
       <div className="absolute inset-y-0 right-8 md:right-16 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent" />
 
       {/* Atmospheric ambient halos */}
+      <motion.div style={{ y: haloScrollY }} className="absolute top-[-10%] right-[-6%] w-[55vw] h-[55vw]">
+        <motion.div
+          style={{ x: slowX, y: slowY }}
+          className="w-full h-full bg-[#D9FF00]/10 rounded-full blur-[140px] opacity-25"
+        />
+      </motion.div>
       <motion.div
-        style={{ x: slowX, y: slowY }}
-        className="absolute top-[-10%] right-[-6%] w-[55vw] h-[55vw] bg-[#D9FF00]/10 rounded-full blur-[140px] opacity-25"
+        style={{ y: haloScrollY2 }}
+        className="absolute bottom-[-10%] left-[-6%] w-[45vw] h-[45vw] bg-emerald-500/5 rounded-full blur-[130px] opacity-15"
       />
-      <div className="absolute bottom-[-10%] left-[-6%] w-[45vw] h-[45vw] bg-emerald-500/5 rounded-full blur-[130px] opacity-15" />
     </div>
   );
 });
@@ -374,9 +400,7 @@ const LuxuryCard = memo(function LuxuryCard({
         "spotlight-card relative overflow-hidden rounded-2xl",
         "border border-white/10 bg-white/[0.025] backdrop-blur-xl",
         "transition-colors duration-300",
-        onClick
-          ? "cursor-pointer hover:border-[#D9FF00]/40 hover:bg-white/[0.045] hover:shadow-[0_12px_32px_rgba(0,0,0,0.6),0_0_20px_rgba(217,255,0,0.06)]"
-          : "hover:border-white/20",
+        onClick ? "cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:shadow-[0_12px_32px_rgba(0,0,0,0.6)]" : "hover:border-white/20",
         className,
       ].join(" ")}
       {...props}
@@ -386,25 +410,46 @@ const LuxuryCard = memo(function LuxuryCard({
   );
 });
 
-// ─── Clean Section Heading (Pure Numbers, No Acts, No Chapters) ───────────────
-function SectionHeading({ num, title, subtitle }: { num: string; title: string; subtitle?: string }) {
+// ─── Clean Section Heading (Pure Numbers, Configurable Bottom Margin) ─────────
+function SectionHeading({
+  num,
+  title,
+  subtitle,
+  className = "mb-10",
+}: {
+  num: string;
+  title: string;
+  subtitle?: string;
+  className?: string;
+}) {
   const shouldReduceMotion = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+
+  const lineScale = useTransform(scrollYProgress, [0.08, 0.32], [shouldReduceMotion ? 1 : 0, 1]);
+  const ghostY = useTransform(scrollYProgress, [0, 1], [shouldReduceMotion ? 0 : 70, shouldReduceMotion ? 0 : -70]);
+  const ghostX = useTransform(scrollYProgress, [0, 1], [shouldReduceMotion ? 0 : -30, shouldReduceMotion ? 0 : 30]);
 
   return (
-    <div className="mb-10">
-      <div className="flex items-center gap-3 mb-2.5">
+    <div ref={ref} className={`relative ${className}`}>
+      <motion.span
+        aria-hidden="true"
+        style={{ y: ghostY, x: ghostX }}
+        className="absolute -top-12 -left-2 sm:-left-4 text-[120px] sm:text-[170px] leading-none font-black font-mono tracking-tighter text-white/[0.035] select-none pointer-events-none"
+      >
+        {num}
+      </motion.span>
+
+      <div className="relative flex items-center gap-3 mb-2.5">
         <span className="text-[#D9FF00] font-mono font-bold text-xs">{num}</span>
         <motion.div
-          className="h-px bg-[#D9FF00]/60 origin-left"
-          initial={shouldReduceMotion ? undefined : { scaleX: 0, width: 32 }}
-          whileInView={shouldReduceMotion ? undefined : { scaleX: 1, width: 32 }}
-          viewport={{ once: false, amount: 0.4 }}
-          transition={{ duration: 0.45, ease: EASE_DECEL }}
+          className="h-px w-16 bg-[#D9FF00]/60 origin-left"
+          style={{ scaleX: lineScale }}
         />
         <span className="text-[11px] font-bold tracking-[0.25em] text-[#D9FF00] uppercase">{title}</span>
       </div>
       {subtitle && (
-        <p className="text-white/60 text-sm sm:text-base font-light max-w-2xl leading-relaxed">
+        <p className="relative text-white/60 text-sm sm:text-base font-light max-w-2xl leading-relaxed">
           {subtitle}
         </p>
       )}
@@ -561,6 +606,57 @@ const chartData = [
   { name: "Process Optimization",  hours: 100,  color: "#F59E0B" },
 ];
 
+// ─── Hours chart: bars grow in the first time it scrolls into view ─────────────
+const HoursChart = memo(function HoursChart() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.25 });
+  const reduced = useReducedMotion();
+
+  return (
+    <div ref={ref} className="h-[280px] sm:h-[300px] w-full" aria-label="Horizontal bar chart of hours saved per initiative">
+      {(inView || reduced) && (
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData} layout="vertical" margin={{ left: 5, right: 30, top: 10, bottom: 10 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#ffffff0a" horizontal={false} />
+            <XAxis type="number" hide />
+            <YAxis
+              dataKey="name"
+              type="category"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "#ffffff80", fontSize: 11, fontWeight: 600 }}
+              width={140}
+            />
+            <Tooltip
+              cursor={{ fill: "#ffffff08" }}
+              contentStyle={{
+                background: "#0c0c0c",
+                border: "1px solid rgba(217,255,0,0.3)",
+                borderRadius: "12px",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.8)",
+              }}
+              itemStyle={{ color: "#D9FF00", fontWeight: "bold" }}
+              formatter={(v: any) => [`${v} hrs / yr`, "Efficiency Gain"]}
+            />
+            <Bar
+              dataKey="hours"
+              radius={[0, 6, 6, 0]}
+              barSize={22}
+              isAnimationActive={!reduced}
+              animationDuration={1200}
+              animationEasing="ease-out"
+            >
+              {chartData.map((e, idx) => (
+                <Cell key={idx} fill={e.color} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
+});
+
 const toolkitBento = [
   {
     category: "Microsoft Power Platform",
@@ -607,6 +703,45 @@ const toolkitBento = [
     metric: "2× Kudos Awards",
   },
 ];
+
+const ToolkitCard = memo(function ToolkitCard({
+  bento,
+  className = "",
+}: {
+  bento: typeof toolkitBento[number];
+  className?: string;
+}) {
+  return (
+    <LuxuryCard className={`p-6 md:p-7 flex flex-col justify-between h-full group ${className}`}>
+      <div>
+        <div className="flex items-center justify-between mb-3.5">
+          <div className="p-2 rounded-xl bg-white/5 border border-white/10 group-hover:border-[#D9FF00]/40 transition-colors">
+            {bento.icon}
+          </div>
+          <span className="text-xs font-mono font-bold text-[#D9FF00] bg-[#D9FF00]/10 px-2.5 py-0.5 rounded-md">
+            {bento.metric}
+          </span>
+        </div>
+
+        <h3 className="text-lg font-bold text-white mb-0.5 group-hover:text-[#D9FF00] transition-colors">
+          {bento.category}
+        </h3>
+        <div className="text-[11px] font-mono text-white/50 uppercase tracking-wider mb-4">
+          {bento.tagline}
+        </div>
+
+        <ul className="space-y-2">
+          {bento.items.map(item => (
+            <li key={item} className="flex items-center gap-2.5 text-xs sm:text-sm text-white/75 group-hover:text-white transition-colors">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D9FF00] shrink-0" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </LuxuryCard>
+  );
+});
 
 const certifications = [
   {
@@ -732,21 +867,23 @@ function CertificationBadge({
 
 const CertificationsRow = memo(function CertificationsRow() {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
+  const { ref, progress } = useSpreadProgress();
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 md:gap-7 py-6 w-full max-w-6xl mx-auto">
+    <div ref={ref} className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 md:gap-7 py-6 w-full max-w-6xl mx-auto">
       {certifications.map((cert, i) => {
         const hovered = hoverIdx === i;
         const dimmed  = hoverIdx !== null && !hovered;
         const offset  = hoverIdx === null ? 0 : i < hoverIdx ? -8 : i > hoverIdx ? 8 : 0;
         return (
-          <div
-            key={cert.id}
-            onMouseEnter={() => setHoverIdx(i)}
-            onMouseLeave={() => setHoverIdx(null)}
-            className="p-1"
-          >
-            <CertificationBadge cert={cert} hovered={hovered} dimmed={dimmed} offset={offset} />
-          </div>
+          <SpreadItem key={cert.id} index={i} total={certifications.length} progress={progress}>
+            <div
+              onMouseEnter={() => setHoverIdx(i)}
+              onMouseLeave={() => setHoverIdx(null)}
+              className="p-1"
+            >
+              <CertificationBadge cert={cert} hovered={hovered} dimmed={dimmed} offset={offset} />
+            </div>
+          </SpreadItem>
         );
       })}
     </div>
@@ -763,6 +900,37 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
 
   const shouldReduceMotion = useReducedMotion();
+
+  // Desktop check for project scroller
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const pinProjects = isDesktop && !shouldReduceMotion;
+
+  const { scrollY } = useScroll();
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroTextY = useTransform(heroProgress, [0, 1], [0, shouldReduceMotion ? 0 : -90]);
+  const heroTextOpacity = useTransform(heroProgress, [0, 0.75], [1, shouldReduceMotion ? 1 : 0]);
+  const heroPhotoY = useTransform(heroProgress, [0, 1], [0, shouldReduceMotion ? 0 : 70]);
+  const heroPhotoScale = useTransform(heroProgress, [0, 1], [1, shouldReduceMotion ? 1 : 0.93]);
+
+  // Scroll cue: starts fading out as soon as user begins scrolling, completely gone & hidden by 160px
+  // (when Section 01 About Me and its 01 line animation are reached / complete)
+  const scrollCueOpacity = useTransform(scrollY, [0, 40, 160], [1, 0.4, 0]);
+  const scrollCueDisplay = useTransform(scrollY, (v) => (v >= 160 ? "none" : "flex"));
+
+  // Contact headline: lines slide in from alternating sides as the section arrives
+  const contactRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: contactProgress } = useScroll({
+    target: contactRef,
+    offset: ["start 0.9", "start 0.25"],
+  });
+  const contactX1 = useTransform(contactProgress, [0, 1], [shouldReduceMotion ? 0 : -120, 0]);
+  const contactX2 = useTransform(contactProgress, [0, 1], [shouldReduceMotion ? 0 : 120, 0]);
+  const contactX3 = useTransform(contactProgress, [0, 1], [shouldReduceMotion ? 0 : -60, 0]);
+  const contactOpacity = useTransform(contactProgress, [0, 0.7], [shouldReduceMotion ? 1 : 0, 1]);
 
   // Subtle interactive 3D portrait mouse tilt
   const portraitMouseX = useMotionValue(0);
@@ -781,6 +949,21 @@ export default function App() {
   const handleHeroMouseLeave = () => {
     portraitMouseX.set(0);
     portraitMouseY.set(0);
+  };
+
+  // Safe filter tab handler: seamlessly aligns to start of #work without any jumping down to Section 07
+  const handleFilterChange = (tabId: "all" | "power-platform" | "genai" | "analytics") => {
+    const workEl = document.getElementById("work");
+    if (workEl) {
+      const workRect = workEl.getBoundingClientRect();
+      if (workRect.top < 70) {
+        window.scrollTo({
+          top: window.scrollY + workRect.top - 70,
+          behavior: "instant",
+        });
+      }
+    }
+    setProjectFilter(tabId);
   };
 
   // Tick clock
@@ -816,11 +999,10 @@ export default function App() {
   }, [projectFilter]);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden selection:bg-[#D9FF00] selection:text-black">
+    <div className="min-h-screen bg-[#050505] text-white font-sans overflow-x-clip selection:bg-[#D9FF00] selection:text-black">
       <style>{`
         @media (pointer: fine) { *, *::before, *::after { cursor: none !important; } }
         @keyframes dotblink { 0%,100% { opacity:1; } 50% { opacity:0.2; } }
-        @keyframes marquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
         section[id] { scroll-margin-top: 88px; }
       `}</style>
 
@@ -837,7 +1019,7 @@ export default function App() {
         warm and measured before the preloader lifts, giving a locked 60fps stutter-free 
         experience from the very first frame.
       */}
-      <div className="overflow-x-hidden w-full relative">
+      <div className="overflow-x-clip w-full relative">
         <ParallaxBackground />
 
         {/* ══════════════════════════════════════════════════
@@ -873,15 +1055,15 @@ export default function App() {
               </span>
             </a>
 
-            {/* Zone 2: Canonical Navigation Links for Desktop */}
-            <div className="hidden lg:flex items-center gap-4 xl:gap-6 text-[11px] font-bold tracking-wider text-white/50 uppercase">
+            {/* Zone 2: Canonical Navigation Links for Desktop (Clean hover-to-green jump links) */}
+            <div className="hidden lg:flex items-center gap-4 xl:gap-6 text-[11px] font-bold tracking-wider uppercase">
               {navLinks.map(link => (
                 <motion.a
                   key={link.label}
                   href={link.href}
-                  whileHover={shouldReduceMotion ? undefined : { y: -1, color: "#D9FF00" }}
+                  whileHover={shouldReduceMotion ? undefined : { y: -1 }}
                   transition={{ duration: 0.15, ease: EASE_DECEL }}
-                  className="hover:text-[#D9FF00] transition-colors relative py-1 focus-visible:outline-none focus-visible:text-[#D9FF00] whitespace-nowrap"
+                  className="text-white/60 hover:text-[#D9FF00] transition-colors relative py-1 focus-visible:outline-none whitespace-nowrap"
                 >
                   {link.label}
                 </motion.a>
@@ -951,15 +1133,19 @@ export default function App() {
         {/* ══════════════════════════════════════════════════
             HERO SECTION (Theatrical Stagger, Masked Text, 3D Tilt Portrait)
         ══════════════════════════════════════════════════ */}
-        <main className="overflow-x-hidden w-full">
+        <main className="overflow-x-clip w-full">
           <section
+            ref={heroRef}
             onMouseMove={handleHeroMouseMove}
             onMouseLeave={handleHeroMouseLeave}
-            className="min-h-[88vh] pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto flex items-center"
+            className="relative min-h-[88vh] pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto flex items-center"
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
-              {/* Left column (Text & Actions) */}
-              <div className="lg:col-span-7 flex flex-col justify-between py-2">
+              {/* Left column (Text & Actions) — drifts up and fades as you scroll away */}
+              <motion.div
+                style={{ y: heroTextY, opacity: heroTextOpacity }}
+                className="lg:col-span-7 flex flex-col justify-between py-2"
+              >
                 <div>
                   {/* Clean Eyebrow with kinetic line reveal */}
                   <motion.div
@@ -1029,7 +1215,7 @@ export default function App() {
                       transition={SPRING_SNAPPY}
                       className="px-6 py-3 rounded-xl bg-white/10 hover:bg-[#D9FF00] hover:text-black border border-white/10 hover:border-transparent font-bold text-xs uppercase tracking-wider transition-colors flex items-center gap-2 group text-white"
                     >
-                      <span>Explore Case Studies</span>
+                      <span>Explore Projects</span>
                       <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-200" />
                     </motion.a>
                     <motion.a
@@ -1043,17 +1229,21 @@ export default function App() {
                     </motion.a>
                   </motion.div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Right column: Black & White Photo with Interactive 3D Depth */}
+              {/* Right column: Black & White Photo — scroll parallax wrapper + mouse-tilt inner */}
               <motion.div
                 className="lg:col-span-5 flex flex-col"
+                style={{ y: heroPhotoY, scale: heroPhotoScale }}
+              >
+              <motion.div
+                className="flex flex-col flex-1"
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={loaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.7, ease: EASE_DECEL, delay: 0.25 }}
                 style={shouldReduceMotion ? undefined : { rotateX: tiltX, rotateY: tiltY, transformPerspective: 800 }}
               >
-                <div className="relative w-full h-full min-h-[460px] md:min-h-[500px] border border-white/15 rounded-3xl overflow-hidden bg-[#111111] shadow-[0_0_50px_rgba(217,255,0,0.06)] group">
+                <div className="relative w-full flex-1 min-h-[460px] md:min-h-[500px] border border-white/15 rounded-3xl overflow-hidden bg-[#111111] shadow-[0_0_50px_rgba(217,255,0,0.06)] group">
                   <img
                     src="/profile.jpg"
                     alt="Portrait of Kartik Bhatt"
@@ -1070,24 +1260,37 @@ export default function App() {
                   </div>
                 </div>
               </motion.div>
+              </motion.div>
             </div>
-          </section>
 
-          {/* ══════════════════════════════════════════════════
-              CONTINUOUS MOVING SKILLS CAROUSEL
-          ══════════════════════════════════════════════════ */}
-          <div className="w-full py-5 border-y border-white/5 bg-white/[0.015] overflow-hidden relative select-none">
-            <div className="flex w-max gap-8 animate-[marquee_32s_linear_infinite]">
-              {[...marqueeSkills, ...marqueeSkills].map((skill, idx) => (
-                <div key={idx} className="flex items-center gap-4 shrink-0">
-                  <span className="text-xs font-mono font-bold tracking-widest text-white/70 hover:text-[#D9FF00] transition-colors uppercase">
-                    {skill}
-                  </span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#D9FF00]/50" />
-                </div>
-              ))}
-            </div>
-          </div>
+            {/* Scroll cue — fades out immediately and is completely gone once About Me is reached */}
+            <motion.div
+              aria-hidden="true"
+              style={{
+                opacity: scrollCueOpacity,
+                display: scrollCueDisplay,
+              }}
+              className="hidden md:flex absolute bottom-5 left-1/2 -translate-x-1/2 flex-col items-center gap-2 pointer-events-none select-none"
+            >
+              <span className="text-[10px] font-mono font-bold tracking-[0.25em] text-white/40 uppercase">
+                Scroll
+              </span>
+              <div className="w-5 h-8 rounded-full border border-white/20 bg-white/[0.02] flex items-start justify-center p-1 backdrop-blur-sm">
+                <motion.div
+                  animate={{
+                    y: [0, 13, 0],
+                    opacity: [0.9, 0.3, 0.9],
+                  }}
+                  transition={{
+                    duration: 2.2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  className="w-1.5 h-1.5 rounded-full bg-[#D9FF00] shadow-[0_0_8px_#D9FF00]"
+                />
+              </div>
+            </motion.div>
+          </section>
 
           {/* ══════════════════════════════════════════════════
               01. ABOUT (Unboxed Narrative & Clean Executive Summary)
@@ -1106,7 +1309,7 @@ export default function App() {
                   <ScrollReveal key={stat.label} delay={i * 0.04}>
                     <LuxuryCard className="p-6 flex flex-col justify-between h-full">
                       <div className="text-3xl md:text-4xl font-mono font-black tracking-tight tabular-nums text-white">
-                        {stat.val}
+                        <CountUp value={stat.val} />
                       </div>
                       <div className="mt-2">
                         <div className="text-[10px] font-mono font-bold tracking-wider text-[#D9FF00] uppercase">
@@ -1123,21 +1326,34 @@ export default function App() {
 
               {/* Equal-Height Unboxed Narrative & Executive Summary Block */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
-                {/* Left text column - Unboxed editorial style */}
+                {/* Left text column - Word-by-word reveal for ALL 4 paragraphs */}
                 <ScrollReveal direction="left" className="lg:col-span-7 flex flex-col justify-between py-2">
                   <div className="space-y-5 text-white/80 text-base md:text-[17px] font-light leading-relaxed">
-                    <p>
-                      Across three continuous years at <span className="text-white font-medium">KPMG</span> and <span className="text-white font-medium">GlobalLogic</span>, my focus has been consistent: replacing fragmented, high-friction manual operations with automated, auditable, enterprise-grade architectures.
-                    </p>
-                    <p>
-                      Whether orchestrating end-to-end Power Apps harvesting workflows that reclaim 1,500+ hours annually, or developing Copilot Studio agents that summarize deliverables against KPMG taxonomy standards, I bridge technical capability with measurable efficiency.
-                    </p>
-                    <p>
-                      Certified in Microsoft Azure AI, Oracle Agentic AI, and Lean Six Sigma, I build solutions designed for production stability, data compliance, and reliable operational adoption across global practice teams.
-                    </p>
-                    <p className="text-white/65 text-sm pt-2">
-                      Specialized in automating complex enterprise approval cycles, designing high-adoption SharePoint knowledge catalogs, and transforming disparate spreadsheets into centralized, self-updating data backbones.
-                    </p>
+                    <ScrollWords
+                      segments={[
+                        { text: "Across three continuous years at " },
+                        { text: "KPMG", className: "text-white font-medium" },
+                        { text: " and " },
+                        { text: "GlobalLogic", className: "text-white font-medium" },
+                        { text: ", my focus has been consistent: replacing fragmented, high-friction manual operations with automated, auditable, enterprise-grade architectures." },
+                      ]}
+                    />
+                    <ScrollWords
+                      segments={[
+                        { text: "Whether orchestrating end-to-end Power Apps harvesting workflows that reclaim 1,500+ hours annually, or developing Copilot Studio agents that summarize deliverables against KPMG taxonomy standards, I bridge technical capability with measurable efficiency." },
+                      ]}
+                    />
+                    <ScrollWords
+                      segments={[
+                        { text: "Certified in Microsoft Azure AI, Oracle Agentic AI, and Lean Six Sigma, I build solutions designed for production stability, data compliance, and reliable operational adoption across global practice teams." },
+                      ]}
+                    />
+                    <ScrollWords
+                      className="text-white/65 text-sm pt-2"
+                      segments={[
+                        { text: "Specialized in automating complex enterprise approval cycles, designing high-adoption SharePoint knowledge catalogs, and transforming disparate spreadsheets into centralized, self-updating data backbones." },
+                      ]}
+                    />
                   </div>
                 </ScrollReveal>
 
@@ -1209,7 +1425,7 @@ export default function App() {
                     {/* Roles */}
                     <div className="space-y-8">
                       {/* Current Role */}
-                      <div className="relative pl-6 border-l-2 border-[#D9FF00]">
+                      <TimelineRole accent="#D9FF00">
                         <span className="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full bg-[#D9FF00] shadow-[0_0_10px_#D9FF00]" />
                         <h4 className="text-xl font-bold text-white mb-1">Business Associate</h4>
                         <div className="text-xs font-mono text-white/50 mb-3 uppercase tracking-wider">
@@ -1230,10 +1446,10 @@ export default function App() {
                             </li>
                           ))}
                         </ul>
-                      </div>
+                      </TimelineRole>
 
                       {/* Previous Analyst Role */}
-                      <div className="relative pl-6 border-l-2 border-white/20">
+                      <TimelineRole accent="rgba(255,255,255,0.55)">
                         <span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-white/40" />
                         <h4 className="text-lg font-bold text-white/95 mb-1">Analyst</h4>
                         <div className="text-xs font-mono text-white/50 mb-3 uppercase tracking-wider">
@@ -1254,7 +1470,7 @@ export default function App() {
                             </li>
                           ))}
                         </ul>
-                      </div>
+                      </TimelineRole>
                     </div>
                   </LuxuryCard>
                 </ScrollReveal>
@@ -1281,7 +1497,7 @@ export default function App() {
                       </span>
                     </div>
 
-                    <div className="relative pl-6 border-l-2 border-white/20">
+                    <TimelineRole accent="rgba(255,255,255,0.55)">
                       <span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-white/40" />
                       <h4 className="text-xl font-bold text-white mb-1">Associate Analyst</h4>
                       <div className="text-xs font-mono text-white/50 mb-3 uppercase tracking-wider">
@@ -1302,7 +1518,7 @@ export default function App() {
                           </li>
                         ))}
                       </ul>
-                    </div>
+                    </TimelineRole>
                   </LuxuryCard>
                 </ScrollReveal>
               </div>
@@ -1322,9 +1538,12 @@ export default function App() {
 
               <ScrollReveal direction="up">
                 <LuxuryCard className="p-8 md:p-10 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-6 opacity-[0.03] pointer-events-none select-none font-mono text-[120px] font-black italic">
+                  <Parallax
+                    distance={55}
+                    className="absolute top-0 right-0 p-6 opacity-[0.03] pointer-events-none select-none font-mono text-[120px] font-black italic"
+                  >
                     BCA
-                  </div>
+                  </Parallax>
 
                   <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 pb-6 border-b border-white/10">
                     <div>
@@ -1356,7 +1575,9 @@ export default function App() {
                     </div>
 
                     <div className="border border-[#D9FF00]/40 bg-[#D9FF00]/[0.08] backdrop-blur-md px-8 py-5 rounded-2xl flex flex-col items-center justify-center text-[#D9FF00] shrink-0 shadow-[0_0_36px_rgba(217,255,0,0.1)]">
-                      <div className="text-3xl sm:text-4xl font-black font-mono tracking-tight tabular-nums">9.3 / 10</div>
+                      <div className="text-3xl sm:text-4xl font-black font-mono tracking-tight tabular-nums">
+                        <CountUp value="9.3 / 10" />
+                      </div>
                       <div className="text-[10px] font-mono font-bold tracking-widest uppercase mt-1 text-white/80">
                         GPA · TOP 1% RANK
                       </div>
@@ -1368,7 +1589,12 @@ export default function App() {
           </section>
 
           {/* ══════════════════════════════════════════════════
-              04. TOOLKIT (Short, Concise, Zero Production Stack Text)
+              CONTINUOUS SKILLS MARQUEE (Shifted above Toolkit & Expertise)
+          ══════════════════════════════════════════════════ */}
+          <VelocityMarquee items={marqueeSkills} />
+
+          {/* ══════════════════════════════════════════════════
+              04. TOOLKIT & EXPERTISE (Original Clean Responsive Grid)
           ══════════════════════════════════════════════════ */}
           <section id="toolkit" className="py-20 md:py-24 px-6 md:px-12 border-b border-white/5 overflow-hidden">
             <div className="max-w-7xl mx-auto">
@@ -1381,34 +1607,7 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {toolkitBento.map((bento, i) => (
                   <ScrollReveal key={bento.category} delay={i * 0.05} direction={i % 2 === 0 ? "left" : "right"}>
-                    <LuxuryCard className="p-6 md:p-7 flex flex-col justify-between h-full group">
-                      <div>
-                        <div className="flex items-center justify-between mb-3.5">
-                          <div className="p-2 rounded-xl bg-white/5 border border-white/10 group-hover:border-[#D9FF00]/40 transition-colors">
-                            {bento.icon}
-                          </div>
-                          <span className="text-xs font-mono font-bold text-[#D9FF00] bg-[#D9FF00]/10 px-2.5 py-0.5 rounded-md">
-                            {bento.metric}
-                          </span>
-                        </div>
-
-                        <h3 className="text-lg font-bold text-white mb-0.5 group-hover:text-[#D9FF00] transition-colors">
-                          {bento.category}
-                        </h3>
-                        <div className="text-[11px] font-mono text-white/50 uppercase tracking-wider mb-4">
-                          {bento.tagline}
-                        </div>
-
-                        <ul className="space-y-2">
-                          {bento.items.map(item => (
-                            <li key={item} className="flex items-center gap-2.5 text-xs sm:text-sm text-white/75 group-hover:text-white transition-colors">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#D9FF00] shrink-0" />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </LuxuryCard>
+                    <ToolkitCard bento={bento} />
                   </ScrollReveal>
                 ))}
               </div>
@@ -1416,121 +1615,238 @@ export default function App() {
           </section>
 
           {/* ══════════════════════════════════════════════════
-              05. PROJECTS & CASE STUDIES
+              05. PROJECTS (Stop and Scroll on Desktop)
           ══════════════════════════════════════════════════ */}
-          <section id="work" className="py-20 md:py-24 px-6 md:px-12 border-b border-white/5 overflow-hidden">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                <div>
-                  <SectionHeading
-                    num="05"
-                    title="Projects &amp; Case Studies"
-                    subtitle="Measurable deliverables that moved enterprise needles, saved thousands of consulting hours, and standardized global data flows."
-                  />
-                </div>
+          <section
+            id="work"
+            className={`border-b border-white/5 overflow-x-clip ${pinProjects ? "pt-8 md:pt-10 pb-16 md:pb-20" : "py-20 md:py-24"}`}
+          >
+            {pinProjects ? (
+              <HorizontalScroller
+                header={
+                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
+                    <div>
+                      <SectionHeading
+                        num="05"
+                        title="Projects"
+                        subtitle="Measurable deliverables that moved enterprise needles, saved thousands of consulting hours, and standardized global data flows."
+                        className="mb-0"
+                      />
+                    </div>
 
-                {/* Vercel-style sliding tab selector with layoutId */}
-                <div
-                  className="flex flex-wrap items-center gap-1.5 p-1.5 bg-white/[0.03] border border-white/10 rounded-xl relative"
-                  role="tablist"
-                  aria-label="Filter case studies by domain"
-                >
-                  {[
-                    { id: "all", label: "All Projects" },
-                    { id: "power-platform", label: "Power Platform" },
-                    { id: "genai", label: "GenAI & Copilot" },
-                    { id: "analytics", label: "Analytics & KM" },
-                  ].map(tab => {
-                    const isActive = projectFilter === tab.id;
-                    return (
-                      <button
-                        key={tab.id}
-                        role="tab"
-                        aria-selected={isActive}
-                        onClick={() => setProjectFilter(tab.id as any)}
-                        className={`relative px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap focus-visible:outline-none z-10 ${
-                          isActive
-                            ? "text-black font-bold"
-                            : "text-white/60 hover:text-white"
-                        }`}
-                        data-testid={`filter-${tab.id}`}
-                      >
-                        {isActive && (
-                          <motion.div
-                            layoutId="activeFilterTab"
-                            className="absolute inset-0 bg-[#D9FF00] rounded-lg -z-10 shadow-[0_0_16px_rgba(217,255,0,0.35)]"
-                            transition={
-                              shouldReduceMotion
-                                ? { duration: 0 }
-                                : SPRING_SNAPPY
-                            }
-                          />
-                        )}
-                        <span>{tab.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Projects Grid with dynamic layout reordering */}
-              <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
-                <AnimatePresence mode="popLayout">
-                  {filteredProjects.map((p, i) => (
-                    <motion.div
-                      key={p.id}
-                      layout
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, transition: { duration: 0.16, ease: EASE_EXIT } }}
-                      transition={{ duration: 0.22, delay: i * 0.02, ease: EASE_DECEL }}
-                      data-testid={`project-card-${p.id}`}
+                    {/* Vercel-style sliding tab selector with layoutId */}
+                    <div
+                      className="flex flex-wrap items-center gap-1.5 p-1.5 bg-white/[0.03] border border-white/10 rounded-xl relative shrink-0"
+                      role="tablist"
+                      aria-label="Filter projects by domain"
                     >
-                      <LuxuryCard
-                        onClick={() => setSelectedProject(p)}
-                        className="p-7 flex flex-col h-full gap-5 select-none"
+                      {[
+                        { id: "all", label: "All Projects" },
+                        { id: "power-platform", label: "Power Platform" },
+                        { id: "genai", label: "GenAI & Copilot" },
+                        { id: "analytics", label: "Analytics & KM" },
+                      ].map(tab => {
+                        const isActive = projectFilter === tab.id;
+                        return (
+                          <button
+                            key={tab.id}
+                            role="tab"
+                            aria-selected={isActive}
+                            onClick={() => handleFilterChange(tab.id as any)}
+                            className={`relative px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap focus-visible:outline-none z-10 ${
+                              isActive
+                                ? "text-black font-bold"
+                                : "text-white/60 hover:text-white"
+                            }`}
+                            data-testid={`filter-${tab.id}`}
+                          >
+                            {isActive && (
+                              <motion.div
+                                layoutId="activeFilterTab"
+                                className="absolute inset-0 bg-[#D9FF00] rounded-lg -z-10 shadow-[0_0_16px_rgba(217,255,0,0.35)]"
+                                transition={
+                                  shouldReduceMotion
+                                    ? { duration: 0 }
+                                    : SPRING_SNAPPY
+                                }
+                              />
+                            )}
+                            <span>{tab.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                }
+              >
+                {filteredProjects.map(p => (
+                  <div
+                    key={p.id}
+                    data-testid={`project-card-${p.id}`}
+                    className="w-[min(82vw,420px)] shrink-0 flex"
+                  >
+                    <LuxuryCard
+                      onClick={() => setSelectedProject(p)}
+                      className="p-6 sm:p-7 flex flex-col justify-between h-full w-full gap-5 select-none"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <img
+                            src={p.org === "KPMG" ? "/kpmg.svg" : "/globallogic.svg"}
+                            alt={p.org}
+                            className="h-5 w-auto object-contain rounded"
+                          />
+                        </div>
+                        <span className="text-xs font-mono font-bold text-[#D9FF00] bg-[#D9FF00]/10 px-2 py-0.5 rounded">
+                          {p.impact}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg sm:text-xl font-bold leading-snug mb-2 text-white">
+                          {p.title}
+                        </h3>
+                        <p className="text-sm text-white/60 leading-relaxed font-light line-clamp-3">
+                          {p.desc}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5 mt-auto">
+                        {p.tags.map(t => (
+                          <span
+                            key={t}
+                            className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold tracking-wider uppercase border border-white/10 text-white/70"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs font-semibold text-white/50 hover:text-white transition-colors">
+                        <span>View Project Breakdown</span>
+                        <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-200" />
+                      </div>
+                    </LuxuryCard>
+                  </div>
+                ))}
+              </HorizontalScroller>
+            ) : (
+              <div className="max-w-7xl mx-auto px-6 md:px-12">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                  <div>
+                    <SectionHeading
+                      num="05"
+                      title="Projects"
+                      subtitle="Measurable deliverables that moved enterprise needles, saved thousands of consulting hours, and standardized global data flows."
+                    />
+                  </div>
+
+                  <div
+                    className="flex flex-wrap items-center gap-1.5 p-1.5 bg-white/[0.03] border border-white/10 rounded-xl relative"
+                    role="tablist"
+                    aria-label="Filter projects by domain"
+                  >
+                    {[
+                      { id: "all", label: "All Projects" },
+                      { id: "power-platform", label: "Power Platform" },
+                      { id: "genai", label: "GenAI & Copilot" },
+                      { id: "analytics", label: "Analytics & KM" },
+                    ].map(tab => {
+                      const isActive = projectFilter === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          role="tab"
+                          aria-selected={isActive}
+                          onClick={() => handleFilterChange(tab.id as any)}
+                          className={`relative px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap focus-visible:outline-none z-10 ${
+                            isActive
+                              ? "text-black font-bold"
+                              : "text-white/60 hover:text-white"
+                          }`}
+                          data-testid={`filter-${tab.id}`}
+                        >
+                          {isActive && (
+                            <motion.div
+                              layoutId="activeFilterTab"
+                              className="absolute inset-0 bg-[#D9FF00] rounded-lg -z-10 shadow-[0_0_16px_rgba(217,255,0,0.35)]"
+                              transition={
+                                shouldReduceMotion
+                                  ? { duration: 0 }
+                                  : SPRING_SNAPPY
+                              }
+                            />
+                          )}
+                          <span>{tab.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+                  <AnimatePresence mode="popLayout">
+                    {filteredProjects.map((p, i) => (
+                      <motion.div
+                        key={p.id}
+                        layout
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, transition: { duration: 0.16, ease: EASE_EXIT } }}
+                        transition={{ duration: 0.22, delay: i * 0.02, ease: EASE_DECEL }}
+                        data-testid={`project-card-${p.id}`}
                       >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-mono font-bold text-white/50 tracking-wider uppercase">
-                            {p.org}
-                          </span>
-                          <span className="text-xs font-mono font-bold text-[#D9FF00] bg-[#D9FF00]/10 px-2 py-0.5 rounded">
-                            {p.impact}
-                          </span>
-                        </div>
-
-                        <div>
-                          <h3 className="text-xl font-bold leading-snug mb-2 group-hover:text-[#D9FF00] transition-colors">
-                            {p.title}
-                          </h3>
-                          <p className="text-sm text-white/60 leading-relaxed font-light line-clamp-3">
-                            {p.desc}
-                          </p>
-                        </div>
-
-                        {/* Clean unboxed tags */}
-                        <div className="flex flex-wrap gap-1.5 mt-auto">
-                          {p.tags.map(t => (
-                            <span
-                              key={t}
-                              className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold tracking-wider uppercase border border-white/10 text-white/70 group-hover:border-[#D9FF00]/30 group-hover:text-white transition-colors"
-                            >
-                              {t}
+                        <LuxuryCard
+                          onClick={() => setSelectedProject(p)}
+                          className="p-7 flex flex-col h-full gap-5 select-none"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <img
+                                src={p.org === "KPMG" ? "/kpmg.svg" : "/globallogic.svg"}
+                                alt={p.org}
+                                className="h-5 w-auto object-contain rounded"
+                              />
+                            </div>
+                            <span className="text-xs font-mono font-bold text-[#D9FF00] bg-[#D9FF00]/10 px-2 py-0.5 rounded">
+                              {p.impact}
                             </span>
-                          ))}
-                        </div>
+                          </div>
 
-                        <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs font-semibold text-white/50 group-hover:text-[#D9FF00] transition-colors">
-                          <span>View Case Breakdown</span>
-                          <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-200" />
-                        </div>
-                      </LuxuryCard>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </motion.div>
+                          <div>
+                            <h3 className="text-xl font-bold leading-snug mb-2 text-white">
+                              {p.title}
+                            </h3>
+                            <p className="text-sm text-white/60 leading-relaxed font-light line-clamp-3">
+                              {p.desc}
+                            </p>
+                          </div>
 
-              {/* Horizontal Bar Chart: Hours Saved by Initiative */}
+                          <div className="flex flex-wrap gap-1.5 mt-auto">
+                            {p.tags.map(t => (
+                              <span
+                                key={t}
+                                className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold tracking-wider uppercase border border-white/10 text-white/70"
+                              >
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+
+                          <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs font-semibold text-white/50 hover:text-white transition-colors">
+                            <span>View Project Breakdown</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-200" />
+                          </div>
+                        </LuxuryCard>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              </div>
+            )}
+
+            {/* Horizontal Bar Chart: Hours Saved by Initiative (Always rendered below) */}
+            <div className="max-w-7xl mx-auto px-6 md:px-12 mt-12 md:mt-16">
               <ScrollReveal direction="up">
                 <LuxuryCard className="p-7 md:p-10">
                   <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
@@ -1543,43 +1859,14 @@ export default function App() {
                       </h3>
                     </div>
                     <div className="sm:text-right">
-                      <div className="text-2xl font-mono font-black text-[#D9FF00] tabular-nums">2,560 hrs</div>
+                      <div className="text-2xl font-mono font-black text-[#D9FF00] tabular-nums">
+                        <CountUp value="2,560 hrs" />
+                      </div>
                       <div className="text-[10px] font-mono font-bold tracking-widest text-white/40 uppercase">Annualized Efficiency Gain</div>
                     </div>
                   </div>
 
-                  <div className="h-[280px] sm:h-[300px] w-full" aria-label="Horizontal bar chart of hours saved per initiative">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={chartData} layout="vertical" margin={{ left: 5, right: 30, top: 10, bottom: 10 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff0a" horizontal={false} />
-                        <XAxis type="number" hide />
-                        <YAxis
-                          dataKey="name"
-                          type="category"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fill: "#ffffff80", fontSize: 11, fontWeight: 600 }}
-                          width={140}
-                        />
-                        <Tooltip
-                          cursor={{ fill: "#ffffff08" }}
-                          contentStyle={{
-                            background: "#0c0c0c",
-                            border: "1px solid rgba(217,255,0,0.3)",
-                            borderRadius: "12px",
-                            boxShadow: "0 8px 24px rgba(0,0,0,0.8)",
-                          }}
-                          itemStyle={{ color: "#D9FF00", fontWeight: "bold" }}
-                          formatter={(v: any) => [`${v} hrs / yr`, "Efficiency Gain"]}
-                        />
-                        <Bar dataKey="hours" radius={[0, 6, 6, 0]} barSize={22} isAnimationActive={false}>
-                          {chartData.map((e, idx) => (
-                            <Cell key={idx} fill={e.color} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <HoursChart />
                 </LuxuryCard>
               </ScrollReveal>
             </div>
@@ -1641,13 +1928,19 @@ export default function App() {
           {/* ══════════════════════════════════════════════════
               08. CONTACT (Clean direct layout, zero copy button)
           ══════════════════════════════════════════════════ */}
-          <section id="contact" className="py-20 md:py-24 px-6 md:px-12 overflow-hidden">
+          <section ref={contactRef} id="contact" className="py-20 md:py-24 px-6 md:px-12 overflow-hidden">
             <div className="max-w-7xl mx-auto text-center">
               <ScrollReveal direction="fade">
                 <h2 className="text-[44px] sm:text-[72px] md:text-[104px] font-black leading-[0.88] mb-6 uppercase text-white">
-                  let's build<br />
-                  <span className="text-white/25">something</span><br />
-                  <span className="text-[#D9FF00]">impactful.</span>
+                  <motion.span className="block" style={{ x: contactX1, opacity: contactOpacity }}>
+                    let's build
+                  </motion.span>
+                  <motion.span className="block text-white/25" style={{ x: contactX2, opacity: contactOpacity }}>
+                    something
+                  </motion.span>
+                  <motion.span className="block text-[#D9FF00]" style={{ x: contactX3, opacity: contactOpacity }}>
+                    impactful.
+                  </motion.span>
                 </h2>
 
                 <p className="text-white/70 text-sm sm:text-base max-w-lg mx-auto mb-10 font-light">
@@ -1721,9 +2014,13 @@ export default function App() {
                 <div className="flex items-start justify-between gap-4 pb-4 border-b border-white/10 shrink-0">
                   <div className="flex-1 pr-2">
                     <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-                      <span className="text-xs font-mono font-bold text-white/50 tracking-wider uppercase">
-                        {selectedProject.org}
-                      </span>
+                      <div className="flex items-center">
+                        <img
+                          src={selectedProject.org === "KPMG" ? "/kpmg.svg" : "/globallogic.svg"}
+                          alt={selectedProject.org}
+                          className="h-5 w-auto object-contain rounded"
+                        />
+                      </div>
                       <span className="text-white/20">·</span>
                       <span className="text-xs font-mono font-bold text-[#D9FF00] bg-[#D9FF00]/10 px-2 py-0.5 rounded">
                         {selectedProject.impact}

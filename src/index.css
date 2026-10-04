@@ -23,7 +23,8 @@
     @apply bg-[#050505] text-white antialiased selection:bg-neon selection:text-black;
     margin: 0;
     min-height: 100%;
-    overflow-x: hidden;
+    /* clip (not hidden) so position: sticky keeps working for pinned sections */
+    overflow-x: clip;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 

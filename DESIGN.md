@@ -94,3 +94,28 @@ In accordance with [Playwright Agent CLI](https://playwright.dev/agent-cli/intro
    - `data-testid="mobile-menu-btn"`
    - `data-testid="download-resume-btn"`
 5. **Reduced Motion**: Respects `@media (prefers-reduced-motion: reduce)` with zero animation latency for sensitive users.
+
+---
+
+## 5. Scroll-Driven Motion System (`src/scrollEffects.tsx`)
+
+All scroll effects are built on `motion`'s `useScroll` / `useTransform` and live in one module. Each one collapses to its resting state under `prefers-reduced-motion`.
+
+| Effect | Where | Behaviour |
+| --- | --- | --- |
+| Scroll progress bar | Fixed, top of viewport | Lime bar scales with page progress (`data-testid="scroll-progress"`) |
+| Chapter rail | Fixed right edge, `xl`+ | Dot per section, active section highlighted, label on hover/focus (`data-testid="chapter-rail"`) |
+| Active nav link | Top bar | Current section's link turns lime (`aria-current`) |
+| Hero parallax | Hero | Text drifts up and fades; portrait moves slower and scales down; scroll cue fades out |
+| Background depth | Fixed backdrop | Grid and glow halos translate at different rates against page scroll |
+| Velocity marquee | Below hero | Constant drift; scrolling speeds it up, scrolling up reverses it |
+| Section headings | All sections | Ghost number parallaxes behind the heading; accent line draws in |
+| Scroll-read text | About | First two paragraphs light up word by word as they cross the viewport |
+| Count-up numbers | About metrics, GPA, hours total | Count from 0 once, when first in view |
+| Timeline lines | Experience | Each role's accent line draws top-to-bottom with scroll |
+| Pinned horizontal scroll | Toolkit (`lg`+ only) | Section pins; vertical scroll slides the four cards sideways. Below `lg` or with reduced motion it is the original grid |
+| Chart reveal | Projects | Bars grow the first time the chart enters view |
+| Badge fan-out | Certifications | Badges start stacked at centre and spread out as the row scrolls in |
+| Headline slide-in | Contact | Each headline line slides in from alternating sides |
+
+**Sticky requirement:** pinned sections need `position: sticky`, which breaks inside any ancestor with `overflow-x: hidden`. The page wrappers and `body` therefore use `overflow-x: clip`.
