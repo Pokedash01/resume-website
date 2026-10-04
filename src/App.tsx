@@ -77,41 +77,13 @@ function calcTenure(start: Date, end: Date = new Date()): string {
 }
 
 // ─── Cinematic Editorial Preloader (Atmospheric Warm Silver, Pre-warming Assets) ──
-const LoadingScreen = memo(function LoadingScreen({
-  onComplete,
-  onWarmStart,
-}: {
-  onComplete: () => void;
-  onWarmStart?: () => void;
-}) {
+const LoadingScreen = memo(function LoadingScreen({ onComplete }: { onComplete: () => void }) {
   const [progress, setProgress] = useState(0);
   const [phaseText, setPhaseText] = useState("GATHERING ARCHITECTURAL ASSETS");
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
-    // Pre-cache critical images and check font readiness so transitions are 100% loaded
-    const criticalImages = [
-      "/profile.jpg",
-      "/oracle.png",
-      "/ai-901.webp",
-      "/lss-yellow-belt.webp",
-      "/nasba.webp",
-      "/anthropic.jpeg",
-      "/cisco.png",
-      "/ai-transformation-leader.svg",
-      "/ai-business-professional.webp",
-    ];
-    criticalImages.forEach(src => {
-      const img = new Image();
-      img.src = src;
-    });
-
-    if (document.fonts?.ready) {
-      document.fonts.ready.catch(() => {});
-    }
-
     let cancelled = false;
-    let warmTriggered = false;
     const startTime = Date.now();
     const duration = 1400; // Calibrated 1.4s: ensures all background DOM nodes, fonts, and SVGs are 100% warm
 
@@ -122,12 +94,6 @@ const LoadingScreen = memo(function LoadingScreen({
       const eased = 1 - Math.pow(1 - p, 2.5);
       const currentPct = Math.round(eased * 100);
       setProgress(currentPct);
-
-      // Trigger animations to load behind the curtain while loading screen is still active
-      if (currentPct > 20 && !warmTriggered) {
-        warmTriggered = true;
-        onWarmStart?.();
-      }
 
       if (currentPct < 28) {
         setPhaseText("GATHERING ARCHITECTURAL ASSETS");
@@ -155,7 +121,7 @@ const LoadingScreen = memo(function LoadingScreen({
 
     requestAnimationFrame(tick);
     return () => { cancelled = true; };
-  }, [onComplete, onWarmStart]);
+  }, [onComplete]);
 
   return (
     <AnimatePresence>
@@ -846,7 +812,6 @@ export default function App() {
   }, [selectedProject, mobileMenuOpen]);
 
   const handleLoadComplete = useCallback(() => setLoaded(true), []);
-  const handleWarmStart = useCallback(() => setLoaded(true), []);
 
   const filteredProjects = useMemo(() => {
     if (projectFilter === "all") return allProjects;
@@ -866,7 +831,7 @@ export default function App() {
       <div className="hidden md:block"><CustomCursor /></div>
 
       {/* Cinematic Editorial Preloader */}
-      <LoadingScreen onComplete={handleLoadComplete} onWarmStart={handleWarmStart} />
+      <LoadingScreen onComplete={handleLoadComplete} />
 
       {/* 
         PRE-WARMED DOM ARCHITECTURE:
@@ -1251,7 +1216,7 @@ export default function App() {
                         <span className="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full bg-[#D9FF00] shadow-[0_0_10px_#D9FF00]" />
                         <h4 className="text-xl font-bold text-white mb-1">Business Associate</h4>
                         <div className="text-xs font-mono text-white/50 mb-3 uppercase tracking-wider">
-                          October 2026 — Present
+                          May 2024 — Present
                         </div>
                         <p className="text-white/70 text-sm leading-relaxed mb-4 font-light">
                           Managing knowledge management operations, stakeholder coordination, and Power Platform automation across global accounts.
@@ -1275,7 +1240,7 @@ export default function App() {
                         <span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-white/40" />
                         <h4 className="text-lg font-bold text-white/95 mb-1">Analyst</h4>
                         <div className="text-xs font-mono text-white/50 mb-3 uppercase tracking-wider">
-                          May 2024 — September 2026
+                          May 2024 — September 2025
                         </div>
                         <p className="text-white/70 text-sm leading-relaxed mb-4 font-light">
                           Led cross-functional initiatives across 13 sectors with end-to-end stakeholder coordination, proposal enablement, and Power Platform process re-engineering.
@@ -1740,7 +1705,7 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: 0.16, ease: EASE_EXIT } }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[1000] overflow-y-auto bg-black/90 backdrop-blur-xl flex justify-center items-start sm:items-center p-3 sm:p-6 md:p-8 pt-12 sm:pt-6 pb-6"
+              className="fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-6 md:p-8 bg-black/85 backdrop-blur-xl"
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-project-title"
@@ -1752,42 +1717,42 @@ export default function App() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96, y: 10, transition: { duration: 0.16, ease: EASE_EXIT } }}
                 transition={{ duration: 0.22, ease: EASE_DECEL }}
-                className="relative w-full max-w-4xl max-h-[82dvh] sm:max-h-[88vh] flex flex-col bg-[#0e0e0e] border border-white/15 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden my-auto"
+                className="relative w-full max-w-4xl max-h-[88vh] sm:max-h-[90vh] flex flex-col bg-[#0c0c0c] border border-white/15 rounded-2xl sm:rounded-3xl p-5 sm:p-7 md:p-8 shadow-2xl overflow-hidden"
                 onClick={e => e.stopPropagation()}
               >
-                {/* Modal Header: Sticky at top, Close Button ALWAYS 100% visible and accessible on mobile */}
-                <div className="sticky top-0 z-20 bg-[#0e0e0e]/95 backdrop-blur-md px-4 py-3.5 sm:px-7 sm:py-5 border-b border-white/10 flex items-center justify-between gap-3 shrink-0">
-                  <div className="flex-1 pr-2 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="text-[11px] font-mono font-bold text-white/50 tracking-wider uppercase">
+                {/* Modal Header: Pinned at top, Close Button is ALWAYS 100% visible on mobile */}
+                <div className="flex items-start justify-between gap-4 pb-4 border-b border-white/10 shrink-0">
+                  <div className="flex-1 pr-2">
+                    <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+                      <span className="text-xs font-mono font-bold text-white/50 tracking-wider uppercase">
                         {selectedProject.org}
                       </span>
                       <span className="text-white/20">·</span>
-                      <span className="text-[11px] font-mono font-bold text-[#D9FF00] bg-[#D9FF00]/10 px-2 py-0.5 rounded">
+                      <span className="text-xs font-mono font-bold text-[#D9FF00] bg-[#D9FF00]/10 px-2 py-0.5 rounded">
                         {selectedProject.impact}
                       </span>
                     </div>
 
-                    <h2 id="modal-project-title" className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white leading-tight">
+                    <h2 id="modal-project-title" className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white leading-tight">
                       {selectedProject.title}
                     </h2>
                   </div>
 
-                  {/* Close button: perfectly visible on all mobile viewports, high contrast */}
+                  {/* Close button: pinned to header, perfectly visible on all mobile viewports */}
                   <motion.button
                     onClick={() => setSelectedProject(null)}
                     whileHover={shouldReduceMotion ? undefined : { scale: 1.08 }}
                     whileTap={shouldReduceMotion ? undefined : { scale: 0.92 }}
-                    className="p-2 sm:p-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/20 text-white transition-colors focus-visible:outline-none shrink-0 touch-manipulation flex items-center justify-center shadow-md"
+                    className="p-2 sm:p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white/80 hover:text-white transition-colors focus-visible:outline-none shrink-0"
                     aria-label="Close project details"
                     data-testid="close-project-modal"
                   >
-                    <X size={18} className="text-white" />
+                    <X size={18} />
                   </motion.button>
                 </div>
 
                 {/* Scrollable Content Body (Seamless scroll on mobile, flat on desktop) */}
-                <div className="overflow-y-auto flex-1 p-4 sm:p-7 space-y-4 no-scrollbar overscroll-contain">
+                <div className="overflow-y-auto flex-1 pt-4 space-y-4 no-scrollbar">
                   <p className="text-white/80 text-xs sm:text-sm leading-relaxed font-light">
                     {selectedProject.desc}
                   </p>
