@@ -896,7 +896,6 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [now, setNow] = useState(() => new Date());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [projectFilter, setProjectFilter] = useState<"all" | "power-platform" | "genai" | "analytics">("all");
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
 
   const shouldReduceMotion = useReducedMotion();
@@ -951,21 +950,6 @@ export default function App() {
     portraitMouseY.set(0);
   };
 
-  // Safe filter tab handler: seamlessly aligns to start of #work without any jumping down to Section 07
-  const handleFilterChange = (tabId: "all" | "power-platform" | "genai" | "analytics") => {
-    const workEl = document.getElementById("work");
-    if (workEl) {
-      const workRect = workEl.getBoundingClientRect();
-      if (workRect.top < 70) {
-        window.scrollTo({
-          top: window.scrollY + workRect.top - 70,
-          behavior: "instant",
-        });
-      }
-    }
-    setProjectFilter(tabId);
-  };
-
   // Tick clock
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 60_000);
@@ -992,11 +976,6 @@ export default function App() {
   }, [selectedProject, mobileMenuOpen]);
 
   const handleLoadComplete = useCallback(() => setLoaded(true), []);
-
-  const filteredProjects = useMemo(() => {
-    if (projectFilter === "all") return allProjects;
-    return allProjects.filter(p => p.category === projectFilter);
-  }, [projectFilter]);
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans overflow-x-clip selection:bg-[#D9FF00] selection:text-black">
@@ -1138,7 +1117,7 @@ export default function App() {
             ref={heroRef}
             onMouseMove={handleHeroMouseMove}
             onMouseLeave={handleHeroMouseLeave}
-            className="relative min-h-[88vh] pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto flex items-center"
+            className="relative min-h-[92vh] lg:min-h-screen pt-32 md:pt-36 pb-20 md:pb-24 px-6 md:px-12 max-w-7xl mx-auto flex items-center"
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
               {/* Left column (Text & Actions) — drifts up and fades as you scroll away */}
@@ -1163,7 +1142,7 @@ export default function App() {
                   {/* Main Typography with masked slide-up reveal */}
                   <div className="overflow-hidden">
                     <motion.h1
-                      className="text-[64px] sm:text-[90px] md:text-[112px] font-black leading-[0.88] tracking-tighter text-white"
+                      className="text-[68px] sm:text-[96px] md:text-[116px] lg:text-[124px] font-black leading-[0.88] tracking-tighter text-white"
                       initial={{ y: 40, opacity: 0 }}
                       animate={loaded ? { y: 0, opacity: 1 } : { y: 40, opacity: 0 }}
                       transition={{ duration: 0.65, ease: EASE_DECEL, delay: 0.15 }}
@@ -1176,7 +1155,7 @@ export default function App() {
 
                   {/* Professional Bio */}
                   <motion.p
-                    className="mt-6 text-base md:text-lg text-white/85 font-normal leading-relaxed max-w-xl"
+                    className="mt-6 md:mt-8 text-base sm:text-lg md:text-xl text-white/85 font-normal leading-relaxed max-w-xl"
                     initial={{ opacity: 0, y: 15 }}
                     animate={loaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                     transition={{ duration: 0.6, ease: EASE_DECEL, delay: 0.3 }}
@@ -1186,10 +1165,10 @@ export default function App() {
                   </motion.p>
                 </div>
 
-                <div className="mt-8 lg:mt-0">
+                <div className="mt-8 lg:mt-4">
                   {/* Quantified Metrics Ribbon */}
                   <motion.div
-                    className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-semibold text-white/50 tracking-wider uppercase font-mono mb-6"
+                    className="flex flex-wrap items-center gap-3.5 sm:gap-5 text-xs sm:text-[13px] font-semibold text-white/50 tracking-wider uppercase font-mono mb-8"
                     initial={{ opacity: 0, y: 15 }}
                     animate={loaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                     transition={{ duration: 0.6, ease: EASE_DECEL, delay: 0.4 }}
@@ -1213,7 +1192,7 @@ export default function App() {
                       whileHover={shouldReduceMotion ? undefined : { scale: 1.03, y: -2 }}
                       whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
                       transition={SPRING_SNAPPY}
-                      className="px-6 py-3 rounded-xl bg-white/10 hover:bg-[#D9FF00] hover:text-black border border-white/10 hover:border-transparent font-bold text-xs uppercase tracking-wider transition-colors flex items-center gap-2 group text-white"
+                      className="px-7 py-3.5 rounded-xl bg-white/10 hover:bg-[#D9FF00] hover:text-black border border-white/10 hover:border-transparent font-bold text-xs uppercase tracking-wider transition-colors flex items-center gap-2 group text-white"
                     >
                       <span>Explore Projects</span>
                       <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-200" />
@@ -1223,7 +1202,7 @@ export default function App() {
                       whileHover={shouldReduceMotion ? undefined : { scale: 1.03, y: -2 }}
                       whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
                       transition={SPRING_SNAPPY}
-                      className="px-6 py-3 rounded-xl border border-white/15 hover:border-white/40 text-white/90 hover:text-white font-bold text-xs uppercase tracking-wider transition-colors"
+                      className="px-7 py-3.5 rounded-xl border border-white/15 hover:border-white/40 text-white/90 hover:text-white font-bold text-xs uppercase tracking-wider transition-colors"
                     >
                       Get in Touch
                     </motion.a>
@@ -1243,7 +1222,7 @@ export default function App() {
                 transition={{ duration: 0.7, ease: EASE_DECEL, delay: 0.25 }}
                 style={shouldReduceMotion ? undefined : { rotateX: tiltX, rotateY: tiltY, transformPerspective: 800 }}
               >
-                <div className="relative w-full flex-1 min-h-[460px] md:min-h-[500px] border border-white/15 rounded-3xl overflow-hidden bg-[#111111] shadow-[0_0_50px_rgba(217,255,0,0.06)] group">
+                <div className="relative w-full flex-1 min-h-[500px] md:min-h-[560px] lg:min-h-[600px] border border-white/15 rounded-3xl overflow-hidden bg-[#111111] shadow-[0_0_50px_rgba(217,255,0,0.06)] group">
                   <img
                     src="/profile.jpg"
                     alt="Portrait of Kartik Bhatt"
@@ -1295,7 +1274,7 @@ export default function App() {
           {/* ══════════════════════════════════════════════════
               01. ABOUT (Unboxed Narrative & Clean Executive Summary)
           ══════════════════════════════════════════════════ */}
-          <section id="about" className="py-20 md:py-24 px-6 md:px-12 border-b border-white/5 overflow-hidden">
+          <section id="about" className="py-16 md:py-20 px-6 md:px-12 border-b border-white/5 overflow-hidden">
             <div className="max-w-7xl mx-auto">
               <SectionHeading
                 num="01"
@@ -1624,62 +1603,17 @@ export default function App() {
             {pinProjects ? (
               <HorizontalScroller
                 header={
-                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
-                    <div>
-                      <SectionHeading
-                        num="05"
-                        title="Projects"
-                        subtitle="Measurable deliverables that moved enterprise needles, saved thousands of consulting hours, and standardized global data flows."
-                        className="mb-0"
-                      />
-                    </div>
-
-                    {/* Vercel-style sliding tab selector with layoutId */}
-                    <div
-                      className="flex flex-wrap items-center gap-1.5 p-1.5 bg-white/[0.03] border border-white/10 rounded-xl relative shrink-0"
-                      role="tablist"
-                      aria-label="Filter projects by domain"
-                    >
-                      {[
-                        { id: "all", label: "All Projects" },
-                        { id: "power-platform", label: "Power Platform" },
-                        { id: "genai", label: "GenAI & Copilot" },
-                        { id: "analytics", label: "Analytics & KM" },
-                      ].map(tab => {
-                        const isActive = projectFilter === tab.id;
-                        return (
-                          <button
-                            key={tab.id}
-                            role="tab"
-                            aria-selected={isActive}
-                            onClick={() => handleFilterChange(tab.id as any)}
-                            className={`relative px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap focus-visible:outline-none z-10 ${
-                              isActive
-                                ? "text-black font-bold"
-                                : "text-white/60 hover:text-white"
-                            }`}
-                            data-testid={`filter-${tab.id}`}
-                          >
-                            {isActive && (
-                              <motion.div
-                                layoutId="activeFilterTab"
-                                className="absolute inset-0 bg-[#D9FF00] rounded-lg -z-10 shadow-[0_0_16px_rgba(217,255,0,0.35)]"
-                                transition={
-                                  shouldReduceMotion
-                                    ? { duration: 0 }
-                                    : SPRING_SNAPPY
-                                }
-                              />
-                            )}
-                            <span>{tab.label}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
+                  <div className="max-w-7xl mx-auto mb-2">
+                    <SectionHeading
+                      num="05"
+                      title="Projects"
+                      subtitle="Measurable deliverables that moved enterprise needles, saved thousands of consulting hours, and standardized global data flows."
+                      className="mb-0"
+                    />
                   </div>
                 }
               >
-                {filteredProjects.map(p => (
+                {allProjects.map(p => (
                   <div
                     key={p.id}
                     data-testid={`project-card-${p.id}`}
@@ -1732,116 +1666,69 @@ export default function App() {
               </HorizontalScroller>
             ) : (
               <div className="max-w-7xl mx-auto px-6 md:px-12">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                  <div>
-                    <SectionHeading
-                      num="05"
-                      title="Projects"
-                      subtitle="Measurable deliverables that moved enterprise needles, saved thousands of consulting hours, and standardized global data flows."
-                    />
-                  </div>
-
-                  <div
-                    className="flex flex-wrap items-center gap-1.5 p-1.5 bg-white/[0.03] border border-white/10 rounded-xl relative"
-                    role="tablist"
-                    aria-label="Filter projects by domain"
-                  >
-                    {[
-                      { id: "all", label: "All Projects" },
-                      { id: "power-platform", label: "Power Platform" },
-                      { id: "genai", label: "GenAI & Copilot" },
-                      { id: "analytics", label: "Analytics & KM" },
-                    ].map(tab => {
-                      const isActive = projectFilter === tab.id;
-                      return (
-                        <button
-                          key={tab.id}
-                          role="tab"
-                          aria-selected={isActive}
-                          onClick={() => handleFilterChange(tab.id as any)}
-                          className={`relative px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap focus-visible:outline-none z-10 ${
-                            isActive
-                              ? "text-black font-bold"
-                              : "text-white/60 hover:text-white"
-                          }`}
-                          data-testid={`filter-${tab.id}`}
-                        >
-                          {isActive && (
-                            <motion.div
-                              layoutId="activeFilterTab"
-                              className="absolute inset-0 bg-[#D9FF00] rounded-lg -z-10 shadow-[0_0_16px_rgba(217,255,0,0.35)]"
-                              transition={
-                                shouldReduceMotion
-                                  ? { duration: 0 }
-                                  : SPRING_SNAPPY
-                              }
-                            />
-                          )}
-                          <span>{tab.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                <div className="mb-10">
+                  <SectionHeading
+                    num="05"
+                    title="Projects"
+                    subtitle="Measurable deliverables that moved enterprise needles, saved thousands of consulting hours, and standardized global data flows."
+                  />
                 </div>
 
-                <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
-                  <AnimatePresence mode="popLayout">
-                    {filteredProjects.map((p, i) => (
-                      <motion.div
-                        key={p.id}
-                        layout
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, transition: { duration: 0.16, ease: EASE_EXIT } }}
-                        transition={{ duration: 0.22, delay: i * 0.02, ease: EASE_DECEL }}
-                        data-testid={`project-card-${p.id}`}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+                  {allProjects.map((p, i) => (
+                    <motion.div
+                      key={p.id}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.35, delay: i * 0.05, ease: EASE_DECEL }}
+                      data-testid={`project-card-${p.id}`}
+                    >
+                      <LuxuryCard
+                        onClick={() => setSelectedProject(p)}
+                        className="p-7 flex flex-col h-full gap-5 select-none"
                       >
-                        <LuxuryCard
-                          onClick={() => setSelectedProject(p)}
-                          className="p-7 flex flex-col h-full gap-5 select-none"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                              <img
-                                src={p.org === "KPMG" ? "/kpmg.svg" : "/globallogic.svg"}
-                                alt={p.org}
-                                className="h-5 w-auto object-contain rounded"
-                              />
-                            </div>
-                            <span className="text-xs font-mono font-bold text-[#D9FF00] bg-[#D9FF00]/10 px-2 py-0.5 rounded">
-                              {p.impact}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <img
+                              src={p.org === "KPMG" ? "/kpmg.svg" : "/globallogic.svg"}
+                              alt={p.org}
+                              className="h-5 w-auto object-contain rounded"
+                            />
+                          </div>
+                          <span className="text-xs font-mono font-bold text-[#D9FF00] bg-[#D9FF00]/10 px-2 py-0.5 rounded">
+                            {p.impact}
+                          </span>
+                        </div>
+
+                        <div>
+                          <h3 className="text-xl font-bold leading-snug mb-2 text-white">
+                            {p.title}
+                          </h3>
+                          <p className="text-sm text-white/60 leading-relaxed font-light line-clamp-3">
+                            {p.desc}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-1.5 mt-auto">
+                          {p.tags.map(t => (
+                            <span
+                              key={t}
+                              className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold tracking-wider uppercase border border-white/10 text-white/70"
+                            >
+                              {t}
                             </span>
-                          </div>
+                          ))}
+                        </div>
 
-                          <div>
-                            <h3 className="text-xl font-bold leading-snug mb-2 text-white">
-                              {p.title}
-                            </h3>
-                            <p className="text-sm text-white/60 leading-relaxed font-light line-clamp-3">
-                              {p.desc}
-                            </p>
-                          </div>
-
-                          <div className="flex flex-wrap gap-1.5 mt-auto">
-                            {p.tags.map(t => (
-                              <span
-                                key={t}
-                                className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold tracking-wider uppercase border border-white/10 text-white/70"
-                              >
-                                {t}
-                              </span>
-                            ))}
-                          </div>
-
-                          <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs font-semibold text-white/50 hover:text-white transition-colors">
-                            <span>View Project Breakdown</span>
-                            <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-200" />
-                          </div>
-                        </LuxuryCard>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </motion.div>
+                        <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs font-semibold text-white/50 hover:text-white transition-colors">
+                          <span>View Project Breakdown</span>
+                          <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-200" />
+                        </div>
+                      </LuxuryCard>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             )}
 

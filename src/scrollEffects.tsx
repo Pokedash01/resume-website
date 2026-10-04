@@ -113,7 +113,7 @@ const ScrollWord = memo(function ScrollWord({
   className?: string;
   children: ReactNode;
 }) {
-  const opacity = useTransform(progress, range, [reduced ? 1 : 0.2, 1]);
+  const opacity = useTransform(progress, range, [reduced ? 1 : 0.28, 1]);
   return (
     <motion.span style={{ opacity }} className={className}>
       {children}
@@ -130,8 +130,8 @@ export function ScrollWords({
 }) {
   const ref = useRef<HTMLParagraphElement>(null);
   const reduced = !!useReducedMotion();
-  // Starts early when approaching viewport, finishes 100% white when centered alongside the Executive Summary tile
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.98", "start 0.40"] });
+  // Starts early when approaching viewport, finishes 100% white when comfortably in view alongside the Executive Summary tile
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.96", "start 0.60"] });
 
   let prevEndsWithSpace = false;
   const words = segments.flatMap(seg => {
@@ -148,19 +148,23 @@ export function ScrollWords({
 
   return (
     <p ref={ref} className={className}>
-      {words.map((word, i) => (
-        <Fragment key={i}>
-          {i > 0 && word.spaceBefore ? " " : null}
-          <ScrollWord
-            progress={scrollYProgress}
-            range={[Math.max(0, (i - 1) / n), Math.min(1, (i + 1) / n)]}
-            reduced={reduced}
-            className={word.cls}
-          >
-            {word.w}
-          </ScrollWord>
-        </Fragment>
-      ))}
+      {words.map((word, i) => {
+        const start = Math.max(0, (i / Math.max(n - 1, 1)) * 0.72);
+        const end = Math.min(1, start + 0.16);
+        return (
+          <Fragment key={i}>
+            {i > 0 && word.spaceBefore ? " " : null}
+            <ScrollWord
+              progress={scrollYProgress}
+              range={[start, end]}
+              reduced={reduced}
+              className={word.cls}
+            >
+              {word.w}
+            </ScrollWord>
+          </Fragment>
+        );
+      })}
     </p>
   );
 }
