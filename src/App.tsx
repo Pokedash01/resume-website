@@ -54,11 +54,10 @@ const marqueeSkills = [
   "POWER APPS",
   "POWER AUTOMATE",
   "COPILOT STUDIO",
-  "POWER BI & DAX",
+  "POWER BI",
   "SHAREPOINT ONLINE",
   "LEAN SIX SIGMA",
-  "AZURE AI",
-  "AGENTIC AI",
+  "AI AGENTS",
   "ADVANCED EXCEL & VBA",
   "PROCESS AUTOMATION",
   "DATA MODELING",
@@ -502,17 +501,17 @@ const allProjects: ProjectItem[] = [
     title: "Engagement Metrics BI Dashboard",
     desc: "Centralized executive repository for engagement metrics across 30,000+ assets, visualized in Power BI for executive and stakeholder decision-making.",
     impact: "30K+ assets tracked",
-    tags: ["POWER BI", "DATA ANALYTICS", "SQL"],
+    tags: ["POWER BI", "DATA ANALYTICS", "SHAREPOINT"],
     challenge: "Practice teams lacked unified intelligence on which knowledge assets, RFP templates, and whitepapers were actually driving deal conversion and reuse across sectors.",
     solution: "Constructed comprehensive Power BI dashboards connecting transactional audit logs and usage telemetry with automated refresh schedules and interactive slicers.",
-    architecture: "Designed custom DAX measures for asset velocity, multi-source SQL aggregation pipelines, and automated monthly PowerPoint export packs for sector leads.",
+    architecture: "Designed custom DAX measures for asset velocity, multi-source aggregation pipelines, and automated monthly PowerPoint export packs for sector leads.",
     outcomes: [
       "Identified top 10% highest-converting proposal collateral for executive review",
       "Decommissioned 2,000+ obsolete or redundant documentation files",
       "Automated monthly KPI packs for 13 global practice teams",
       "Unlocked data-driven content retirement and update roadmaps",
     ],
-    techStack: ["Power BI Desktop & Service", "DAX", "Power Query (M)", "SQL Server", "SharePoint Analytics"],
+    techStack: ["Power BI Desktop & Service", "DAX", "Power Query (M)", "SharePoint Lists"],
   },
   {
     id: "gl-genai",
@@ -568,9 +567,9 @@ const toolkitBento = [
     tagline: "High-Scale Low-Code Engineering",
     icon: <Cpu className="text-[#D9FF00]" size={18} />,
     items: [
-      "Power Apps (Canvas & Model-Driven)",
-      "Power Automate (Cloud & Desktop)",
-      "Power BI (DAX, Modeling)",
+      "Power Apps",
+      "Power Automate",
+      "Power BI",
     ],
     metric: "1,700+ hrs / yr",
   },
@@ -592,7 +591,6 @@ const toolkitBento = [
     items: [
       "SharePoint Online Ecosystem",
       "Advanced Excel and VBA Macros",
-      "SQL Query Engineering",
       "Teams Webhook Workflows",
     ],
     metric: "30,000+ assets",
@@ -602,7 +600,6 @@ const toolkitBento = [
     tagline: "Quantified Process Excellence",
     icon: <Terminal className="text-[#F59E0B]" size={18} />,
     items: [
-      "Lean Six Sigma (Yellow Belt)",
       "DMAIC Process Re-engineering",
       "RFP & RFI Bid Management",
       "Taxonomy & Governance",
@@ -1216,7 +1213,7 @@ export default function App() {
                         <span className="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full bg-[#D9FF00] shadow-[0_0_10px_#D9FF00]" />
                         <h4 className="text-xl font-bold text-white mb-1">Business Associate</h4>
                         <div className="text-xs font-mono text-white/50 mb-3 uppercase tracking-wider">
-                          May 2024 — Present
+                          October 2026 — Present
                         </div>
                         <p className="text-white/70 text-sm leading-relaxed mb-4 font-light">
                           Managing knowledge management operations, stakeholder coordination, and Power Platform automation across global accounts.
@@ -1240,7 +1237,7 @@ export default function App() {
                         <span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-white/40" />
                         <h4 className="text-lg font-bold text-white/95 mb-1">Analyst</h4>
                         <div className="text-xs font-mono text-white/50 mb-3 uppercase tracking-wider">
-                          May 2024 — September 2025
+                          May 2024 — September 2026
                         </div>
                         <p className="text-white/70 text-sm leading-relaxed mb-4 font-light">
                           Led cross-functional initiatives across 13 sectors with end-to-end stakeholder coordination, proposal enablement, and Power Platform process re-engineering.
