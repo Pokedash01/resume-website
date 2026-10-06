@@ -366,17 +366,20 @@ const ParallaxBackground = memo(function ParallaxBackground() {
 
 // ─── Luxury Spotlight Card (Clean, Refined, Non-aggressive) ───────────────────
 const LuxuryCard = memo(function LuxuryCard({
-  children, className = "", onClick, ...props
+  children, className = "", onClick, href, target, rel, ...props
 }: {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
+  href?: string;
+  target?: string;
+  rel?: string;
   [key: string]: any;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLElement>(null);
   const shouldReduceMotion = useReducedMotion();
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -385,9 +388,15 @@ const LuxuryCard = memo(function LuxuryCard({
     cardRef.current.style.setProperty("--mouse-y", `${y}px`);
   };
 
+  const Component = href ? motion.a : motion.div;
+  const isInteractive = Boolean(onClick || href);
+
   return (
-    <motion.div
-      ref={cardRef}
+    <Component
+      ref={cardRef as any}
+      href={href}
+      target={target}
+      rel={rel}
       onClick={onClick}
       onMouseMove={handleMouseMove}
       initial={shouldReduceMotion ? undefined : { opacity: 0, y: 20 }}
@@ -395,18 +404,18 @@ const LuxuryCard = memo(function LuxuryCard({
       viewport={{ once: false, amount: 0.12 }}
       transition={{ duration: 0.45, ease: EASE_DECEL }}
       whileHover={!shouldReduceMotion ? { y: -3, transition: { duration: 0.2, ease: EASE_DECEL } } : undefined}
-      whileTap={onClick && !shouldReduceMotion ? { scale: 0.99 } : undefined}
+      whileTap={isInteractive && !shouldReduceMotion ? { scale: 0.98 } : undefined}
       className={[
-        "spotlight-card relative overflow-hidden rounded-2xl",
+        "spotlight-card relative overflow-hidden rounded-2xl block",
         "border border-white/10 bg-white/[0.025] backdrop-blur-xl",
         "transition-colors duration-300",
-        onClick ? "cursor-pointer hover:border-white/20 hover:bg-white/[0.04] hover:shadow-[0_12px_32px_rgba(0,0,0,0.6)]" : "hover:border-white/20",
+        isInteractive ? "cursor-pointer hover:border-white/25 hover:bg-white/[0.045] hover:shadow-[0_12px_32px_rgba(0,0,0,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9FF00]" : "hover:border-white/20",
         className,
       ].join(" ")}
       {...props}
     >
       {children}
-    </motion.div>
+    </Component>
   );
 });
 
@@ -1836,26 +1845,33 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto w-full">
                 {contactItems.map((item, i) => (
                   <ScrollReveal key={item.id} delay={i * 0.06} direction="up">
-                    <LuxuryCard className="p-8 flex flex-col items-center gap-3 text-center group h-full">
-                      <motion.div
-                        whileHover={shouldReduceMotion ? undefined : { scale: 1.15, rotate: 6 }}
-                        transition={SPRING_BOUNCY}
-                        className="text-white/50 group-hover:text-[#D9FF00] transition-colors p-3 rounded-2xl bg-white/5"
-                      >
-                        {item.icon}
-                      </motion.div>
-                      <div className="text-[10px] font-mono font-bold tracking-[0.25em] text-white/40 uppercase">
-                        {item.label}
+                    <LuxuryCard
+                      href={item.href}
+                      target={item.href.startsWith("http") ? "_blank" : undefined}
+                      rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      className="p-8 flex flex-col items-center justify-between gap-4 text-center group h-full select-none cursor-pointer"
+                      data-testid={`contact-button-${item.id}`}
+                      aria-label={`${item.label}: ${item.val}`}
+                    >
+                      <div className="flex flex-col items-center gap-3 w-full">
+                        <div className="text-white/60 group-hover:text-[#D9FF00] group-hover:bg-[#D9FF00]/10 transition-colors p-3.5 rounded-2xl bg-white/5 group-hover:scale-110 duration-200">
+                          {item.icon}
+                        </div>
+                        <div className="text-[10px] font-mono font-bold tracking-[0.25em] text-white/40 group-hover:text-white/70 transition-colors uppercase">
+                          {item.label}
+                        </div>
+                        <div
+                          className="text-sm font-semibold text-white group-hover:text-[#D9FF00] transition-colors break-all"
+                          data-testid={`contact-link-${item.id}`}
+                        >
+                          {item.val}
+                        </div>
                       </div>
-                      <a
-                        href={item.href}
-                        target={item.href.startsWith("http") ? "_blank" : undefined}
-                        rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                        className="text-sm font-semibold text-white hover:text-[#D9FF00] transition-colors focus-visible:outline-none break-all"
-                        data-testid={`contact-link-${item.id}`}
-                      >
-                        {item.val}
-                      </a>
+
+                      <div className="flex items-center gap-1.5 text-[11px] font-mono font-semibold text-white/35 group-hover:text-[#D9FF00] transition-colors uppercase tracking-wider pt-3 border-t border-white/5 w-full justify-center">
+                        <span>{item.id === "email" ? "Send Email" : item.id === "phone" ? "Call Now" : "Open LinkedIn"}</span>
+                        <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-200" />
+                      </div>
                     </LuxuryCard>
                   </ScrollReveal>
                 ))}
