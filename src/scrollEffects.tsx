@@ -57,12 +57,23 @@ const wrap = (min: number, max: number, v: number) => {
 };
 
 export const VelocityMarquee = memo(function VelocityMarquee({
++  // expose the MotionValue so a pre‑warm step can tick it once
++  // (this does not affect normal operation)
++  // eslint-disable-next-line @typescript-eslint/no-unused-vars
++  __exposeBaseX?: (base: any) => void,
+
   items,
 }: {
   items: readonly string[];
 }) {
   const reduced = useReducedMotion();
   const baseX = useMotionValue(0);
++  // expose the value globally so the warm‑up hook can read it once
++  useEffect(() => {
++    (window as any).__marqueeBaseX = baseX;
++    return () => delete (window as any).__marqueeBaseX;
++  }, [baseX]);
+
   const { scrollY } = useScroll();
   const velocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(velocity, { damping: 50, stiffness: 400 });
@@ -98,6 +109,15 @@ export const VelocityMarquee = memo(function VelocityMarquee({
 });
 
 // ─── Word-by-word reveal tied to scroll position ──────────────────────────────
+
+export function warmMarquee() {
+  const mv = (window as any).__marqueeBaseX;
+  if (mv) {
+    // Force a read/write to trigger Motion's internal subscription graph.
+    mv.set(mv.get() ?? 0);
+  }
+}
+
 type Segment = { text: string; className?: string };
 
 const ScrollWord = memo(function ScrollWord({
