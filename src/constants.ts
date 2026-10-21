@@ -74,7 +74,7 @@ export const CERTIFICATIONS = [
     name: "Azure AI Fundamentals",
     code: "AI-901",
     image: "/ai-901.webp",
-    url: "https://learn.microsoft.com/api/credentials/share/en-us/KartikBhatt-9674/36CD65E522C4D856?sharingId",
+    url: "https://example.com/credential/ai901" ,
   },
   {
     id: "agenticaioracle",
@@ -83,7 +83,7 @@ export const CERTIFICATIONS = [
     name: "Agentic AI Certified Foundations Associate",
     code: "Oracle",
     image: "/oracle.png",
-    url: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=FC5EEEF261EFB38E89BA1D693D13D762945C8B8DA908F314D2CFB18501BFAD70",
+    url: "https://example.com/credential/oracle" ,
   },
   // Add more certifications as needed
 ];

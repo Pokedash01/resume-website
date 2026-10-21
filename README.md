@@ -8,7 +8,7 @@ This contains everything you need to run your app locally.
 
 View your app in AI Studio: https://ai.studio/apps/02d582f5-07d7-4e76-9ed3-e3947a217329
 
-## Run Locally
+- The app now pre‑loads all images and lazy‑loads heavy sections for a lag‑free experience after the splash screen.
 
 **Prerequisites:**  Node.js
 
