@@ -258,8 +258,8 @@ export function createDefaultPartitionForUser(
     salary_expectation: chosenSalary,
   };
 
-  const defaultChatId = user?.telegram_chat_id || (user?.id === PRIMARY_USER_ID ? (process.env.TELEGRAM_CHAT_ID || '1368681854') : '');
-  const defaultBotToken = process.env.TELEGRAM_BOT_TOKEN || '8624209195:AAGnBEyZpf2mNq0JJyguRRhfmN0dKlmMaas';
+  const defaultChatId = user?.telegram_chat_id || (user?.id === PRIMARY_USER_ID ? (process.env.TELEGRAM_CHAT_ID || '') : '');
+  const defaultBotToken = process.env.TELEGRAM_BOT_TOKEN;
   const hasTelegram = Boolean(defaultChatId);
 
   const partitionSettings: AppSettings & { serpapi_key?: string } = {
@@ -314,7 +314,7 @@ export function createDefaultPartitionForUser(
  */
 export function seedDefaultUsers() {
   if (!users[PRIMARY_USER_ID]) {
-    const { hash, salt } = hashPassword('careerops123');
+    const { hash, salt } = hashPassword(process.env.PRIMARY_PASSWORD || 'change-this-password');
     const primaryAccount: UserAccountRecord = {
       id: PRIMARY_USER_ID,
       email: 'kb270102@gmail.com',
@@ -323,14 +323,14 @@ export function seedDefaultUsers() {
       salt,
       created_at: '2026-01-01T00:00:00.000Z',
       last_login_at: new Date().toISOString(),
-      telegram_chat_id: process.env.TELEGRAM_CHAT_ID || '1368681854',
+      telegram_chat_id: process.env.TELEGRAM_CHAT_ID || '',
     };
     users[PRIMARY_USER_ID] = primaryAccount;
     userEmailIndex['kb270102@gmail.com'] = PRIMARY_USER_ID;
   }
 
   if (!users[DEMO_USER_ID]) {
-    const { hash, salt } = hashPassword('demo123');
+    const { hash, salt } = hashPassword(process.env.DEMO_PASSWORD || 'change-this-password');
     const demoAccount: UserAccountRecord = {
       id: DEMO_USER_ID,
       email: 'demo@careerops.ai',
@@ -339,7 +339,7 @@ export function seedDefaultUsers() {
       salt,
       created_at: '2026-01-01T00:00:00.000Z',
       last_login_at: new Date().toISOString(),
-      telegram_chat_id: '1368681854',
+      telegram_chat_id: process.env.TELEGRAM_CHAT_ID || '',
     };
     users[DEMO_USER_ID] = demoAccount;
     userEmailIndex['demo@careerops.ai'] = DEMO_USER_ID;

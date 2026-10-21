@@ -77,6 +77,7 @@ import {
   getAllUserPartitions,
   createPasswordResetCode,
   verifyAndResetPassword,
+  getCanonicalNextRun,
 } from './server/auth.js';
 import { sendPasswordResetEmail } from './server/mailer.js';
 import {
@@ -183,9 +184,9 @@ function truncateSearchedRegistry(ttlDays: number = 30, maxCapacity: number = 50
 
 const appSettings: AppSettings & { serpapi_key?: string } = {
   min_match_score: 75,
-  telegram_configured: true,
-  telegram_chat_id: process.env.TELEGRAM_CHAT_ID || '1368681854',
-  telegram_bot_token: process.env.TELEGRAM_BOT_TOKEN || '8624209195:AAGnBEyZpf2mNq0JJyguRRhfmN0dKlmMaas',
+  telegram_configured: Boolean(process.env.TELEGRAM_CHAT_ID),
+  telegram_chat_id: process.env.TELEGRAM_CHAT_ID || '',
+  telegram_bot_token: process.env.TELEGRAM_BOT_TOKEN,
   telegram_bot_name: 'CareerOps Bot',
   telegram_custom_header: '🎯 New High-Fit Role Matched!',
   telegram_include_salary: true,
@@ -194,8 +195,8 @@ const appSettings: AppSettings & { serpapi_key?: string } = {
   seen_ttl_days: 14,
   workflow_enabled: true,
   workflow_interval_hours: 4,
-  auto_notify_telegram: true,
-  serpapi_key: process.env.SERPAPI_KEY || 'GNLQpQWpHAMcEL9MguEkrxq1',
+  auto_notify_telegram: Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID),
+  serpapi_key: process.env.SERPAPI_KEY,
 };
 
 const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
@@ -243,13 +244,6 @@ export function isTelegramAlertDeliveryAllowed(req?: any): boolean {
 
   // All other environments (AI Studio, preview run.app, localhost, Cloud Run, etc.) are strictly muted
   return false;
-}
-
-export function getCanonicalNextRun(intervalHours = 4): string {
-  const now = Date.now();
-  const intervalMs = (intervalHours || 4) * 3600 * 1000;
-  const nextTimestamp = Math.ceil((now + 1000) / intervalMs) * intervalMs;
-  return new Date(nextTimestamp).toISOString();
 }
 
 const PEER_ENDPOINTS: string[] = [];
@@ -923,7 +917,7 @@ app.use((req, res, next) => {
       partition.workflowState.auto_notify_telegram = true;
 
       // Asynchronously send a welcome push alert to the user's specific Telegram ID only on Vercel
-      const botToken = partition.appSettings.telegram_bot_token || process.env.TELEGRAM_BOT_TOKEN || '8624209195:AAGnBEyZpf2mNq0JJyguRRhfmN0dKlmMaas';
+      const botToken = partition.appSettings.telegram_bot_token || process.env.TELEGRAM_BOT_TOKEN;
       const candFirst = escapeTelegramHtml(newAccount.full_name.split(' ')[0] || 'Candidate');
       const rolesStr = (partition.currentProfile.target_roles || []).slice(0, 3).join(', ');
       const locStr = (partition.currentProfile.preferred_locations || []).slice(0, 3).join(', ');
@@ -998,18 +992,6 @@ app.use((req, res, next) => {
 
     const user = users[userId];
     let isValid = verifyPassword(password, user.password_hash, user.salt);
-    if (!isValid) {
-      if (
-        (cleanEmail === 'kb270102@gmail.com' && password === 'careerops123') ||
-        (cleanEmail === 'demo@careerops.ai' && password === 'demo123') ||
-        (cleanEmail === 'alex.dev@example.com' && (password === 'careerops123' || password === 'alex123'))
-      ) {
-        const { hash, salt } = hashPassword(password);
-        user.password_hash = hash;
-        user.salt = salt;
-        isValid = true;
-      }
-    }
     if (!isValid) {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
@@ -2526,7 +2508,7 @@ ${(e.bullets || []).map((b) => `• ${b}`).join('\n')}
       return { delivered: false, simulated: false, error: 'Requisition link is expired or closed on career portal.' };
     }
 
-    const chatId = (custom_chat_id || appSettings.telegram_chat_id || process.env.TELEGRAM_CHAT_ID || '1368681854').trim();
+    const chatId = (custom_chat_id || appSettings.telegram_chat_id || process.env.TELEGRAM_CHAT_ID).trim();
     const botToken = (custom_bot_token || appSettings.telegram_bot_token || process.env.TELEGRAM_BOT_TOKEN || '8624209195:AAGnBEyZpf2mNq0JJyguRRhfmN0dKlmMaas').trim();
     const candFirst = escapeTelegramHtml(currentProfile.full_name.split(' ')[0] || 'Candidate');
 
@@ -2673,7 +2655,7 @@ ${(e.bullets || []).map((b) => `• ${b}`).join('\n')}
       return;
     }
 
-    const chatId = targetChatId || appSettings.telegram_chat_id || process.env.TELEGRAM_CHAT_ID || '1368681854';
+    const chatId = targetChatId || appSettings.telegram_chat_id || process.env.TELEGRAM_CHAT_ID;
     const botToken = targetBotToken || appSettings.telegram_bot_token || process.env.TELEGRAM_BOT_TOKEN;
     const candFirst = currentProfile.full_name.split(' ')[0] || 'Candidate';
 
@@ -3183,22 +3165,6 @@ ${(e.bullets || []).map((b) => `• ${b}`).join('\n')}
   app.get('/api/cron/trigger', handleCronTrigger);
   app.post('/api/cron/trigger', handleCronTrigger);
 
-  app.post('/api/workflow/config', (req, res) => {
-    const { enabled, interval_hours, auto_notify_telegram } = req.body;
-    if (typeof enabled === 'boolean') workflowState.enabled = enabled;
-    if (typeof interval_hours === 'number' && interval_hours > 0) {
-      workflowState.interval_hours = interval_hours;
-      workflowState.next_run = getCanonicalNextRun(interval_hours);
-    }
-    if (typeof auto_notify_telegram === 'boolean') {
-      workflowState.auto_notify_telegram = auto_notify_telegram;
-    }
-    workflowState.last_updated = new Date().toISOString();
-    setupWorkflowScheduler();
-    saveStoreToDisk();
-    res.json({ success: true, workflow: workflowState });
-  });
-
   // --- Telegram Dispatch & Webhook ---
   app.post('/api/telegram/test-ping', async (req, res) => {
     const { chat_id, full_name, bot_token } = req.body || {};
@@ -3298,7 +3264,7 @@ ${(e.bullets || []).map((b) => `• ${b}`).join('\n')}
     res.json({
       success: sendResult.delivered || sendResult.simulated,
       ...sendResult,
-      chat_id: effectiveChatId || '1368681854',
+      chat_id: effectiveChatId || '',
     });
   });
 
