@@ -1313,7 +1313,7 @@ export default function App() {
               {/* Equal-Height Unboxed Narrative & Executive Summary Block */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
                 {/* Left text column - Word-by-word reveal for ALL 4 paragraphs */}
-                <ScrollReveal direction="left" className="lg:col-span-7 flex flex-col justify-between py-2">
+                <ScrollReveal direction="left" className="lg:col-span-7 flex flex-col justify-between py-2 h-full">
                   <div className="space-y-5 text-white/80 text-base md:text-[17px] font-light leading-relaxed">
                     <ScrollWords
                       segments={[
@@ -1344,7 +1344,7 @@ export default function App() {
                 </ScrollReveal>
 
                 {/* Right executive summary card (Clean table, zero status bit, matching height) */}
-                <ScrollReveal direction="right" className="lg:col-span-5 flex flex-col">
+                <ScrollReveal direction="right" className="lg:col-span-5 flex flex-col h-full">
                   <LuxuryCard className="p-8 md:p-9 h-full flex flex-col justify-between">
                     <div>
                       <div className="text-xs font-mono font-bold tracking-[0.2em] text-[#D9FF00] uppercase mb-5 flex items-center justify-between">
