@@ -57,10 +57,8 @@ const wrap = (min: number, max: number, v: number) => {
 };
 
 export const VelocityMarquee = memo(function VelocityMarquee({
-+  // expose the MotionValue so a pre‑warm step can tick it once
-+  // (this does not affect normal operation)
-+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-+  __exposeBaseX?: (base: any) => void,
+  // expose the MotionValue so a pre‑warm step can tick it once
+  // (this does not affect normal operation)
 
   items,
 }: {
@@ -68,11 +66,11 @@ export const VelocityMarquee = memo(function VelocityMarquee({
 }) {
   const reduced = useReducedMotion();
   const baseX = useMotionValue(0);
-+  // expose the value globally so the warm‑up hook can read it once
-+  useEffect(() => {
-+    (window as any).__marqueeBaseX = baseX;
-+    return () => delete (window as any).__marqueeBaseX;
-+  }, [baseX]);
+  // expose the value globally so the warm‑up hook can read it once
+  useEffect(() => {
+    (window as any).__marqueeBaseX = baseX;
+    return () => delete (window as any).__marqueeBaseX;
+  }, [baseX]);
 
   const { scrollY } = useScroll();
   const velocity = useVelocity(scrollY);
